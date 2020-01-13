@@ -4,28 +4,27 @@ import (
 	"testing"
 )
 
-
-func initLinkedList() *LinkedList{
-	linkedList:=new(LinkedList)
+func initLinkedList() *LinkedList {
+	linkedList := new(LinkedList)
 	return linkedList
 }
-func TestCreateNode(t *testing.T){
-	linkedList:=initLinkedList()
-	if linkedList!=nil{
+func TestCreateNode(t *testing.T) {
+	linkedList := initLinkedList()
+	if linkedList != nil {
 		t.Log(linkedList)
 	}
 }
 
-func TestLinkedListAdd(t *testing.T){
-	linkedList:=initLinkedList1()
-	for ; linkedList != nil; {
+func TestLinkedListAdd(t *testing.T) {
+	linkedList := initLinkedList1()
+	for linkedList != nil {
 		t.Log(linkedList)
 		linkedList = linkedList.nextNode
 	}
 }
 
-func TestLinkedListHeadAdd(t *testing.T){
-	linkedList:=initLinkedList()
+func TestLinkedListHeadAdd(t *testing.T) {
+	linkedList := initLinkedList()
 	linkedList.headAdd("1111")
 	linkedList.headAdd("2222")
 	linkedList.headAdd("3333")
@@ -36,8 +35,8 @@ func TestLinkedListHeadAdd(t *testing.T){
 	}
 }
 
-func initLinkedList1() *LinkedList{
-	linkedList:=initLinkedList()
+func initLinkedList1() *LinkedList {
+	linkedList := initLinkedList()
 	linkedList.tailAdd("1111")
 	linkedList.tailAdd("2222")
 	linkedList.tailAdd("3333")
@@ -53,19 +52,18 @@ func TestLinkedListGetVaule(t *testing.T) {
 	}
 }
 
-func TestLinkedListLength(t *testing.T){
-	linkedList:=initLinkedList1()
-	len:=linkedList.length()
+func TestLinkedListLength(t *testing.T) {
+	linkedList := initLinkedList1()
+	len := linkedList.length()
 	t.Log(len)
 }
 
-func TestLinkedListDelete(t *testing.T){
-	linkedList:=initLinkedList1()
-	linkedList.delete("2222")
-	for linkedList!=nil{
+func TestLinkedListDelete(t *testing.T) {
+	linkedList := initLinkedList1()
+	linkedList.delete("1111")
+	for linkedList != nil {
 		t.Log(linkedList)
-		linkedList=linkedList.nextNode
+		linkedList = linkedList.nextNode
 	}
 
 }
-
