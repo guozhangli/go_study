@@ -1,10 +1,24 @@
 package TestProject
 
-const capacity  = 8
+import "errors"
+
 
 type ArrayList struct {
 	length int
-	data [capacity]interface{}
+	data []interface{}
+}
+
+var capacity  = func (list *ArrayList) int {
+	return cap(list.data)
+}
+
+func newArray(cap uint) *ArrayList{
+	if cap==0{
+		return new(ArrayList)
+	}
+	list:=&ArrayList{length:0,
+		data:make([]interface{},cap,cap)}
+	return list
 }
 
 func checkInit(list *ArrayList){
@@ -23,7 +37,7 @@ func (list *ArrayList) isEmpty() bool{
 
 func (list *ArrayList) add(value interface{}) bool{
 	checkInit(list)
-	if list.length+1>capacity{
+	if list.length+1>capacity(list){
 		return false
 	}
 	list.data[list.length]=value
@@ -38,10 +52,10 @@ func (list *ArrayList) size() int{
 
 func(list *ArrayList) insert(index int,value interface{}) bool{
 	checkInit(list)
-	if list.length+1>capacity{
+	if list.length+1>capacity(list){
 		return false
 	}
-	if index<0 || index>=capacity{
+	if  index>=capacity(list){
 		return false
 	}
 
@@ -58,7 +72,7 @@ func (list *ArrayList) getValue(index int) interface{}{
 	if list.length==0{
 		return nil
 	}
-	if index<0||index>=capacity{
+	if index<0||index>=capacity(list){
 		return nil
 	}
 	return list.data[index]
@@ -69,26 +83,26 @@ func (list *ArrayList) delete(value interface{}) bool{
 	if list.length==0{
 		return false
 	}
-	index,flag:=list.getIndex(value)
-	if flag{
-		for i:=index+1;i<=list.length;i++{
-			list.data[i-1]=list.data[i]
-		}
-		list.length--
-		return true
+	index, err := list.getIndex(value)
+	if err != nil {
+		return false
 	}
-	return flag
+	for i := index + 1; i <= list.length; i++ {
+		list.data[i-1] = list.data[i]
+	}
+	list.length--
+	return true
 }
 
-func (list *ArrayList) getIndex(value interface{}) (int,bool){
+func (list *ArrayList) getIndex(value interface{}) (int,error){
 	checkInit(list)
 	if list.length==0{
-		return 0,false
+		return 0,errors.New("数组无数据")
 	}
 	for i,v:=range list.data{
 		if v==value{
-			return i,true
+			return i,nil
 		}
 	}
-	return 0,false
+	return 0,errors.New("未查询出数据")
 }

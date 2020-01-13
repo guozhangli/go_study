@@ -5,10 +5,7 @@ import (
 )
 
 func initArrayList() *ArrayList{
-	list:=new(ArrayList)
-	list.add("111")
-	list.add("222")
-	list.add("333")
+	list:=newArray(8)
 	return list
 }
 
@@ -36,6 +33,9 @@ func TestArrayListAdd(t *testing.T){
 
 func TestArrayListSize(t *testing.T){
 	list:=initArrayList()
+	list.add("111")
+	list.add("222")
+	list.add("333")
 	if list.size()==3{
 		t.Log(3)
 	}else{
@@ -54,7 +54,10 @@ func TestArrayListInsert(t *testing.T){
 
 func TestArrayListGetValue(t *testing.T){
 	list:=initArrayList()
-	val:=list.getValue(-1)
+	list.add("111")
+	list.add("222")
+	list.add("333")
+	val:=list.getValue(2)
 	if val!=nil{
 		t.Log(val)
 	}else{
@@ -64,10 +67,22 @@ func TestArrayListGetValue(t *testing.T){
 
 func TestArrayListDelete(t *testing.T){
 	list:=initArrayList()
+	list.add("111")
+	list.add("222")
+	list.add("333")
+	list.add("444")
 	if list.delete("444"){
 		t.Log(list)
 	}else{
 		t.Error(list)
 	}
+}
+
+func TestArrayListAddConcurrence(t *testing.T){
+	list:=initArrayList()
+	for i:=0;i<8;i++{
+		go list.add(i)
+	}
+	t.Log(list)
 }
 
