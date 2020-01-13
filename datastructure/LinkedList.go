@@ -35,7 +35,7 @@ func (list *LinkedList) tailAdd(value interface{}){
 		nextNode:nil,
 	}
 	if r!=nil{
-		for ;r.nextNode!=nil;{
+		for r.nextNode!=nil{
 			r=r.nextNode
 		}
 	}
@@ -59,7 +59,7 @@ func (list *LinkedList) length() int {
 	f := list
 	var count int
 	if f != nil {
-		for ;f.nextNode != nil; {
+		for f.nextNode != nil {
 			f=f.nextNode
 			count++
 		}
@@ -69,5 +69,37 @@ func (list *LinkedList) length() int {
 
 func (list *LinkedList) getVaule(index int) interface{}{
 	checkInitLinkedList(list)
+	f:=list
+	if index<0 || index > f.length(){
+		return nil
+	}
+	var count int
+	for {
+		if count==index{
+			return f.data
+		}
+		count++
+		if f=f.nextNode;f==nil{
+			break
+		}
+	}
     return nil
+}
+
+func (list *LinkedList) delete(value interface{}){
+	checkInitLinkedList(list)
+	p:=list
+	if value!=nil{
+		var f,q LinkedList
+		for {
+			if p.data==value{
+				q=*p
+				f.nextNode=q.nextNode
+			}
+			f=*p
+			if p=p.nextNode;p==nil{
+				break
+			}
+		}
+	}
 }

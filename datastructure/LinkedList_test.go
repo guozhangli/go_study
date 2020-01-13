@@ -1,6 +1,8 @@
 package TestProject
 
-import "testing"
+import (
+	"testing"
+)
 
 
 func initLinkedList() *LinkedList{
@@ -28,7 +30,7 @@ func TestLinkedListHeadAdd(t *testing.T){
 	linkedList.headAdd("2222")
 	linkedList.headAdd("3333")
 	linkedList.headAdd("4444")
-	for ; linkedList != nil; {
+	for linkedList != nil {
 		t.Log(linkedList)
 		linkedList = linkedList.nextNode
 	}
@@ -43,14 +45,27 @@ func initLinkedList1() *LinkedList{
 	return linkedList
 }
 
-func TestLinkedListGetVaule(t *testing.T){
-	linkedList:=initLinkedList1()
-	linkedList.getVaule(1)
+func TestLinkedListGetVaule(t *testing.T) {
+	linkedList := initLinkedList1()
+	for i := 0; i < 8; i++ {
+		data := linkedList.getVaule(i)
+		t.Log(data)
+	}
 }
 
 func TestLinkedListLength(t *testing.T){
 	linkedList:=initLinkedList1()
 	len:=linkedList.length()
 	t.Log(len)
+}
+
+func TestLinkedListDelete(t *testing.T){
+	linkedList:=initLinkedList1()
+	linkedList.delete("2222")
+	for linkedList!=nil{
+		t.Log(linkedList)
+		linkedList=linkedList.nextNode
+	}
+
 }
 
