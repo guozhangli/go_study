@@ -102,3 +102,14 @@ func (list *LinkedList) delete(value interface{}) {
 		}
 	}
 }
+
+func (list *LinkedList) clear() {
+	checkInitLinkedList(list)
+	p := list
+	var it *LinkedList
+	for p != nil {
+		it = p.nextNode
+		p = nil
+		p = it
+	}
+}

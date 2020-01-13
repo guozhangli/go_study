@@ -65,5 +65,10 @@ func TestLinkedListDelete(t *testing.T) {
 		t.Log(linkedList)
 		linkedList = linkedList.nextNode
 	}
+}
 
+func TestLinkedListClear(t *testing.T) {
+	linkedList := initLinkedList1()
+	linkedList.clear()
+	t.Log(linkedList)
 }
