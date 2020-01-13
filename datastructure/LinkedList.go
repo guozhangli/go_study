@@ -112,4 +112,5 @@ func (list *LinkedList) clear() {
 		p = nil
 		p = it
 	}
+	list.nextNode = nil
 }
