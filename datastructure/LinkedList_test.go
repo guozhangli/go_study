@@ -72,3 +72,39 @@ func TestLinkedListClear(t *testing.T) {
 	linkedList.clear()
 	t.Log(linkedList)
 }
+
+func TestLinkedListMidInsert(t *testing.T){
+	linkedList := initLinkedList1()
+	if linkedList.insert(3,"5555"){
+		for linkedList != nil {
+			t.Log(linkedList)
+			linkedList = linkedList.nextNode
+		}
+	}else{
+		for linkedList != nil {
+			t.Error(linkedList)
+			linkedList = linkedList.nextNode
+		}
+	}
+}
+
+func TestLinkedListDelHead(t *testing.T){
+	linkedList := initLinkedList1()
+	linkedList.deleteF()
+	for linkedList != nil {
+		t.Log(linkedList)
+		linkedList = linkedList.nextNode
+	}
+}
+
+func TestLinkedListDelTail(t *testing.T){
+	linkedList := initLinkedList1()
+	linkedList.deleteT()
+	linkedList.deleteT()
+	linkedList.deleteT()
+	linkedList.deleteT()
+	for linkedList != nil {
+		t.Log(linkedList)
+		linkedList = linkedList.nextNode
+	}
+}

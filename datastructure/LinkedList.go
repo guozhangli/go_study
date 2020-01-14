@@ -54,6 +54,28 @@ func (list *LinkedList) headAdd(value interface{}) {
 	f.nextNode = node
 }
 
+func (list *LinkedList) insert(index int,value interface{}) bool{
+	checkInitLinkedList(list)
+	f := list
+	if index >= 0 && index <= f.length() {
+		var node = &LinkedList{
+			data:     value,
+			nextNode: nil,
+		}
+		var count int
+		for f != nil {
+			if count == index {
+				node.nextNode = f.nextNode
+				f.nextNode = node
+				return true
+			}
+			f = f.nextNode
+			count++
+		}
+	}
+	return false
+}
+
 func (list *LinkedList) length() int {
 	checkInitLinkedList(list)
 	f := list
@@ -100,6 +122,30 @@ func (list *LinkedList) delete(value interface{}) {
 				break
 			}
 		}
+	}
+}
+
+func (list *LinkedList) deleteF(){
+	checkInitLinkedList(list)
+	f:=list
+	var p LinkedList
+	if f.nextNode!=nil{
+		p=*f.nextNode
+		f.nextNode=p.nextNode
+	}
+}
+
+func (list *LinkedList) deleteT(){
+	checkInitLinkedList(list)
+	f:=list
+	var p *LinkedList
+	for f!=nil{
+		p=f.nextNode
+		if(p!=nil&&p.nextNode==nil){
+			f.nextNode=nil
+		}
+		f=f.nextNode
+		p=nil
 	}
 }
 
