@@ -52,30 +52,37 @@ func (list *CyclicLinkedList) TailAdd(value interface{}) {
 }
 
 func (list *CyclicLinkedList) Print(head *CyclicLinkedList) {
+	checkCyclicLinkedList(list)
 	cycLinkedList := list
 	for cycLinkedList != nil && cycLinkedList.nextNode != head {
 		fmt.Println(cycLinkedList)
 		cycLinkedList = cycLinkedList.nextNode
 	}
-	fmt.Println(cycLinkedList)
+	if cycLinkedList != nil {
+		fmt.Println(cycLinkedList)
+	}
 }
 
-func (list *CyclicLinkedList) insert(index int, value interface{}) bool {
+func (list *CyclicLinkedList) Insert(index int, value interface{}) bool {
+	checkCyclicLinkedList(list)
 	head := list
 	cycLinkedList := list
 	node := NewCyclicLinkedList(value)
-	if index < 0 || index > list.length() {
+	if index < 0 || index > list.Length() {
 		return false
 	}
 	var count int
 	var currNode *CyclicLinkedList
-	for cycLinkedList != nil && cycLinkedList.nextNode != head {
+	for {
 		if count == index {
 			currNode = cycLinkedList
 			break
 		}
 		cycLinkedList = cycLinkedList.nextNode
 		count++
+		if cycLinkedList == nil || cycLinkedList == head {
+			break
+		}
 	}
 	if currNode != nil && currNode != head {
 		node.nextNode = currNode.nextNode
@@ -88,13 +95,86 @@ func (list *CyclicLinkedList) insert(index int, value interface{}) bool {
 	return true
 }
 
-func (list *CyclicLinkedList) length() int {
+func (list *CyclicLinkedList) Length() int {
+	checkCyclicLinkedList(list)
 	cycLinkedList := list
 	head := list
 	var count int
-	for cycLinkedList != nil && cycLinkedList.nextNode != head {
+	for {
 		cycLinkedList = cycLinkedList.nextNode
+		if cycLinkedList == nil || cycLinkedList == head {
+			break
+		}
 		count++
 	}
 	return count
+}
+
+func (list *CyclicLinkedList) Delete(value interface{}) {
+	checkCyclicLinkedList(list)
+	cycLinkedList := list
+	head := list
+	var currNode, perNode *CyclicLinkedList
+	for {
+		if cycLinkedList.data == value {
+			currNode = cycLinkedList
+			break
+		}
+		perNode = cycLinkedList
+		cycLinkedList = cycLinkedList.nextNode
+		if cycLinkedList == nil || cycLinkedList == head {
+			break
+		}
+	}
+	if currNode != nil {
+		perNode.nextNode = currNode.nextNode
+	}
+}
+
+func (list *CyclicLinkedList) DeleteF() {
+	checkCyclicLinkedList(list)
+	head := list
+	if head.nextNode != nil {
+		head.nextNode = head.nextNode.nextNode
+	}
+}
+
+func (list *CyclicLinkedList) DeleteT() {
+	checkCyclicLinkedList(list)
+	cycLinkedList := list
+	head := list
+	var tail_1 *CyclicLinkedList
+	for cycLinkedList.nextNode != head {
+		tail_1 = cycLinkedList
+		cycLinkedList = cycLinkedList.nextNode
+	}
+	if tail_1 != nil {
+		tail_1.nextNode = head
+	}
+}
+
+func (list *CyclicLinkedList) Clear() {
+	checkCyclicLinkedList(list)
+	cycLinkedList := list
+	head := list
+	var tail *CyclicLinkedList
+	for cycLinkedList.nextNode != head {
+		tail = cycLinkedList.nextNode
+		cycLinkedList = nil
+		cycLinkedList = tail
+	}
+	if tail != nil {
+		head.nextNode = nil
+		tail.nextNode = nil
+	}
+
+}
+
+func (list *CyclicLinkedList) IsEmpty() bool {
+	checkCyclicLinkedList(list)
+	count := list.Length()
+	if count > 0 {
+		return false
+	}
+	return true
 }

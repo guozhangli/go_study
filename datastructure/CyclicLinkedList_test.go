@@ -29,7 +29,7 @@ func TestCycLinkedListTailAdd(t *testing.T) {
 
 func TestCycLinkedListInsert(t *testing.T) {
 	cycLinkedList, head := initCycLinkedListAddValue()
-	if cycLinkedList.insert(4, "5555") {
+	if cycLinkedList.Insert(4, "5555") {
 		cycLinkedList.Print(head)
 	} else {
 		t.Log("insert failed")
@@ -49,6 +49,46 @@ func initCycLinkedListAddValue() (*CyclicLinkedList, *CyclicLinkedList) {
 
 func TestCycLinkedListLength(t *testing.T) {
 	cycLinkedList, _ := initCycLinkedListAddValue()
-	len := cycLinkedList.length()
+	len := cycLinkedList.Length()
 	t.Log(len)
+}
+
+func TestCycLinkedListDelete(t *testing.T) {
+	cycLinkedList, head := initCycLinkedListAddValue()
+	cycLinkedList.Delete("1111")
+	cycLinkedList.Delete("2222")
+	cycLinkedList.Delete("3333")
+	cycLinkedList.Delete("4444")
+	cycLinkedList.Print(head)
+}
+
+func TestCycLinkedListDeleteF(t *testing.T) {
+	cycLinkedList, head := initCycLinkedListAddValue()
+	cycLinkedList.DeleteF()
+	cycLinkedList.DeleteF()
+	cycLinkedList.DeleteF()
+	cycLinkedList.Print(head)
+}
+
+func TestCycLinkedListDeleteT(t *testing.T) {
+	cycLinkedList, head := initCycLinkedListAddValue()
+	cycLinkedList.DeleteT()
+	cycLinkedList.DeleteT()
+	cycLinkedList.DeleteT()
+	cycLinkedList.Print(head)
+}
+
+func TestCycLinkedListClear(t *testing.T) {
+	cycLinkedList, head := initCycLinkedListAddValue()
+	cycLinkedList.Clear()
+	cycLinkedList.Print(head)
+}
+
+func TestCycLinkedListIsEmpty(t *testing.T) {
+	cycLinkedList := initCycLinkedList()
+	if cycLinkedList.IsEmpty() {
+		t.Log("cyclicLinkedList is Empty")
+	} else {
+		t.Log("cyclicLinkedList is not Empty")
+	}
 }
