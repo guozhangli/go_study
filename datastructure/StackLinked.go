@@ -40,3 +40,23 @@ func (stack *StackLinked) Pop() *Node {
 	stack.Length--
 	return top
 }
+
+func (stack *StackLinked) IsEmpty() bool{
+	checkStackLinked(stack)
+	if stack.Length==0{
+		return true
+	}
+	return false
+}
+
+func (stack *StackLinked) Clear() {
+	checkStackLinked(stack)
+	for stack.Length>0{
+		stack.Pop()
+	}
+}
+
+func (stack *StackLinked) Distroy(s **StackLinked) {
+	checkStackLinked(stack)
+	*s=nil
+}

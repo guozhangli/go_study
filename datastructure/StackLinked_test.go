@@ -34,3 +34,39 @@ func TestStackLinkedPop(t *testing.T) {
 	json, _ := json.MarshalIndent(*sl, "", " ")
 	fmt.Printf("%s\n", json)
 }
+
+func TestStackLinkedLength(t *testing.T){
+	sl := newStackLinked()
+
+	json, _ := json.MarshalIndent(*sl, "", " ")
+	fmt.Printf("%s\n", json)
+
+	if sl.IsEmpty(){
+		t.Log("stackLinked is empty")
+	}else{
+		t.Log("stackLinked is not empty")
+	}
+
+}
+
+func TestStackLinkedClear(t *testing.T){
+	sl := newStackLinked()
+	sl.Push("1111")
+	sl.Push("2222")
+	sl.Push("3333")
+	sl.Push("4444")
+	sl.Clear()
+	t.Log(sl)
+}
+
+func TestStackLinkedDistroy(t *testing.T){
+	sl := newStackLinked()
+	sl.Push("1111")
+	sl.Push("2222")
+	sl.Push("3333")
+	sl.Push("4444")
+	sl.Clear()
+	t.Log(sl)
+	sl.Distroy(&sl)
+	t.Log(sl)
+}
