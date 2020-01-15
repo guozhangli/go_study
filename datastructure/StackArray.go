@@ -13,14 +13,14 @@ func NewStackArray(cap uint) *StackArray {
 	return stackArray
 }
 
-func checkStack(stack *StackArray) {
+func checkStackArray(stack *StackArray) {
 	if stack == nil {
 		panic("no stack created")
 	}
 }
 
 func (stack *StackArray) IsEmpty() bool {
-	checkStack(stack)
+	checkStackArray(stack)
 	if stack.top == -1 {
 		return true
 	}
@@ -28,18 +28,18 @@ func (stack *StackArray) IsEmpty() bool {
 }
 
 func (stack *StackArray) Length() int {
-	checkStack(stack)
+	checkStackArray(stack)
 	return len(stack.data)
 }
 
 func (stack *StackArray) Push(value interface{}) {
-	checkStack(stack)
+	checkStackArray(stack)
 	stack.data = append(stack.data, value)
 	stack.top++
 }
 
 func (stack *StackArray) Pop() interface{} {
-	checkStack(stack)
+	checkStackArray(stack)
 	if stack.top == -1 {
 		return nil
 	}
@@ -50,7 +50,7 @@ func (stack *StackArray) Pop() interface{} {
 }
 
 func (stack *StackArray) Clear() {
-	checkStack(stack)
+	checkStackArray(stack)
 	if stack.Length() > 0 {
 		stack.data = stack.data[0:0]
 		stack.top = -1
@@ -58,6 +58,6 @@ func (stack *StackArray) Clear() {
 }
 
 func (stack *StackArray) Distroy(s **StackArray) {
-	checkStack(stack)
+	checkStackArray(stack)
 	*s = nil
 }
