@@ -35,21 +35,21 @@ func TestStackLinkedPop(t *testing.T) {
 	fmt.Printf("%s\n", json)
 }
 
-func TestStackLinkedLength(t *testing.T){
+func TestStackLinkedLength(t *testing.T) {
 	sl := newStackLinked()
 
 	json, _ := json.MarshalIndent(*sl, "", " ")
 	fmt.Printf("%s\n", json)
 
-	if sl.IsEmpty(){
+	if sl.IsEmpty() {
 		t.Log("stackLinked is empty")
-	}else{
+	} else {
 		t.Log("stackLinked is not empty")
 	}
 
 }
 
-func TestStackLinkedClear(t *testing.T){
+func TestStackLinkedClear(t *testing.T) {
 	sl := newStackLinked()
 	sl.Push("1111")
 	sl.Push("2222")
@@ -59,7 +59,7 @@ func TestStackLinkedClear(t *testing.T){
 	t.Log(sl)
 }
 
-func TestStackLinkedDistroy(t *testing.T){
+func TestStackLinkedDistroy(t *testing.T) {
 	sl := newStackLinked()
 	sl.Push("1111")
 	sl.Push("2222")
@@ -69,4 +69,23 @@ func TestStackLinkedDistroy(t *testing.T){
 	t.Log(sl)
 	sl.Distroy(&sl)
 	t.Log(sl)
+}
+
+func TestFabiFunc(t *testing.T) {
+	i := 0
+	for i < 5 {
+		n := fabi(i)
+		i++
+		t.Log(n)
+	}
+}
+
+func fabi(i int) int {
+	if i < 2 {
+		if i == 0 {
+			return 0
+		}
+		return 1
+	}
+	return fabi(i-1) + fabi(i-2)
 }
