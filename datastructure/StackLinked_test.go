@@ -33,5 +33,4 @@ func TestStackLinkedPop(t *testing.T) {
 	t.Logf("%+v", top1.Data)
 	json, _ := json.MarshalIndent(*sl, "", " ")
 	fmt.Printf("%s\n", json)
-
 }
