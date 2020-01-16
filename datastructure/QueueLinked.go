@@ -6,6 +6,11 @@ type QueueLinked struct {
 	node  *Node
 }
 
+func NewQueueLinked() Queue {
+	queueLinked := new(QueueLinked)
+	return queueLinked
+}
+
 func (queue *QueueLinked) DeQueue() interface{} {
 	panic("implement me")
 }
