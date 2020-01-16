@@ -4,117 +4,116 @@ import (
 	"testing"
 )
 
-func TestCreateTwLinkedList(t *testing.T){
-	twLinkedList:=newTwLinkedList(nil)
+func TestCreateTwLinkedList(t *testing.T) {
+	twLinkedList := newTwLinkedList(nil)
 	t.Log(twLinkedList)
 }
 
-func initTwLinkedList() *TwLinkedList{
-	twLinkedList:=newTwLinkedList(nil)
+func initTwLinkedList() *TwLinkedList {
+	twLinkedList := newTwLinkedList(nil)
 	return twLinkedList
 }
 
-func TestTwLinkedListAddF(t *testing.T){
-	twLinkedList:=initTwLinkedListAddValue()
-	for twLinkedList!=nil{
+func TestTwLinkedListAddF(t *testing.T) {
+	twLinkedList := initTwLinkedListAddValue()
+	for twLinkedList != nil {
 		t.Log(twLinkedList)
-		twLinkedList=twLinkedList.nextNode
+		twLinkedList = twLinkedList.nextNode
 	}
 }
 
-func initTwLinkedListAddValue() *TwLinkedList{
-	twLinkedList:=initTwLinkedList()
-	twLinkedList.addHead("1111")
-	twLinkedList.addHead("2222")
-	twLinkedList.addHead("3333")
-	twLinkedList.addHead("4444")
+func initTwLinkedListAddValue() *TwLinkedList {
+	twLinkedList := initTwLinkedList()
+	twLinkedList.HeadAdd("1111")
+	twLinkedList.HeadAdd("2222")
+	twLinkedList.HeadAdd("3333")
+	twLinkedList.HeadAdd("4444")
 	return twLinkedList
 }
 
-func TestTwLinkedListAddT(t *testing.T){
-	twLinkedList:=initTwLinkedList()
-	twLinkedList.addTail("1111")
-	twLinkedList.addTail("2222")
-	twLinkedList.addTail("3333")
-	twLinkedList.addTail("4444")
-	for twLinkedList!=nil{
+func TestTwLinkedListAddT(t *testing.T) {
+	twLinkedList := initTwLinkedList()
+	twLinkedList.TailAdd("1111")
+	twLinkedList.TailAdd("2222")
+	twLinkedList.TailAdd("3333")
+	twLinkedList.TailAdd("4444")
+	for twLinkedList != nil {
 		t.Log(twLinkedList)
-		twLinkedList=twLinkedList.nextNode
+		twLinkedList = twLinkedList.nextNode
 	}
 }
 
-func TestTwLinkedListInsert(t *testing.T){
-	twLinkedList:=initTwLinkedListAddValue()
-    twLinkedList.insert(3,"5555")
-	for twLinkedList!=nil{
+func TestTwLinkedListInsert(t *testing.T) {
+	twLinkedList := initTwLinkedListAddValue()
+	twLinkedList.Insert(3, "5555")
+	for twLinkedList != nil {
 		t.Log(twLinkedList)
-		twLinkedList=twLinkedList.nextNode
+		twLinkedList = twLinkedList.nextNode
 	}
 }
 
-func TestTwLinkedListLength(t *testing.T){
-	twLinkedList:=initTwLinkedListAddValue()
-	len:=twLinkedList.length()
+func TestTwLinkedListLength(t *testing.T) {
+	twLinkedList := initTwLinkedListAddValue()
+	len := twLinkedList.Length()
 	t.Log(len)
 }
 
-func TestTwLinkedListIsEmpty(t *testing.T){
-	twLinkedList:=initTwLinkedList()
-	if twLinkedList.isEmpty(){
+func TestTwLinkedListIsEmpty(t *testing.T) {
+	twLinkedList := initTwLinkedList()
+	if twLinkedList.IsEmpty() {
 		t.Log("twLinkedList is empty")
-	}else{
+	} else {
 		t.Log("twLinkedList is not empty")
 	}
 }
 
-func TestTwLinkedListGetValue(t *testing.T){
-	twLinkedList:=initTwLinkedListAddValue()
-	val:=twLinkedList.getValue(4)
+func TestTwLinkedListGetValue(t *testing.T) {
+	twLinkedList := initTwLinkedListAddValue()
+	val := twLinkedList.GetValue(4)
 	t.Log(val)
-	for twLinkedList!=nil{
+	for twLinkedList != nil {
 		t.Log(twLinkedList)
-		twLinkedList=twLinkedList.nextNode
+		twLinkedList = twLinkedList.nextNode
 	}
 }
 
-func TestTwLinkedListDelete(t *testing.T){
-	twLinkedList:=initTwLinkedListAddValue()
-	twLinkedList.delete("1111")
-	twLinkedList.delete("2222")
-	twLinkedList.delete("3333")
-	twLinkedList.delete("4444")
-	for twLinkedList!=nil{
+func TestTwLinkedListDelete(t *testing.T) {
+	twLinkedList := initTwLinkedListAddValue()
+	twLinkedList.Delete("1111")
+	twLinkedList.Delete("2222")
+	twLinkedList.Delete("3333")
+	twLinkedList.Delete("4444")
+	for twLinkedList != nil {
 		t.Log(twLinkedList)
-		twLinkedList=twLinkedList.nextNode
+		twLinkedList = twLinkedList.nextNode
 	}
 }
 
-func TestTwLinkedListDeleteF(t *testing.T){
-	twLinkedList:=initTwLinkedListAddValue()
-	twLinkedList.deleteF()
-	for twLinkedList!=nil{
+func TestTwLinkedListDeleteF(t *testing.T) {
+	twLinkedList := initTwLinkedListAddValue()
+	twLinkedList.DeleteF()
+	for twLinkedList != nil {
 		t.Log(twLinkedList)
-		twLinkedList=twLinkedList.nextNode
+		twLinkedList = twLinkedList.nextNode
 	}
 }
 
-func TestTwLinkedListDeleteT(t *testing.T){
-	twLinkedList:=initTwLinkedListAddValue()
-	twLinkedList.deleteT()
-	twLinkedList.deleteT()
-	twLinkedList.deleteT()
-	for twLinkedList!=nil{
+func TestTwLinkedListDeleteT(t *testing.T) {
+	twLinkedList := initTwLinkedListAddValue()
+	twLinkedList.DeleteT()
+	twLinkedList.DeleteT()
+	twLinkedList.DeleteT()
+	for twLinkedList != nil {
 		t.Log(twLinkedList)
-		twLinkedList=twLinkedList.nextNode
+		twLinkedList = twLinkedList.nextNode
 	}
 }
 
-func TestTwLinkedListClear(t *testing.T){
-	twLinkedList:=initTwLinkedListAddValue()
-	twLinkedList.clear()
-	for twLinkedList!=nil{
+func TestTwLinkedListClear(t *testing.T) {
+	twLinkedList := initTwLinkedListAddValue()
+	twLinkedList.Clear()
+	for twLinkedList != nil {
 		t.Log(twLinkedList)
-		twLinkedList=twLinkedList.nextNode
+		twLinkedList = twLinkedList.nextNode
 	}
 }
-

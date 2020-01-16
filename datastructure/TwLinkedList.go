@@ -1,160 +1,159 @@
 package TestProject
 
 type TwLinkedList struct {
-	data interface{}
-	preNode *TwLinkedList
+	data     interface{}
+	preNode  *TwLinkedList
 	nextNode *TwLinkedList
 }
 
-func newTwLinkedList(vaule interface{}) *TwLinkedList{
+func newTwLinkedList(vaule interface{}) *TwLinkedList {
 	return &TwLinkedList{
-		data:vaule,
-		preNode:nil,
-		nextNode:nil,
+		data:     vaule,
+		preNode:  nil,
+		nextNode: nil,
 	}
 }
 
-func checkTwLinkedList(list *TwLinkedList){
-	if list==nil{
+func checkTwLinkedList(list *TwLinkedList) {
+	if list == nil {
 		panic("未创建双向链表")
 	}
 }
 
-func (list *TwLinkedList) addHead(value interface{}){
+func (list *TwLinkedList) HeadAdd(value interface{}) {
 	checkTwLinkedList(list)
-   	node:=newTwLinkedList(value)
-	node.preNode=list
-	node.nextNode=list.nextNode
-	if(list.nextNode!=nil){
-		list.nextNode.preNode=node
+	node := newTwLinkedList(value)
+	node.preNode = list
+	node.nextNode = list.nextNode
+	if list.nextNode != nil {
+		list.nextNode.preNode = node
 	}
-    list.nextNode=node
+	list.nextNode = node
 }
 
-func (list *TwLinkedList) addTail(value interface{}) {
+func (list *TwLinkedList) TailAdd(value interface{}) {
 	checkTwLinkedList(list)
-	node:=newTwLinkedList(value)
+	node := newTwLinkedList(value)
 	var p *TwLinkedList
-	if list.nextNode==nil{
-		p=list
-	}else{
-		for list.nextNode!=nil{
-			list=list.nextNode
-			p=list
+	if list.nextNode == nil {
+		p = list
+	} else {
+		for list.nextNode != nil {
+			list = list.nextNode
+			p = list
 		}
 	}
-	p.nextNode=node
-	node.preNode=p
+	p.nextNode = node
+	node.preNode = p
 }
 
-func (list *TwLinkedList) insert(index int ,value interface{}) bool{
+func (list *TwLinkedList) Insert(index int, value interface{}) bool {
 	checkTwLinkedList(list)
-	node:=newTwLinkedList(value)
-	if index<0 || index>=list.length(){
+	node := newTwLinkedList(value)
+	if index < 0 || index >= list.Length() {
 		return false
 	}
 	var count int
 	var p *TwLinkedList
-	for list!=nil{
-		if count==index{
-			p=list
+	for list != nil {
+		if count == index {
+			p = list
 			break
 		}
-		list=list.nextNode
+		list = list.nextNode
 		count++
 	}
-	if p.nextNode!=nil{
-		p.nextNode.preNode=node
+	if p.nextNode != nil {
+		p.nextNode.preNode = node
 	}
-	node.nextNode=p.nextNode
-	p.nextNode=node
-	node.preNode=p
+	node.nextNode = p.nextNode
+	p.nextNode = node
+	node.preNode = p
 	return true
 }
 
-func (list *TwLinkedList) length() int {
+func (list *TwLinkedList) Length() int {
 	checkTwLinkedList(list)
 	var count int
-	for list!=nil{
-		list=list.nextNode
+	for list != nil {
+		list = list.nextNode
 		count++
 	}
-  	return count
+	return count
 }
 
-func (list *TwLinkedList) isEmpty() bool {
+func (list *TwLinkedList) IsEmpty() bool {
 	checkTwLinkedList(list)
-	for list.nextNode!=nil{
+	for list.nextNode != nil {
 		return false
 	}
 	return true
 }
 
-func (list *TwLinkedList) getValue(index int) interface{} {
+func (list *TwLinkedList) GetValue(index int) interface{} {
 	checkTwLinkedList(list)
-	if index<0 || index>=list.length(){
+	if index < 0 || index >= list.Length() {
 		return nil
 	}
 	var count int
-	for list!=nil{
-		if count==index {
+	for list != nil {
+		if count == index {
 			return list.data
 		}
-		list=list.nextNode
+		list = list.nextNode
 		count++
 	}
 	return nil
 }
 
-func (list *TwLinkedList) delete(value interface{}) {
+func (list *TwLinkedList) Delete(value interface{}) {
 	checkTwLinkedList(list)
 	var p *TwLinkedList
-	for list!=nil{
-		if list.data==value{
-			p=list
+	for list != nil {
+		if list.data == value {
+			p = list
 		}
-		list=list.nextNode
+		list = list.nextNode
 	}
-	if p!=nil&&p.nextNode!=nil{
-		p.nextNode.preNode=p.preNode
-		p.preNode.nextNode=p.nextNode
+	if p != nil && p.nextNode != nil {
+		p.nextNode.preNode = p.preNode
+		p.preNode.nextNode = p.nextNode
 	}
-	if p!=nil&&p.nextNode==nil{
-		p.preNode.nextNode=nil
+	if p != nil && p.nextNode == nil {
+		p.preNode.nextNode = nil
 	}
-	p=nil
+	p = nil
 }
 
-func (list *TwLinkedList) deleteF(){
+func (list *TwLinkedList) DeleteF() {
 	checkTwLinkedList(list)
 	var p *TwLinkedList
-	if list.nextNode!=nil{
-		p=list.nextNode
-		if p.nextNode!=nil{
-			p.nextNode.preNode=p.preNode
-			p.preNode.nextNode=p.nextNode
+	if list.nextNode != nil {
+		p = list.nextNode
+		if p.nextNode != nil {
+			p.nextNode.preNode = p.preNode
+			p.preNode.nextNode = p.nextNode
 		}
-		if p.nextNode==nil{
-			p.preNode.nextNode=nil
+		if p.nextNode == nil {
+			p.preNode.nextNode = nil
 		}
 	}
 }
 
-func (list *TwLinkedList) deleteT(){
+func (list *TwLinkedList) DeleteT() {
 	checkTwLinkedList(list)
 	var p *TwLinkedList
-	for list.nextNode!=nil{
-		list=list.nextNode
-		p=list
+	for list.nextNode != nil {
+		list = list.nextNode
+		p = list
 	}
-	if p!=nil&&p.nextNode==nil{
-		p.preNode.nextNode=nil
+	if p != nil && p.nextNode == nil {
+		p.preNode.nextNode = nil
 	}
-	p=nil
+	p = nil
 }
 
-func (list *TwLinkedList) clear(){
+func (list *TwLinkedList) Clear() {
 	checkTwLinkedList(list)
-	list.nextNode=nil
+	list.nextNode = nil
 }
-

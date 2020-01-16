@@ -25,10 +25,10 @@ func TestLinkedListAdd(t *testing.T) {
 
 func TestLinkedListHeadAdd(t *testing.T) {
 	linkedList := initLinkedList()
-	linkedList.headAdd("1111")
-	linkedList.headAdd("2222")
-	linkedList.headAdd("3333")
-	linkedList.headAdd("4444")
+	linkedList.HeadAdd("1111")
+	linkedList.HeadAdd("2222")
+	linkedList.HeadAdd("3333")
+	linkedList.HeadAdd("4444")
 	for linkedList != nil {
 		t.Log(linkedList)
 		linkedList = linkedList.nextNode
@@ -37,30 +37,30 @@ func TestLinkedListHeadAdd(t *testing.T) {
 
 func initLinkedList1() *LinkedList {
 	linkedList := initLinkedList()
-	linkedList.tailAdd("1111")
-	linkedList.tailAdd("2222")
-	linkedList.tailAdd("3333")
-	linkedList.tailAdd("4444")
+	linkedList.TailAdd("1111")
+	linkedList.TailAdd("2222")
+	linkedList.TailAdd("3333")
+	linkedList.TailAdd("4444")
 	return linkedList
 }
 
 func TestLinkedListGetVaule(t *testing.T) {
 	linkedList := initLinkedList1()
 	for i := 0; i < 8; i++ {
-		data := linkedList.getVaule(i)
+		data := linkedList.GetVaule(i)
 		t.Log(data)
 	}
 }
 
 func TestLinkedListLength(t *testing.T) {
 	linkedList := initLinkedList1()
-	len := linkedList.length()
+	len := linkedList.Length()
 	t.Log(len)
 }
 
 func TestLinkedListDelete(t *testing.T) {
 	linkedList := initLinkedList1()
-	linkedList.delete("1111")
+	linkedList.Delete("1111")
 	for linkedList != nil {
 		t.Log(linkedList)
 		linkedList = linkedList.nextNode
@@ -69,18 +69,18 @@ func TestLinkedListDelete(t *testing.T) {
 
 func TestLinkedListClear(t *testing.T) {
 	linkedList := initLinkedList1()
-	linkedList.clear()
+	linkedList.Clear()
 	t.Log(linkedList)
 }
 
-func TestLinkedListMidInsert(t *testing.T){
+func TestLinkedListMidInsert(t *testing.T) {
 	linkedList := initLinkedList1()
-	if linkedList.insert(3,"5555"){
+	if linkedList.Insert(3, "5555") {
 		for linkedList != nil {
 			t.Log(linkedList)
 			linkedList = linkedList.nextNode
 		}
-	}else{
+	} else {
 		for linkedList != nil {
 			t.Error(linkedList)
 			linkedList = linkedList.nextNode
@@ -88,21 +88,21 @@ func TestLinkedListMidInsert(t *testing.T){
 	}
 }
 
-func TestLinkedListDelHead(t *testing.T){
+func TestLinkedListDelHead(t *testing.T) {
 	linkedList := initLinkedList1()
-	linkedList.deleteF()
+	linkedList.DeleteF()
 	for linkedList != nil {
 		t.Log(linkedList)
 		linkedList = linkedList.nextNode
 	}
 }
 
-func TestLinkedListDelTail(t *testing.T){
+func TestLinkedListDelTail(t *testing.T) {
 	linkedList := initLinkedList1()
-	linkedList.deleteT()
-	linkedList.deleteT()
-	linkedList.deleteT()
-	linkedList.deleteT()
+	linkedList.DeleteT()
+	linkedList.DeleteT()
+	linkedList.DeleteT()
+	linkedList.DeleteT()
 	for linkedList != nil {
 		t.Log(linkedList)
 		linkedList = linkedList.nextNode

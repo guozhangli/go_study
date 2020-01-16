@@ -18,7 +18,7 @@ func checkInitLinkedList(list *LinkedList) {
 		panic("未创建单链表")
 	}
 }
-func (list *LinkedList) isEmpty() bool {
+func (list *LinkedList) IsEmpty() bool {
 	checkInitLinkedList(list)
 	r := list.nextNode
 	if r != nil {
@@ -27,7 +27,7 @@ func (list *LinkedList) isEmpty() bool {
 	return false
 }
 
-func (list *LinkedList) tailAdd(value interface{}) {
+func (list *LinkedList) TailAdd(value interface{}) {
 	checkInitLinkedList(list)
 	r := list
 	var node = &LinkedList{
@@ -42,7 +42,7 @@ func (list *LinkedList) tailAdd(value interface{}) {
 	r.nextNode = node
 }
 
-func (list *LinkedList) headAdd(value interface{}) {
+func (list *LinkedList) HeadAdd(value interface{}) {
 	checkInitLinkedList(list)
 	f := list
 	var node = &LinkedList{
@@ -54,10 +54,10 @@ func (list *LinkedList) headAdd(value interface{}) {
 	f.nextNode = node
 }
 
-func (list *LinkedList) insert(index int,value interface{}) bool{
+func (list *LinkedList) Insert(index int, value interface{}) bool {
 	checkInitLinkedList(list)
 	f := list
-	if index >= 0 && index <= f.length() {
+	if index >= 0 && index <= f.Length() {
 		var node = &LinkedList{
 			data:     value,
 			nextNode: nil,
@@ -76,7 +76,7 @@ func (list *LinkedList) insert(index int,value interface{}) bool{
 	return false
 }
 
-func (list *LinkedList) length() int {
+func (list *LinkedList) Length() int {
 	checkInitLinkedList(list)
 	f := list
 	var count int
@@ -89,10 +89,10 @@ func (list *LinkedList) length() int {
 	return count
 }
 
-func (list *LinkedList) getVaule(index int) interface{} {
+func (list *LinkedList) GetVaule(index int) interface{} {
 	checkInitLinkedList(list)
 	f := list
-	if index < 0 || index > f.length() {
+	if index < 0 || index > f.Length() {
 		return nil
 	}
 	var count int
@@ -108,7 +108,7 @@ func (list *LinkedList) getVaule(index int) interface{} {
 	return nil
 }
 
-func (list *LinkedList) delete(value interface{}) {
+func (list *LinkedList) Delete(value interface{}) {
 	checkInitLinkedList(list)
 	p := list
 	if value != nil {
@@ -125,31 +125,31 @@ func (list *LinkedList) delete(value interface{}) {
 	}
 }
 
-func (list *LinkedList) deleteF(){
+func (list *LinkedList) DeleteF() {
 	checkInitLinkedList(list)
-	f:=list
+	f := list
 	var p LinkedList
-	if f.nextNode!=nil{
-		p=*f.nextNode
-		f.nextNode=p.nextNode
+	if f.nextNode != nil {
+		p = *f.nextNode
+		f.nextNode = p.nextNode
 	}
 }
 
-func (list *LinkedList) deleteT(){
+func (list *LinkedList) DeleteT() {
 	checkInitLinkedList(list)
-	f:=list
+	f := list
 	var p *LinkedList
-	for f!=nil{
-		p=f.nextNode
-		if(p!=nil&&p.nextNode==nil){
-			f.nextNode=nil
+	for f != nil {
+		p = f.nextNode
+		if p != nil && p.nextNode == nil {
+			f.nextNode = nil
 		}
-		f=f.nextNode
-		p=nil
+		f = f.nextNode
+		p = nil
 	}
 }
 
-func (list *LinkedList) clear() {
+func (list *LinkedList) Clear() {
 	checkInitLinkedList(list)
 	p := list
 	var it *LinkedList

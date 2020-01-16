@@ -17,7 +17,7 @@ func newArray(cap uint) *ArrayList {
 	}
 	list := &ArrayList{
 		length: 0,
-		data: make([]interface{}, cap, cap)}
+		data:   make([]interface{}, cap, cap)}
 	return list
 }
 
@@ -27,7 +27,7 @@ func checkInit(list *ArrayList) {
 	}
 }
 
-func (list *ArrayList) isEmpty() bool {
+func (list *ArrayList) IsEmpty() bool {
 	checkInit(list)
 	if list.length > 0 {
 		return false
@@ -35,7 +35,7 @@ func (list *ArrayList) isEmpty() bool {
 	return true
 }
 
-func (list *ArrayList) add(value interface{}) bool {
+func (list *ArrayList) Add(value interface{}) bool {
 	checkInit(list)
 	if list.length+1 > capacity(list) {
 		return false
@@ -45,12 +45,12 @@ func (list *ArrayList) add(value interface{}) bool {
 	return true
 }
 
-func (list *ArrayList) size() int {
+func (list *ArrayList) Length() int {
 	checkInit(list)
 	return list.length
 }
 
-func (list *ArrayList) insert(index int, value interface{}) bool {
+func (list *ArrayList) Insert(index int, value interface{}) bool {
 	checkInit(list)
 	if list.length+1 > capacity(list) {
 		return false
@@ -67,7 +67,7 @@ func (list *ArrayList) insert(index int, value interface{}) bool {
 	return true
 }
 
-func (list *ArrayList) getValue(index int) interface{} {
+func (list *ArrayList) GetValue(index int) interface{} {
 	checkInit(list)
 	if list.length == 0 {
 		return nil
@@ -78,12 +78,12 @@ func (list *ArrayList) getValue(index int) interface{} {
 	return list.data[index]
 }
 
-func (list *ArrayList) delete(value interface{}) bool {
+func (list *ArrayList) Delete(value interface{}) bool {
 	checkInit(list)
 	if list.length == 0 {
 		return false
 	}
-	index, err := list.getIndex(value)
+	index, err := list.GetIndex(value)
 	if err != nil {
 		return false
 	}
@@ -94,7 +94,7 @@ func (list *ArrayList) delete(value interface{}) bool {
 	return true
 }
 
-func (list *ArrayList) getIndex(value interface{}) (int, error) {
+func (list *ArrayList) GetIndex(value interface{}) (int, error) {
 	checkInit(list)
 	if list.length == 0 {
 		return 0, errors.New("数组无数据")

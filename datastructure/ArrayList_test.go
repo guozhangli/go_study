@@ -11,7 +11,7 @@ func initArrayList(capacity uint) *ArrayList {
 
 func TestArrayListIsEmpty(t *testing.T) {
 	list := initArrayList(8)
-	len := list.isEmpty()
+	len := list.IsEmpty()
 	if len {
 		t.Log("list is empty")
 	} else {
@@ -22,7 +22,7 @@ func TestArrayListIsEmpty(t *testing.T) {
 func TestArrayListAdd(t *testing.T) {
 	list := initArrayList(8)
 	for i := 0; i < 8; i++ {
-		if list.add(i) {
+		if list.Add(i) {
 			t.Log("ok")
 		} else {
 			t.Error("err")
@@ -34,10 +34,10 @@ func TestArrayListAdd(t *testing.T) {
 
 func TestArrayListSize(t *testing.T) {
 	list := initArrayList(8)
-	list.add("111")
-	list.add("222")
-	list.add("333")
-	if list.size() == 3 {
+	list.Add("111")
+	list.Add("222")
+	list.Add("333")
+	if list.Length() == 3 {
 		t.Log(3)
 	} else {
 		t.Error("err")
@@ -46,7 +46,7 @@ func TestArrayListSize(t *testing.T) {
 
 func TestArrayListInsert(t *testing.T) {
 	list := initArrayList(8)
-	if list.insert(1, "adadf") {
+	if list.Insert(1, "adadf") {
 		t.Log(list)
 	} else {
 		t.Error(list)
@@ -55,10 +55,10 @@ func TestArrayListInsert(t *testing.T) {
 
 func TestArrayListGetValue(t *testing.T) {
 	list := initArrayList(8)
-	list.add("111")
-	list.add("222")
-	list.add("333")
-	val := list.getValue(2)
+	list.Add("111")
+	list.Add("222")
+	list.Add("333")
+	val := list.GetValue(2)
 	if val != nil {
 		t.Log(val)
 	} else {
@@ -68,11 +68,11 @@ func TestArrayListGetValue(t *testing.T) {
 
 func TestArrayListDelete(t *testing.T) {
 	list := initArrayList(8)
-	list.add("111")
-	list.add("222")
-	list.add("333")
-	list.add("444")
-	if list.delete("444") {
+	list.Add("111")
+	list.Add("222")
+	list.Add("333")
+	list.Add("444")
+	if list.Delete("444") {
 		t.Log(list)
 	} else {
 		t.Error(list)
@@ -82,7 +82,7 @@ func TestArrayListDelete(t *testing.T) {
 func TestArrayListAddConcurrence(t *testing.T) {
 	list := initArrayList(10000)
 	for i := 0; i < 10000; i++ {
-		go list.add(i)
+		go list.Add(i)
 	}
 	t.Log(list)
 }
