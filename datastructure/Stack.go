@@ -7,4 +7,5 @@ type Stack interface {
 	Pop() interface{}
 	Clear()
 	Distroy(s *Stack)
+	GetTop() interface{}
 }

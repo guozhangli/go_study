@@ -5,6 +5,14 @@ type StackArray struct {
 	top  int
 }
 
+func (stack *StackArray) GetTop() interface{} {
+	checkStackArray(stack)
+	if stack.top >= 0 {
+		return stack.data[stack.top]
+	}
+	return nil
+}
+
 func NewStackArray(cap uint) Stack {
 	stackArray := &StackArray{
 		data: make([]interface{}, 0, cap),

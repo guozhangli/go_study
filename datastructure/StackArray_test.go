@@ -90,6 +90,8 @@ func TestStackArrayDistory(t *testing.T) {
 	sa.Push("7777")
 	sa.Push("8888")
 	sa.Push("9999")
+	top := sa.GetTop()
+	t.Log(top)
 	sa.Clear()
 	t.Log(sa)
 	sa.Distroy(&sa)

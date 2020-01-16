@@ -65,9 +65,10 @@ func TestStackLinkedDistroy(t *testing.T) {
 	sl.Push("2222")
 	sl.Push("3333")
 	sl.Push("4444")
+	top := sl.GetTop()
+	t.Log(top)
 	sl.Clear()
 	t.Log(sl)
 	sl.Distroy(&sl)
 	t.Log(sl)
 }
-

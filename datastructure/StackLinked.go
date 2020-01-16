@@ -6,11 +6,11 @@ type Node struct {
 }
 
 type StackLinked struct {
-	Top    *Node
+	Top *Node
 	Len int
 }
 
-func NewStackLinked() Stack{
+func NewStackLinked() Stack {
 	stackLinked := new(StackLinked)
 	return stackLinked
 }
@@ -41,26 +41,31 @@ func (stack *StackLinked) Pop() interface{} {
 	return top
 }
 
-func (stack *StackLinked) IsEmpty() bool{
+func (stack *StackLinked) IsEmpty() bool {
 	checkStackLinked(stack)
-	if stack.Len==0{
+	if stack.Len == 0 {
 		return true
 	}
 	return false
 }
 
-func (stack *StackLinked) Length() int{
+func (stack *StackLinked) Length() int {
 	return stack.Len
 }
 
 func (stack *StackLinked) Clear() {
 	checkStackLinked(stack)
-	for stack.Len>0{
+	for stack.Len > 0 {
 		stack.Pop()
 	}
 }
 
 func (stack *StackLinked) Distroy(s *Stack) {
 	checkStackLinked(stack)
-	*s=nil
+	*s = nil
+}
+
+func (stack *StackLinked) GetTop() interface{} {
+	checkStackLinked(stack)
+	return stack.Top.Data
 }
