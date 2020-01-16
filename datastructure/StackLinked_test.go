@@ -7,38 +7,38 @@ import (
 )
 
 func TestStackLinkedCreate(t *testing.T) {
-	sl := newStackLinked()
+	sl := NewStackLinked()
 	t.Log(sl)
 }
 
 func TestStackLinkedPush(t *testing.T) {
-	sl := newStackLinked()
+	sl := NewStackLinked()
 	sl.Push("1111")
 	sl.Push("2222")
 	sl.Push("3333")
-	t.Logf("%+v", *sl)
-	json, _ := json.MarshalIndent(*sl, "", " ")
+	t.Logf("%+v", sl)
+	json, _ := json.MarshalIndent(sl, "", " ")
 	fmt.Printf("%s\n", json)
 }
 
 func TestStackLinkedPop(t *testing.T) {
-	sl := newStackLinked()
+	sl := NewStackLinked()
 	sl.Push("1111")
 	sl.Push("2222")
 	sl.Push("3333")
 	sl.Push("4444")
 	top := sl.Pop()
-	t.Logf("%+v", top.Data)
+	t.Logf("%+v", top)
 	top1 := sl.Pop()
-	t.Logf("%+v", top1.Data)
-	json, _ := json.MarshalIndent(*sl, "", " ")
+	t.Logf("%+v", top1)
+	json, _ := json.MarshalIndent(sl, "", " ")
 	fmt.Printf("%s\n", json)
 }
 
 func TestStackLinkedLength(t *testing.T) {
-	sl := newStackLinked()
+	sl := NewStackLinked()
 
-	json, _ := json.MarshalIndent(*sl, "", " ")
+	json, _ := json.MarshalIndent(sl, "", " ")
 	fmt.Printf("%s\n", json)
 
 	if sl.IsEmpty() {
@@ -50,7 +50,7 @@ func TestStackLinkedLength(t *testing.T) {
 }
 
 func TestStackLinkedClear(t *testing.T) {
-	sl := newStackLinked()
+	sl := NewStackLinked()
 	sl.Push("1111")
 	sl.Push("2222")
 	sl.Push("3333")
@@ -60,7 +60,7 @@ func TestStackLinkedClear(t *testing.T) {
 }
 
 func TestStackLinkedDistroy(t *testing.T) {
-	sl := newStackLinked()
+	sl := NewStackLinked()
 	sl.Push("1111")
 	sl.Push("2222")
 	sl.Push("3333")
@@ -71,21 +71,3 @@ func TestStackLinkedDistroy(t *testing.T) {
 	t.Log(sl)
 }
 
-func TestFabiFunc(t *testing.T) {
-	i := 0
-	for i < 5 {
-		n := fabi(i)
-		i++
-		t.Log(n)
-	}
-}
-
-func fabi(i int) int {
-	if i < 2 {
-		if i == 0 {
-			return 0
-		}
-		return 1
-	}
-	return fabi(i-1) + fabi(i-2)
-}

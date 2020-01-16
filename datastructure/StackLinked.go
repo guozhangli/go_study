@@ -7,10 +7,10 @@ type Node struct {
 
 type StackLinked struct {
 	Top    *Node
-	Length int
+	Len int
 }
 
-func newStackLinked() *StackLinked {
+func NewStackLinked() Stack{
 	stackLinked := new(StackLinked)
 	return stackLinked
 }
@@ -30,33 +30,37 @@ func (stack *StackLinked) Push(value interface{}) {
 	checkStackLinked(stack)
 	node := newNode(stack.Top, value)
 	stack.Top = node
-	stack.Length++
+	stack.Len++
 }
 
-func (stack *StackLinked) Pop() *Node {
+func (stack *StackLinked) Pop() interface{} {
 	checkStackLinked(stack)
 	var top = stack.Top
 	stack.Top = stack.Top.Next
-	stack.Length--
+	stack.Len--
 	return top
 }
 
 func (stack *StackLinked) IsEmpty() bool{
 	checkStackLinked(stack)
-	if stack.Length==0{
+	if stack.Len==0{
 		return true
 	}
 	return false
 }
 
+func (stack *StackLinked) Length() int{
+	return stack.Len
+}
+
 func (stack *StackLinked) Clear() {
 	checkStackLinked(stack)
-	for stack.Length>0{
+	for stack.Len>0{
 		stack.Pop()
 	}
 }
 
-func (stack *StackLinked) Distroy(s **StackLinked) {
+func (stack *StackLinked) Distroy(s *Stack) {
 	checkStackLinked(stack)
 	*s=nil
 }

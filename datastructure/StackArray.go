@@ -5,7 +5,7 @@ type StackArray struct {
 	top  int
 }
 
-func NewStackArray(cap uint) *StackArray {
+func NewStackArray(cap uint) Stack {
 	stackArray := &StackArray{
 		data: make([]interface{}, 0, cap),
 		top:  -1,
@@ -57,7 +57,7 @@ func (stack *StackArray) Clear() {
 	}
 }
 
-func (stack *StackArray) Distroy(s **StackArray) {
+func (stack *StackArray) Distroy(s *Stack) {
 	checkStackArray(stack)
 	*s = nil
 }

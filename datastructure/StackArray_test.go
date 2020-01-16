@@ -7,7 +7,7 @@ func TestStackArrayCreate(t *testing.T) {
 	t.Log(stackArray)
 }
 
-func initStack() *StackArray {
+func initStack() Stack {
 	stackArray := NewStackArray(5)
 	return stackArray
 }
