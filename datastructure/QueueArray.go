@@ -15,12 +15,21 @@ func NewQueueArray(cap int) Queue {
 	return queueArray
 }
 
+func checkQueueArray(queue *QueueArray) {
+	if queue == nil {
+		panic("no queueArray created")
+	}
+}
+
 func (queue *QueueArray) DeQueue() interface{} {
 	panic("implement me")
 }
 
 func (queue *QueueArray) EnQueue(value interface{}) {
-	panic("implement me")
+	checkQueueArray(queue)
+	queue.Array = append(queue.Array, value)
+	var rear_index int
+	queue.Rear = rear_index % cap(queue.Array)
 }
 
 func (queue *QueueArray) IsEmpty() bool {
@@ -28,7 +37,15 @@ func (queue *QueueArray) IsEmpty() bool {
 }
 
 func (queue *QueueArray) Length() int {
-	panic("implement me")
+	checkQueueArray(queue)
+	if queue.Front == queue.Rear {
+		return 0
+	} else if queue.Rear > queue.Front {
+		return queue.Rear - queue.Front
+	} else {
+		return cap(queue.Array) - queue.Front + queue.Rear
+	}
+
 }
 
 func (queue *QueueArray) Clear() {
