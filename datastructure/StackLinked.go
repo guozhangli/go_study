@@ -36,8 +36,10 @@ func (stack *StackLinked) Push(value interface{}) {
 func (stack *StackLinked) Pop() interface{} {
 	checkStackLinked(stack)
 	var top = stack.Top
-	stack.Top = stack.Top.Next
-	stack.Len--
+	if top != nil {
+		stack.Top = top.Next
+		stack.Len--
+	}
 	return top
 }
 
@@ -67,5 +69,8 @@ func (stack *StackLinked) Distroy(s *Stack) {
 
 func (stack *StackLinked) GetTop() interface{} {
 	checkStackLinked(stack)
-	return stack.Top.Data
+	if stack.Top != nil {
+		return stack.Top.Data
+	}
+	return nil
 }
