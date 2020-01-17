@@ -1,9 +1,9 @@
 package TestProject
 
+//链队列
 type QueueLinked struct {
-	Front int
-	Rear  int
-	node  *Node
+	Front *Node
+	Rear  *Node
 }
 
 func NewQueueLinked() Queue {

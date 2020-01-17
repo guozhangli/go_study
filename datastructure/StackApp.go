@@ -30,10 +30,7 @@ func Convert2PostfixExp(stack Stack, midExp string) string {
 	for _, v := range w {
 		var s = midExp[v[0]:v[1]]
 		if isNumber(s) {
-			if postfxExp != "" {
-				postfxExp += " "
-			}
-			postfxExp += s
+			PostfixExp(&postfxExp, s)
 		} else {
 			if s != ")" {
 				p := GetPriority(s)
@@ -47,15 +44,14 @@ func Convert2PostfixExp(stack Stack, midExp string) string {
 							stack.Push(s)
 						} else {
 							var top = stack.GetTop()
-							for top != nil {
+							for top != nil && top.(string) != "(" {
 								var t = stack.Pop()
 								v := reflect.ValueOf(t)
 								if !v.IsNil() {
 									top := t.(*Node).Data
-									if postfxExp != "" {
-										postfxExp += " "
+									if top.(string) != "(" {
+										PostfixExp(&postfxExp, top.(string))
 									}
-									postfxExp += top.(string)
 								} else {
 									top = nil
 								}
@@ -69,12 +65,15 @@ func Convert2PostfixExp(stack Stack, midExp string) string {
 			} else {
 				var top = stack.GetTop()
 				for top != nil && top.(string) != "(" {
-					top = stack.Pop().(*Node).Data
-					if top.(string) != "(" {
-						if postfxExp != "" {
-							postfxExp += " "
+					var t = stack.Pop()
+					v := reflect.ValueOf(t)
+					if !v.IsNil() {
+						top := t.(*Node).Data
+						if top.(string) != "(" {
+							PostfixExp(&postfxExp, top.(string))
 						}
-						postfxExp += top.(string)
+					} else {
+						top = nil
 					}
 				}
 			}
@@ -87,16 +86,20 @@ func Convert2PostfixExp(stack Stack, midExp string) string {
 			v := reflect.ValueOf(t)
 			if !v.IsNil() {
 				top := t.(*Node).Data
-				if postfxExp != "" {
-					postfxExp += " "
-				}
-				postfxExp += top.(string)
+				PostfixExp(&postfxExp, top.(string))
 			} else {
 				top = nil
 			}
 		}
 	}
 	return postfxExp
+}
+
+func PostfixExp(postfxExp *string, s string) {
+	if *postfxExp != "" {
+		*postfxExp += " "
+	}
+	*postfxExp += s
 }
 
 func CalculateExpression(stack Stack, postfixExp string) int {

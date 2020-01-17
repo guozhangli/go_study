@@ -1,15 +1,11 @@
 package TestProject
 
 type QueueArray struct {
-	Front int
-	Rear  int
 	Array []interface{}
 }
 
 func NewQueueArray(cap int) Queue {
 	queueArray := &QueueArray{
-		Front: 0,
-		Rear:  0,
 		Array: make([]interface{}, 0, cap),
 	}
 	return queueArray
@@ -22,40 +18,41 @@ func checkQueueArray(queue *QueueArray) {
 }
 
 func (queue *QueueArray) DeQueue() interface{} {
-	panic("implement me")
+	checkQueueArray(queue)
+	var top = queue.Array[0]
+	queue.Array = append(queue.Array[:0], queue.Array[1:]...)
+	return top
 }
 
 func (queue *QueueArray) EnQueue(value interface{}) {
 	checkQueueArray(queue)
 	queue.Array = append(queue.Array, value)
-	var rear_index int
-	queue.Rear = rear_index % cap(queue.Array)
 }
 
 func (queue *QueueArray) IsEmpty() bool {
-	panic("implement me")
+	checkQueueArray(queue)
+	if queue.Length() == 0 {
+		return true
+	}
+	return false
 }
 
 func (queue *QueueArray) Length() int {
 	checkQueueArray(queue)
-	if queue.Front == queue.Rear {
-		return 0
-	} else if queue.Rear > queue.Front {
-		return queue.Rear - queue.Front
-	} else {
-		return cap(queue.Array) - queue.Front + queue.Rear
-	}
-
+	return len(queue.Array)
 }
 
 func (queue *QueueArray) Clear() {
-	panic("implement me")
+	checkQueueArray(queue)
+	queue.Array = append(queue.Array[0:0])
 }
 
 func (queue *QueueArray) GetFront() interface{} {
-	panic("implement me")
+	checkQueueArray(queue)
+	return queue.Array[0]
 }
 
 func (queue *QueueArray) Distroy(q *Queue) {
-	panic("implement me")
+	queue.Array = nil
+	*q = nil
 }

@@ -28,8 +28,10 @@ func TestFindWord(t *testing.T) {
 
 func TestCalculaeExpression(t *testing.T) {
 	sl := NewStackLinked()
-	midExp := "9+(3-1)*3+10/2"
+	midExp := "(9+(3-1)*3+10/2)*5"
+	//midExp := "9+(3-1)*3+10/2"
 	postfixExp := Convert2PostfixExp(sl, midExp)
+	t.Log(postfixExp)
 	value := CalculateExpression(sl, postfixExp)
 	t.Log(value)
 }
