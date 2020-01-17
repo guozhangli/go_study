@@ -1,6 +1,5 @@
 package TestProject
 
-//链队列
 type QueueLinked struct {
 	Front *Node
 	Rear  *Node
@@ -11,30 +10,74 @@ func NewQueueLinked() Queue {
 	return queueLinked
 }
 
+func checkQueueLinked(queue *QueueLinked) {
+	if queue == nil {
+		panic("no queueLinked created")
+	}
+}
+
 func (queue *QueueLinked) DeQueue() interface{} {
-	panic("implement me")
+	checkQueueLinked(queue)
+	if queue.Front == nil {
+		return nil
+	}
+	var top = queue.Front
+	queue.Front = queue.Front.Next
+	return top.Data
 }
 
 func (queue *QueueLinked) EnQueue(value interface{}) {
-	panic("implement me")
+	checkQueueLinked(queue)
+	node := NewNode(nil, value)
+	if queue.Rear != nil {
+		queue.Rear.Next = node
+	}
+	queue.Rear = node
+	if queue.Front == nil {
+		queue.Front = node
+	}
+
 }
 
 func (queue *QueueLinked) IsEmpty() bool {
-	panic("implement me")
+	checkQueueLinked(queue)
+	if queue.Front == nil {
+		return true
+	}
+	return false
 }
 
 func (queue *QueueLinked) Length() int {
-	panic("implement me")
+	checkQueueLinked(queue)
+	if queue.Front == nil {
+		return 0
+	}
+	var front = queue.Front
+	var count int
+	for front != nil {
+		front = front.Next
+		count++
+	}
+	return count
 }
 
 func (queue *QueueLinked) Clear() {
-	panic("implement me")
+	checkQueueLinked(queue)
+	for queue.Length() > 0 {
+		queue.DeQueue()
+	}
+	queue.Rear = nil
 }
 
 func (queue *QueueLinked) GetFront() interface{} {
-	panic("implement me")
+	checkQueueLinked(queue)
+	if queue.Front == nil {
+		return nil
+	}
+	return queue.Front.Data
 }
 
 func (queue *QueueLinked) Distroy(q *Queue) {
-	panic("implement me")
+	checkQueueLinked(queue)
+	*q = nil
 }

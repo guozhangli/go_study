@@ -1,10 +1,5 @@
 package TestProject
 
-type Node struct {
-	Data interface{}
-	Next *Node
-}
-
 type StackLinked struct {
 	Top *Node
 	Len int
@@ -15,12 +10,6 @@ func NewStackLinked() Stack {
 	return stackLinked
 }
 
-func newNode(top *Node, value interface{}) *Node {
-	node := new(Node)
-	node.Data = value
-	node.Next = top
-	return node
-}
 func checkStackLinked(stack *StackLinked) {
 	if stack == nil {
 		panic("no stack created")
@@ -28,7 +17,7 @@ func checkStackLinked(stack *StackLinked) {
 }
 func (stack *StackLinked) Push(value interface{}) {
 	checkStackLinked(stack)
-	node := newNode(stack.Top, value)
+	node := NewNode(stack.Top, value)
 	stack.Top = node
 	stack.Len++
 }
