@@ -36,3 +36,17 @@ func (tree *BinaryTree) CreatePerBinaryTree(n *BinaryTreeNode, str []string) *Bi
 	tree.Root = n
 	return n
 }
+
+func (tree *BinaryTree) CreateMidBinaryTree(n *BinaryTreeNode, str []string) *BinaryTreeNode {
+	checkBinaryTree(tree)
+	if str[tree.index] == "#" {
+		tree.index++
+		n = NewBinaryTreeNode(str[tree.index])
+		//n.Left=tree.CreateMidBinaryTree(n,str)
+
+		tree.index++
+		n.Right = tree.CreateMidBinaryTree(n, str)
+	}
+	tree.Root = n
+	return n
+}
