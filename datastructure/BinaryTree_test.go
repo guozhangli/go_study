@@ -9,7 +9,7 @@ import (
 func TestBinaryTree_Create(t *testing.T) {
 	var tree = new(BinaryTree)
 	var str = []string{"A", "B", "#", "#", "C", "#", "D", "#", "#"}
-	tree.CreateBinaryTree(nil, str)
+	tree.CreatePerBinaryTree(nil, str)
 	str1, _ := json.Marshal(tree)
 	t.Log(string(str1))
 }

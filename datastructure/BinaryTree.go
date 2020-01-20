@@ -24,14 +24,14 @@ func checkBinaryTree(tree *BinaryTree) {
 		panic("no binaryTree created")
 	}
 }
-func (tree *BinaryTree) CreateBinaryTree(n *BinaryTreeNode, str []string) *BinaryTreeNode {
+func (tree *BinaryTree) CreatePerBinaryTree(n *BinaryTreeNode, str []string) *BinaryTreeNode {
 	checkBinaryTree(tree)
 	if str[tree.index] != "#" {
 		n = NewBinaryTreeNode(str[tree.index])
 		tree.index++
-		n.Left = tree.CreateBinaryTree(n.Left, str)
+		n.Left = tree.CreatePerBinaryTree(n.Left, str)
 		tree.index++
-		n.Right = tree.CreateBinaryTree(n.Right, str)
+		n.Right = tree.CreatePerBinaryTree(n.Right, str)
 	}
 	tree.Root = n
 	return n
