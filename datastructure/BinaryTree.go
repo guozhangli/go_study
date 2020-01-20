@@ -1,14 +1,17 @@
 package TestProject
 
-import "fmt"
-
 type BinaryTreeNode struct {
 	Data  interface{}
 	Left  *BinaryTreeNode
 	Right *BinaryTreeNode
 }
 
-func NewBinaryTree(vaule interface{}) *BinaryTreeNode {
+type BinaryTree struct {
+	Root  *BinaryTreeNode
+	index int
+}
+
+func NewBinaryTreeNode(vaule interface{}) *BinaryTreeNode {
 	return &BinaryTreeNode{
 		Data:  vaule,
 		Left:  nil,
@@ -16,19 +19,20 @@ func NewBinaryTree(vaule interface{}) *BinaryTreeNode {
 	}
 }
 
-func CreateBinaryTree(node *BinaryTreeNode, str []string, count int) *BinaryTreeNode {
-	fmt.Println("test1")
-	fmt.Println(str[count], count)
-	if node == nil {
-		node = NewBinaryTree(str[count])
+func checkBinaryTree(tree *BinaryTree) {
+	if tree == nil {
+		panic("no binaryTree created")
 	}
-	if str[count] != "#" {
-		count++
-		node.Left = CreateBinaryTree(node.Left, str, count)
-		fmt.Println("test2")
-		count++
-		node.Right = CreateBinaryTree(node.Right, str, count)
-		fmt.Println("test3")
+}
+func (tree *BinaryTree) CreateBinaryTree(n *BinaryTreeNode, str []string) *BinaryTreeNode {
+	checkBinaryTree(tree)
+	if str[tree.index] != "#" {
+		n = NewBinaryTreeNode(str[tree.index])
+		tree.index++
+		n.Left = tree.CreateBinaryTree(n.Left, str)
+		tree.index++
+		n.Right = tree.CreateBinaryTree(n.Right, str)
 	}
-	return node
+	tree.Root = n
+	return n
 }
