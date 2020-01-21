@@ -24,29 +24,40 @@ func checkBinaryTree(tree *BinaryTree) {
 		panic("no binaryTree created")
 	}
 }
-func (tree *BinaryTree) CreatePerBinaryTree(n *BinaryTreeNode, str []string) *BinaryTreeNode {
+func (tree *BinaryTree) CreatePreBinaryTree(n *BinaryTreeNode, str []string) *BinaryTreeNode {
 	checkBinaryTree(tree)
 	if str[tree.index] != "#" {
 		n = NewBinaryTreeNode(str[tree.index])
 		tree.index++
-		n.Left = tree.CreatePerBinaryTree(n.Left, str)
+		n.Left = tree.CreatePreBinaryTree(n.Left, str)
 		tree.index++
-		n.Right = tree.CreatePerBinaryTree(n.Right, str)
+		n.Right = tree.CreatePreBinaryTree(n.Right, str)
 	}
 	tree.Root = n
 	return n
 }
 
-func (tree *BinaryTree) CreateMidBinaryTree(n *BinaryTreeNode, str []string) *BinaryTreeNode {
+func (tree *BinaryTree) CreateMidBinaryTree(str_p []string, str_m []string) *BinaryTreeNode {
 	checkBinaryTree(tree)
-	if str[tree.index] == "#" {
-		tree.index++
-		n = NewBinaryTreeNode(str[tree.index])
-		//n.Left=tree.CreateMidBinaryTree(n,str)
-
-		tree.index++
-		n.Right = tree.CreateMidBinaryTree(n, str)
+	if len(str_m) <= 0 || len(str_p) <= 0 {
+		return nil
 	}
-	tree.Root = n
-	return n
+	var index = searchRootIndex(str_p, str_m)
+	if str_m[index] != "#" {
+		root := NewBinaryTreeNode(str_p[0])
+		root.Left = tree.CreateMidBinaryTree(str_p[1:index+1], str_m[:index])
+		root.Right = tree.CreateMidBinaryTree(str_p[index+1:], str_m[index+1:])
+		tree.Root = root
+		return root
+	}
+	return nil
+}
+
+func searchRootIndex(str_p []string, str_m []string) int {
+	for i, v := range str_m {
+		if v == str_p[0] {
+			return i
+		}
+	}
+	return -1
 }
