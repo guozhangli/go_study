@@ -52,3 +52,35 @@ func TestPointer(t *testing.T) {
 	index = &(a)
 	fmt.Println(*index)
 }
+
+func TestBinaryTree_PreForeach(t *testing.T) {
+	var tree = new(BinaryTree)
+	var str = []string{"A", "B", "#", "#", "C", "#", "D", "#", "#"}
+	tree.CreatePreBinaryTree(nil, str)
+	str1, _ := json.Marshal(tree)
+	t.Log(string(str1))
+	tree.BinaryTreePreOrder(tree.Root)
+}
+
+func TestBinaryTree_MidForeach(t *testing.T) {
+	var tree = new(BinaryTree)
+	var str_p = []string{"A", "B", "#", "#", "C", "#", "D", "#", "#"}
+	var str_m = []string{"#", "B", "#", "A", "#", "C", "#", "D", "#"}
+	//var str = []string{"B", "A", "C"}
+	tree.CreateMidBinaryTree(str_p, str_m)
+	str1, _ := json.Marshal(tree)
+	t.Log(string(str1))
+	tree.BinaryTreeMidOrder(tree.Root)
+}
+
+func TestBinaryTreePostOrder(t *testing.T) {
+	var tree = new(BinaryTree)
+	var str_p = []string{"#", "#", "B", "#", "#", "#", "D", "C", "A"}
+	//var str_p = []string{"#", "#", "B"}
+	n := tree.CreatePostBinaryTree(nil, str_p)
+	str2, _ := json.Marshal(n)
+	t.Log(string(str2))
+	str1, _ := json.Marshal(tree)
+	t.Log(string(str1))
+	tree.BinaryTreePostOrder(tree.Root)
+}

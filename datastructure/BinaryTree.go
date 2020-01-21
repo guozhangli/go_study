@@ -1,5 +1,7 @@
 package TestProject
 
+import "fmt"
+
 type BinaryTreeNode struct {
 	Data  interface{}
 	Left  *BinaryTreeNode
@@ -97,4 +99,31 @@ func (tree *BinaryTree) CreateLevelBinaryTree(n *BinaryTreeNode, str []string) *
 		return n
 	}
 	return n
+}
+
+func (tree *BinaryTree) BinaryTreePreOrder(n *BinaryTreeNode) {
+	checkBinaryTree(tree)
+	if n != nil {
+		fmt.Print(n.Data)
+		tree.BinaryTreePreOrder(n.Left)
+		tree.BinaryTreePreOrder(n.Right)
+	}
+}
+
+func (tree *BinaryTree) BinaryTreeMidOrder(n *BinaryTreeNode) {
+	checkBinaryTree(tree)
+	if n != nil {
+		tree.BinaryTreeMidOrder(n.Left)
+		fmt.Print(n.Data)
+		tree.BinaryTreeMidOrder(n.Right)
+	}
+}
+
+func (tree *BinaryTree) BinaryTreePostOrder(n *BinaryTreeNode) {
+	checkBinaryTree(tree)
+	if n != nil {
+		tree.BinaryTreePostOrder(n.Left)
+		tree.BinaryTreePostOrder(n.Right)
+		fmt.Print(n.Data)
+	}
 }
