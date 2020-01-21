@@ -61,3 +61,17 @@ func searchRootIndex(str_p []string, str_m []string) int {
 	}
 	return -1
 }
+
+func (tree *BinaryTree) CreatePostBinaryTree(n *BinaryTreeNode, str []string) *BinaryTreeNode {
+	checkBinaryTree(tree)
+	count := len(str)
+	item := str[count-1]
+	count--
+	if item != "#" {
+		n := NewBinaryTreeNode(item)
+		n.Right = tree.CreatePostBinaryTree(n.Right, str)
+		n.Left = tree.CreatePostBinaryTree(n.Left, str)
+	}
+	tree.Root = n
+	return n
+}

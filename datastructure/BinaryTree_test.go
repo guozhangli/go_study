@@ -24,6 +24,17 @@ func TestBinaryTree_Create_Mid(t *testing.T) {
 	t.Log(string(str1))
 }
 
+func TestBinaryTree_Create_Post(t *testing.T) {
+	var tree = new(BinaryTree)
+	var str_p = []string{"#", "#", "B", "#", "#", "#", "D", "C", "A"}
+	//var str_p = []string{"#", "#", "B"}
+	n := tree.CreatePostBinaryTree(nil, str_p)
+	str2, _ := json.Marshal(n)
+	t.Log(string(str2))
+	str1, _ := json.Marshal(tree)
+	t.Log(string(str1))
+}
+
 func TestPointer(t *testing.T) {
 	var index *int
 	var a = 1
