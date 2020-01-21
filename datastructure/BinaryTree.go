@@ -76,3 +76,25 @@ func (tree *BinaryTree) CreatePostBinaryTree(n *BinaryTreeNode, str []string) *B
 	}
 	return n
 }
+
+func (tree *BinaryTree) CreateLevelBinaryTree(n *BinaryTreeNode, str []string) *BinaryTreeNode {
+	checkBinaryTree(tree)
+	var count = tree.index
+	item := str[count]
+	if item != "#" {
+		n := NewBinaryTreeNode(item)
+		indexLeft := count*2 + 1
+		if indexLeft < len(str) && str[indexLeft] != "#" {
+			tree.index = count*2 + 1
+			n.Left = tree.CreateLevelBinaryTree(n.Left, str)
+		}
+		indexLight := count*2 + 2
+		if indexLight < len(str) && str[indexLight] != "#" {
+			tree.index = count*2 + 2
+			n.Right = tree.CreateLevelBinaryTree(n.Right, str)
+		}
+		tree.Root = n
+		return n
+	}
+	return n
+}

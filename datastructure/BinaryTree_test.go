@@ -35,6 +35,17 @@ func TestBinaryTree_Create_Post(t *testing.T) {
 	t.Log(string(str1))
 }
 
+func TestBinaryTree_Create_Level(t *testing.T) {
+	var tree = new(BinaryTree)
+	var str_p = []string{"A", "B", "C", "#", "#", "#", "D", "#", "#"}
+	//var str_p = []string{"#", "#", "B"}
+	n := tree.CreateLevelBinaryTree(nil, str_p)
+	str2, _ := json.Marshal(n)
+	t.Log(string(str2))
+	str1, _ := json.Marshal(tree)
+	t.Log(string(str1))
+}
+
 func TestPointer(t *testing.T) {
 	var index *int
 	var a = 1
