@@ -1,7 +1,5 @@
 package TestProject
 
-import "fmt"
-
 type BinaryTreeNode struct {
 	Data  interface{}
 	Left  *BinaryTreeNode
@@ -34,8 +32,9 @@ func (tree *BinaryTree) CreatePreBinaryTree(n *BinaryTreeNode, str []string) *Bi
 		n.Left = tree.CreatePreBinaryTree(n.Left, str)
 		tree.index++
 		n.Right = tree.CreatePreBinaryTree(n.Right, str)
+		tree.Root = n
+		return n
 	}
-	tree.Root = n
 	return n
 }
 
@@ -72,8 +71,8 @@ func (tree *BinaryTree) CreatePostBinaryTree(n *BinaryTreeNode, str []string) *B
 		n := NewBinaryTreeNode(item)
 		n.Right = tree.CreatePostBinaryTree(n.Right, str)
 		n.Left = tree.CreatePostBinaryTree(n.Left, str)
-		fmt.Printf("%v", n)
 		tree.Root = n
+		return n
 	}
 	return n
 }

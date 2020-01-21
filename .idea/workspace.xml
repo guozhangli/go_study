@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="91f40247-73cd-446f-9308-3d258178b0da" name="Default Changelist" comment="implement queue method">
+    <list default="true" id="91f40247-73cd-446f-9308-3d258178b0da" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datastructure/BinaryTree.go" beforeDir="false" afterPath="$PROJECT_DIR$/datastructure/BinaryTree.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datastructure/BinaryTree_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/datastructure/BinaryTree_test.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,7 +44,7 @@
       <recent name="C:\Users\dell\go\src\datastructure" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Test.TestBinaryTree_CreateMid in go_study/datastructure">
+  <component name="RunManager" selected="Go Test.TestBinaryTree_Create_Post in go_study/datastructure">
     <configuration name="TestBinaryTree_Create in go_study/datastructure" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go_study" />
       <working_directory value="$PROJECT_DIR$/datastructure" />
@@ -69,7 +67,7 @@
       <pattern value="^TestBinaryTree_CreateMid$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestQueueArray_EnQueue in go_study/datastructure" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestBinaryTree_Create_Post in go_study/datastructure" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go_study" />
       <working_directory value="$PROJECT_DIR$/datastructure" />
       <framework value="gotest" />
@@ -77,10 +75,10 @@
       <package value="go_study/datastructure" />
       <directory value="$PROJECT_DIR$/" />
       <filePath value="$PROJECT_DIR$/" />
-      <pattern value="^TestQueueArray_EnQueue$" />
+      <pattern value="^TestBinaryTree_Create_Post$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestQueueArray_Length in go_study/datastructure" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestBinaryTree_Create_Pre in go_study/datastructure" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go_study" />
       <working_directory value="$PROJECT_DIR$/datastructure" />
       <framework value="gotest" />
@@ -88,7 +86,7 @@
       <package value="go_study/datastructure" />
       <directory value="$PROJECT_DIR$/" />
       <filePath value="$PROJECT_DIR$/" />
-      <pattern value="^TestQueueArray_Length$" />
+      <pattern value="^TestBinaryTree_Create_Pre$" />
       <method v="2" />
     </configuration>
     <configuration name="TestString_pattern in go_study/datastructure" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
@@ -104,11 +102,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.TestBinaryTree_Create_Post in go_study/datastructure" />
+        <item itemvalue="Go Test.TestBinaryTree_Create_Pre in go_study/datastructure" />
         <item itemvalue="Go Test.TestBinaryTree_CreateMid in go_study/datastructure" />
         <item itemvalue="Go Test.TestBinaryTree_Create in go_study/datastructure" />
         <item itemvalue="Go Test.TestString_pattern in go_study/datastructure" />
-        <item itemvalue="Go Test.TestQueueArray_EnQueue in go_study/datastructure" />
-        <item itemvalue="Go Test.TestQueueArray_Length in go_study/datastructure" />
       </list>
     </recent_temporary>
   </component>
@@ -134,61 +132,62 @@
     <MESSAGE value="create queue function" />
     <MESSAGE value="implement queue method" />
     <MESSAGE value="string pattern" />
-    <option name="LAST_COMMIT_MESSAGE" value="string pattern" />
+    <MESSAGE value="implement BinaryTree.go method" />
+    <option name="LAST_COMMIT_MESSAGE" value="implement BinaryTree.go method" />
   </component>
   <component name="WindowStateProjectService">
     <state x="278" y="43" width="802" height="687" key="#GOROOT" timestamp="1579092932141">
       <screen x="0" y="28" width="1366" height="706" />
     </state>
     <state x="278" y="43" width="802" height="687" key="#GOROOT/0.28.1366.706@0.28.1366.706" timestamp="1579092932141" />
-    <state x="382" y="28" width="852" height="706" key="CommitChangelistDialog2" timestamp="1579363357946">
+    <state x="382" y="28" width="852" height="706" key="CommitChangelistDialog2" timestamp="1579528891627">
       <screen x="0" y="28" width="1366" height="706" />
     </state>
-    <state x="382" y="28" width="852" height="706" key="CommitChangelistDialog2/0.28.1366.706@0.28.1366.706" timestamp="1579363357946" />
-    <state width="1316" height="172" key="GridCell.Tab.0.bottom" timestamp="1579527983829">
+    <state x="382" y="28" width="852" height="706" key="CommitChangelistDialog2/0.28.1366.706@0.28.1366.706" timestamp="1579528891627" />
+    <state width="1316" height="119" key="GridCell.Tab.0.bottom" timestamp="1579608683312">
       <screen x="0" y="28" width="1366" height="706" />
     </state>
-    <state width="1316" height="172" key="GridCell.Tab.0.bottom/0.28.1366.706@0.28.1366.706" timestamp="1579527983829" />
-    <state width="1316" height="172" key="GridCell.Tab.0.center" timestamp="1579527983828">
+    <state width="1316" height="119" key="GridCell.Tab.0.bottom/0.28.1366.706@0.28.1366.706" timestamp="1579608683312" />
+    <state width="1316" height="119" key="GridCell.Tab.0.center" timestamp="1579608683311">
       <screen x="0" y="28" width="1366" height="706" />
     </state>
-    <state width="1316" height="172" key="GridCell.Tab.0.center/0.28.1366.706@0.28.1366.706" timestamp="1579527983828" />
-    <state width="1316" height="172" key="GridCell.Tab.0.left" timestamp="1579527983828">
+    <state width="1316" height="119" key="GridCell.Tab.0.center/0.28.1366.706@0.28.1366.706" timestamp="1579608683311" />
+    <state width="1316" height="119" key="GridCell.Tab.0.left" timestamp="1579608683311">
       <screen x="0" y="28" width="1366" height="706" />
     </state>
-    <state width="1316" height="172" key="GridCell.Tab.0.left/0.28.1366.706@0.28.1366.706" timestamp="1579527983828" />
-    <state width="1316" height="172" key="GridCell.Tab.0.right" timestamp="1579527983828">
+    <state width="1316" height="119" key="GridCell.Tab.0.left/0.28.1366.706@0.28.1366.706" timestamp="1579608683311" />
+    <state width="1316" height="119" key="GridCell.Tab.0.right" timestamp="1579608683311">
       <screen x="0" y="28" width="1366" height="706" />
     </state>
-    <state width="1316" height="172" key="GridCell.Tab.0.right/0.28.1366.706@0.28.1366.706" timestamp="1579527983828" />
-    <state width="1316" height="172" key="GridCell.Tab.1.bottom" timestamp="1579527984535">
+    <state width="1316" height="119" key="GridCell.Tab.0.right/0.28.1366.706@0.28.1366.706" timestamp="1579608683311" />
+    <state width="1316" height="59" key="GridCell.Tab.1.bottom" timestamp="1579608551618">
       <screen x="0" y="28" width="1366" height="706" />
     </state>
-    <state width="1316" height="172" key="GridCell.Tab.1.bottom/0.28.1366.706@0.28.1366.706" timestamp="1579527984535" />
-    <state width="1316" height="172" key="GridCell.Tab.1.center" timestamp="1579527984535">
+    <state width="1316" height="59" key="GridCell.Tab.1.bottom/0.28.1366.706@0.28.1366.706" timestamp="1579608551618" />
+    <state width="1316" height="59" key="GridCell.Tab.1.center" timestamp="1579608551617">
       <screen x="0" y="28" width="1366" height="706" />
     </state>
-    <state width="1316" height="172" key="GridCell.Tab.1.center/0.28.1366.706@0.28.1366.706" timestamp="1579527984535" />
-    <state width="1316" height="172" key="GridCell.Tab.1.left" timestamp="1579527984535">
+    <state width="1316" height="59" key="GridCell.Tab.1.center/0.28.1366.706@0.28.1366.706" timestamp="1579608551617" />
+    <state width="1316" height="59" key="GridCell.Tab.1.left" timestamp="1579608551617">
       <screen x="0" y="28" width="1366" height="706" />
     </state>
-    <state width="1316" height="172" key="GridCell.Tab.1.left/0.28.1366.706@0.28.1366.706" timestamp="1579527984535" />
-    <state width="1316" height="172" key="GridCell.Tab.1.right" timestamp="1579527984535">
+    <state width="1316" height="59" key="GridCell.Tab.1.left/0.28.1366.706@0.28.1366.706" timestamp="1579608551617" />
+    <state width="1316" height="59" key="GridCell.Tab.1.right" timestamp="1579608551617">
       <screen x="0" y="28" width="1366" height="706" />
     </state>
-    <state width="1316" height="172" key="GridCell.Tab.1.right/0.28.1366.706@0.28.1366.706" timestamp="1579527984535" />
+    <state width="1316" height="59" key="GridCell.Tab.1.right/0.28.1366.706@0.28.1366.706" timestamp="1579608551617" />
     <state x="389" y="96" width="579" height="580" key="MultipleFileMergeDialog" timestamp="1579177539641">
       <screen x="0" y="28" width="1366" height="706" />
     </state>
     <state x="389" y="96" width="579" height="580" key="MultipleFileMergeDialog/0.28.1366.706@0.28.1366.706" timestamp="1579177539641" />
-    <state x="278" y="117" width="802" height="539" key="Vcs.Push.Dialog.v2" timestamp="1579363360205">
+    <state x="278" y="117" width="802" height="539" key="Vcs.Push.Dialog.v2" timestamp="1579528900783">
       <screen x="0" y="28" width="1366" height="706" />
     </state>
-    <state x="278" y="117" width="802" height="539" key="Vcs.Push.Dialog.v2/0.28.1366.706@0.28.1366.706" timestamp="1579363360205" />
-    <state x="458" y="299" width="449" height="174" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1579525201005">
+    <state x="278" y="117" width="802" height="539" key="Vcs.Push.Dialog.v2/0.28.1366.706@0.28.1366.706" timestamp="1579528900783" />
+    <state x="458" y="299" width="449" height="174" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1579608518148">
       <screen x="0" y="28" width="1366" height="706" />
     </state>
-    <state x="458" y="299" width="449" height="174" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.28.1366.706@0.28.1366.706" timestamp="1579525201005" />
+    <state x="458" y="299" width="449" height="174" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.28.1366.706@0.28.1366.706" timestamp="1579608518148" />
     <state x="0" y="28" width="695" height="876" key="find.popup" timestamp="1579357127386">
       <screen x="0" y="28" width="1366" height="706" />
     </state>
