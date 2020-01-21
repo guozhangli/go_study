@@ -1,5 +1,7 @@
 package TestProject
 
+import "fmt"
+
 type BinaryTreeNode struct {
 	Data  interface{}
 	Left  *BinaryTreeNode
@@ -64,14 +66,14 @@ func searchRootIndex(str_p []string, str_m []string) int {
 
 func (tree *BinaryTree) CreatePostBinaryTree(n *BinaryTreeNode, str []string) *BinaryTreeNode {
 	checkBinaryTree(tree)
-	count := len(str)
-	item := str[count-1]
-	count--
+	item := str[len(str)-1-tree.index]
+	tree.index++
 	if item != "#" {
 		n := NewBinaryTreeNode(item)
 		n.Right = tree.CreatePostBinaryTree(n.Right, str)
 		n.Left = tree.CreatePostBinaryTree(n.Left, str)
+		fmt.Printf("%v", n)
+		tree.Root = n
 	}
-	tree.Root = n
 	return n
 }
