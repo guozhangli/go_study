@@ -104,7 +104,7 @@ func (tree *BinaryTree) CreateLevelBinaryTree(n *BinaryTreeNode, str []string) *
 func (tree *BinaryTree) BinaryTreePreOrder(n *BinaryTreeNode) {
 	checkBinaryTree(tree)
 	if n != nil {
-		fmt.Print(n.Data)
+		fmt.Println(n.Data)
 		tree.BinaryTreePreOrder(n.Left)
 		tree.BinaryTreePreOrder(n.Right)
 	}
@@ -114,7 +114,7 @@ func (tree *BinaryTree) BinaryTreeMidOrder(n *BinaryTreeNode) {
 	checkBinaryTree(tree)
 	if n != nil {
 		tree.BinaryTreeMidOrder(n.Left)
-		fmt.Print(n.Data)
+		fmt.Println(n.Data)
 		tree.BinaryTreeMidOrder(n.Right)
 	}
 }
@@ -124,6 +124,50 @@ func (tree *BinaryTree) BinaryTreePostOrder(n *BinaryTreeNode) {
 	if n != nil {
 		tree.BinaryTreePostOrder(n.Left)
 		tree.BinaryTreePostOrder(n.Right)
-		fmt.Print(n.Data)
+		fmt.Println(n.Data)
+	}
+}
+
+func (tree *BinaryTree) BinaryTreePreOrderByStack() {
+	if tree.Root != nil {
+		stack := NewStackLinked()
+		root := tree.Root
+		for {
+			for root != nil {
+				stack.Push(root)
+				fmt.Println(root.Data)
+				root = root.Left
+			}
+			if stack.IsEmpty() {
+				break
+			}
+			root = stack.Pop().(*Node).Data.(*BinaryTreeNode)
+			root = root.Right
+		}
+	}
+}
+
+func (tree *BinaryTree) BinaryTreeMidOrderStack() {
+	if tree.Root != nil {
+		stack := NewStackLinked()
+		root := tree.Root
+		for {
+			for root != nil {
+				stack.Push(root)
+				root = root.Left
+			}
+			if stack.IsEmpty() {
+				break
+			}
+			root = stack.Pop().(*Node).Data.(*BinaryTreeNode)
+			fmt.Println(root.Data)
+			root = root.Right
+		}
+	}
+}
+
+func (tree *BinaryTree) BinaryTreePostOrderStack() {
+	if tree.Root != nil {
+
 	}
 }
