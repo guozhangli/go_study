@@ -85,6 +85,26 @@ func TestBinaryTreePostOrder(t *testing.T) {
 	tree.BinaryTreePostOrder(tree.Root)
 }
 
+func TestBinaryTree_PreOrderStack(t *testing.T) {
+	var tree = new(BinaryTree)
+	var str = []string{"A", "B", "#", "#", "C", "#", "D", "#", "#"}
+	tree.CreatePreBinaryTree(nil, str)
+	str1, _ := json.Marshal(tree)
+	t.Log(string(str1))
+	tree.BinaryTreePreOrderStack()
+}
+
+func TestBinaryTreeMidOrderStack(t *testing.T) {
+	var tree = new(BinaryTree)
+	var str_p = []string{"A", "B", "#", "#", "C", "#", "D", "#", "#"}
+	var str_m = []string{"#", "B", "#", "A", "#", "C", "#", "D", "#"}
+	//var str = []string{"B", "A", "C"}
+	tree.CreateMidBinaryTree(str_p, str_m)
+	str1, _ := json.Marshal(tree)
+	t.Log(string(str1))
+	tree.BinaryTreeMidOrderStack()
+}
+
 func TestBinaryTreePostOrderStack(t *testing.T) {
 	var tree = new(BinaryTree)
 	var str_p = []string{"#", "#", "B", "#", "#", "#", "D", "C", "A"}
@@ -95,4 +115,16 @@ func TestBinaryTreePostOrderStack(t *testing.T) {
 	str1, _ := json.Marshal(tree)
 	t.Log(string(str1))
 	tree.BinaryTreePostOrderStack()
+}
+
+func TestBinaryTreeLevelQueue(t *testing.T) {
+	var tree = new(BinaryTree)
+	var str_p = []string{"A", "B", "C", "#", "#", "#", "D", "#", "#"}
+	//var str_p = []string{"#", "#", "B"}
+	n := tree.CreateLevelBinaryTree(nil, str_p)
+	str2, _ := json.Marshal(n)
+	t.Log(string(str2))
+	str1, _ := json.Marshal(tree)
+	t.Log(string(str1))
+	tree.BinaryTreeLevelOrderQueue()
 }

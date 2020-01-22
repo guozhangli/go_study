@@ -23,7 +23,7 @@ func (queue *QueueLinked) DeQueue() interface{} {
 	}
 	var top = queue.Front
 	queue.Front = queue.Front.Next
-	return top.Data
+	return top
 }
 
 func (queue *QueueLinked) EnQueue(value interface{}) {

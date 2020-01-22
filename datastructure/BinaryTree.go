@@ -1,7 +1,6 @@
 package TestProject
 
 import (
-	"encoding/json"
 	"fmt"
 )
 
@@ -131,7 +130,7 @@ func (tree *BinaryTree) BinaryTreePostOrder(n *BinaryTreeNode) {
 	}
 }
 
-func (tree *BinaryTree) BinaryTreePreOrderByStack() {
+func (tree *BinaryTree) BinaryTreePreOrderStack() {
 	if tree.Root != nil {
 		stack := NewStackLinked()
 		root := tree.Root
@@ -172,8 +171,42 @@ func (tree *BinaryTree) BinaryTreeMidOrderStack() {
 func (tree *BinaryTree) BinaryTreePostOrderStack() {
 	if tree.Root != nil {
 		stack := NewStackLinked()
+		root := tree.Root
+		var s []string
+		for {
+			for root != nil {
+				stack.Push(root)
+				s = append(s, root.Data.(string))
+				root = root.Right
+			}
+			if stack.IsEmpty() {
+				break
+			}
+			root = stack.Pop().(*Node).Data.(*BinaryTreeNode)
+			root = root.Left
+		}
+		for i := len(s) - 1; i >= 0; i-- {
+			fmt.Println(s[i])
+		}
+	}
+}
 
-		str, _ := json.Marshal(stack)
-		fmt.Println(string(str))
+func (tree *BinaryTree) BinaryTreeLevelOrderQueue() {
+	if tree.Root != nil {
+		queue := NewQueueLinked()
+		root := tree.Root
+		queue.EnQueue(root)
+		fmt.Println(root.Data)
+		for !queue.IsEmpty() {
+			root = queue.DeQueue().(*Node).Data.(*BinaryTreeNode)
+			if root.Left != nil {
+				queue.EnQueue(root.Left)
+				fmt.Println(root.Left.Data)
+			}
+			if root.Right != nil {
+				queue.EnQueue(root.Right)
+				fmt.Println(root.Right.Data)
+			}
+		}
 	}
 }
