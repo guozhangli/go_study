@@ -1,6 +1,9 @@
 package TestProject
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type BinaryTreeNode struct {
 	Data  interface{}
@@ -168,6 +171,9 @@ func (tree *BinaryTree) BinaryTreeMidOrderStack() {
 
 func (tree *BinaryTree) BinaryTreePostOrderStack() {
 	if tree.Root != nil {
+		stack := NewStackLinked()
 
+		str, _ := json.Marshal(stack)
+		fmt.Println(string(str))
 	}
 }
