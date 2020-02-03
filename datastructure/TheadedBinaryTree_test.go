@@ -38,7 +38,7 @@ func TestThreadedBinaryTreeThreadingMidForEach(t *testing.T) {
 	str0, _ := json.Marshal(tbt)
 	t.Log(string(str0))
 	tbt.ThreadedBinaryTreeThreading(tbt.Root)
-	tbt.ThreadedBinaryTreeMidForEach()
+	tbt.ThreadedBinaryTreeMidForEachAsc()
 }
 
 func TestThreadedBinaryTreeThreadingPreForEach(t *testing.T) {
@@ -49,5 +49,5 @@ func TestThreadedBinaryTreeThreadingPreForEach(t *testing.T) {
 	str0, _ := json.Marshal(tbt)
 	t.Log(string(str0))
 	tbt.ThreadedBinaryTreeThreading(tbt.Root)
-	tbt.ThreadedBinaryTreePreForEach()
+	tbt.ThreadedBinaryTreeMidForEachDesc()
 }
