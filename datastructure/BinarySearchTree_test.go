@@ -46,3 +46,15 @@ func TestSearchElementInBinarySearchTree(t *testing.T) {
 	ele := bst.SearchElementInBinarySearchTree(bst.Root, 9)
 	t.Log(ele)
 }
+
+func TestBinarySearchTree_InsertElementInBinarySearchTree(t *testing.T) {
+	bst := NewBinarySearchTree()
+	str_p := []string{"7", "4", "2", "5", "9", "10"}
+	str_m := []string{"2", "4", "5", "7", "9", "10"}
+	bst.InitBinarySearchTree(str_p, str_m)
+	str, _ := json.Marshal(bst)
+	t.Log(string(str))
+	bst.InsertElementInBinarySearchTree(bst.Root, 9)
+	str1, _ := json.Marshal(bst)
+	t.Log(string(str1))
+}

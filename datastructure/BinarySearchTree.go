@@ -87,3 +87,7 @@ func (tree *BinarySearchTree) SearchElementInBinarySearchTree(root *BinarySearch
 		return root
 	}
 }
+
+func (tree *BinarySearchTree) InsertElementInBinarySearchTree(node *BinarySearchNode, element int) {
+
+}
