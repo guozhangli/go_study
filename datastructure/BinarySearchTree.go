@@ -62,6 +62,17 @@ func (tree *BinarySearchTree) SearchMinElementInBinarySearchTree(root *BinarySea
 	}
 }
 
+func (tree *BinarySearchTree) SearchMinElementInBinarySearchTreeForeach(root *BinarySearchNode) *BinarySearchNode {
+	checkBinarySearchTree(tree)
+	if root == nil {
+		return nil
+	}
+	for root.Left != nil {
+		root = root.Left
+	}
+	return root
+}
+
 func (tree *BinarySearchTree) SearchMaxElementInBinarySearchTree(root *BinarySearchNode) *BinarySearchNode {
 	checkBinarySearchTree(tree)
 	if root == nil {
@@ -72,6 +83,17 @@ func (tree *BinarySearchTree) SearchMaxElementInBinarySearchTree(root *BinarySea
 	} else {
 		return tree.SearchMaxElementInBinarySearchTree(root.Right)
 	}
+}
+
+func (tree *BinarySearchTree) SearchMaxElementInBinarySearchTreeForeach(root *BinarySearchNode) *BinarySearchNode {
+	checkBinarySearchTree(tree)
+	if root == nil {
+		return nil
+	}
+	for root.Right != nil {
+		root = root.Right
+	}
+	return root
 }
 
 func (tree *BinarySearchTree) SearchElementInBinarySearchTree(root *BinarySearchNode, element int) *BinarySearchNode {
@@ -88,6 +110,52 @@ func (tree *BinarySearchTree) SearchElementInBinarySearchTree(root *BinarySearch
 	}
 }
 
-func (tree *BinarySearchTree) InsertElementInBinarySearchTree(node *BinarySearchNode, element int) {
+func (tree *BinarySearchTree) SearchElementInBinarySearchTreeForeach(root *BinarySearchNode, element int) *BinarySearchNode {
+	checkBinarySearchTree(tree)
+	if root == nil {
+		return nil
+	}
+	for root != nil {
+		if root.Data < element {
+			root = root.Right
+		} else if root.Data > element {
+			root = root.Left
+		} else {
+			return root
+		}
+	}
+	return root
+}
+
+func (tree *BinarySearchTree) InsertElementInBinarySearchTree(root *BinarySearchNode, element int) {
+	checkBinarySearchTree(tree)
+	node := NewBinarySearchTreeNode(element)
+	var pre, next *BinarySearchNode
+	for root != nil {
+		if root.Data < element {
+			root = root.Right
+			if root != nil {
+				next = root
+			}
+
+		} else if root.Data > element {
+			root = root.Left
+			if root != nil {
+				pre = root
+			}
+		} else {
+			pre = nil
+			next = nil
+			break
+		}
+	}
+	if pre != nil && next != nil {
+		node.Left = next
+		pre.Right = node
+	}
+}
+
+func (tree *BinarySearchTree) DeleteElementInBinarySearchTree(root *BinarySearchNode, element int) {
+	checkBinarySearchTree(tree)
 
 }
