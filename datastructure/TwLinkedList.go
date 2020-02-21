@@ -1,5 +1,6 @@
 package TestProject
 
+//双向链表
 type TwLinkedList struct {
 	data     interface{}
 	preNode  *TwLinkedList

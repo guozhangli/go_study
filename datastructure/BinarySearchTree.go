@@ -155,6 +155,7 @@ func (tree *BinarySearchTree) InsertElementInBinarySearchTree(root *BinarySearch
 	}
 }
 
+//Todo have a bug
 func (tree *BinarySearchTree) DeleteElementInBinarySearchTree(root *BinarySearchNode, element int) {
 	checkBinarySearchTree(tree)
 	var temp *BinarySearchNode
