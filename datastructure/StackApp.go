@@ -24,6 +24,7 @@ func fabi(i int) int {
 	return fabi(i-1) + fabi(i-2)
 }
 
+//Todo have a bug
 func Convert2PostfixExp(stack Stack, midExp string) string {
 	var postfxExp string
 	w := FindWordOrNum(midExp)
