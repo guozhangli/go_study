@@ -99,7 +99,7 @@ func TestBinarySearchTree_DeleteElementInBinarySearchTree(t *testing.T) {
 	bst.InitBinarySearchTree(str_p, str_m)
 	str, _ := json.Marshal(bst)
 	t.Log(string(str))
-	bst.DeleteElementInBinarySearchTree(bst.Root, 5)
-	str1, _ := json.Marshal(bst)
+	node := bst.DeleteElementInBinarySearchTree(bst.Root, 5)
+	str1, _ := json.Marshal(node)
 	t.Log(string(str1))
 }
