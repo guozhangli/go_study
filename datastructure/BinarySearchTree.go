@@ -155,26 +155,25 @@ func (tree *BinarySearchTree) InsertElementInBinarySearchTree(root *BinarySearch
 	}
 }
 
-//Todo have a bug
-func (tree *BinarySearchTree) DeleteElementInBinarySearchTree(root *BinarySearchNode, element int) {
+func (tree *BinarySearchTree) DeleteElementInBinarySearchTree(root **BinarySearchNode, element int) {
 	checkBinarySearchTree(tree)
 	var temp *BinarySearchNode
-	for root != nil {
-		if root.Data > element {
-			root = root.Left
-		} else if root.Data < element {
-			root = root.Right
+	for *root != nil {
+		if (*root).Data > element {
+			root = &(*root).Left
+		} else if (*root).Data < element {
+			root = &(*root).Right
 		} else {
-			if root.Left == nil && root.Right == nil {
-				root = nil
-			} else if root.Left != nil && root.Right != nil {
-				temp = tree.SearchMaxElementInBinarySearchTreeForeach(root.Left)
-				root.Data = temp.Data
-				tree.DeleteElementInBinarySearchTree(root.Left, root.Data)
-			} else if root.Left != nil && root.Right == nil {
-				root = root.Left
-			} else if root.Left == nil && root.Right != nil {
-				root = root.Right
+			if (*root).Left == nil && (*root).Right == nil {
+				*root = nil
+			} else if (*root).Left != nil && (*root).Right != nil {
+				temp = tree.SearchMaxElementInBinarySearchTreeForeach((*root).Right)
+				(*root).Data = temp.Data
+				tree.DeleteElementInBinarySearchTree(&(*root).Right, (*root).Data)
+			} else if (*root).Left != nil && (*root).Right == nil {
+				*root = (*root).Left
+			} else if (*root).Left == nil && (*root).Right != nil {
+				*root = (*root).Right
 			}
 		}
 	}
