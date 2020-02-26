@@ -95,3 +95,29 @@ func (graphMatrix *GraphMatrix) DeleteEdgeInDirectedGraphMatrix(i int, j int) {
 		panic("输入坐标不合法")
 	}
 }
+
+func (graphMatrix *GraphMatrix) IsEdgeInUndirectedGraphMatrix(i int, j int) bool {
+	checkGraphMatrix(graphMatrix)
+	if i < len(graphMatrix.Veriex) && i >= 0 && j < len(graphMatrix.Veriex) && j >= 0 {
+		if graphMatrix.Edge[i][j] != 0 {
+			return true
+		} else {
+			return false
+		}
+	} else {
+		return false
+	}
+}
+
+func (graphMatrix *GraphMatrix) IsEdgeInDirectedGraphMatrix(i int, j int) interface{} {
+	checkGraphMatrix(graphMatrix)
+	if i < len(graphMatrix.Veriex) && i >= 0 && j < len(graphMatrix.Veriex) && j >= 0 {
+		if graphMatrix.Edge[i][j] != 0 && graphMatrix.Edge[i][j] != INFINITY {
+			return true
+		} else {
+			return false
+		}
+	} else {
+		return false
+	}
+}

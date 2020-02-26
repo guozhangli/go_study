@@ -65,3 +65,19 @@ func TestDeleteEdgeInDrirectedGraphMatrix(t *testing.T) {
 	graph.DeleteEdgeInDirectedGraphMatrix(1, 2)
 	t.Log(graph)
 }
+
+func TestIsEdgeInUndirectedGraphMatrix(t *testing.T) {
+	graph := InitUnDirectedGraph()
+	graph.AddEdgeInUndirectedGraphMatrix(1, 2)
+	t.Log(graph)
+	b := graph.IsEdgeInUndirectedGraphMatrix(1, 3)
+	t.Log(b)
+}
+
+func TestIsEdgeInDirectedGraphMatrix(t *testing.T) {
+	graph := InitDirectedGraph()
+	graph.AddEdgeInDirectedGraphMatrix(1, 2, 4)
+	t.Log(graph)
+	b := graph.IsEdgeInDirectedGraphMatrix(1, 2)
+	t.Log(b)
+}
