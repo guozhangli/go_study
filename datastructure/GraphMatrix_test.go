@@ -78,6 +78,6 @@ func TestIsEdgeInDirectedGraphMatrix(t *testing.T) {
 	graph := InitDirectedGraph()
 	graph.AddEdgeInDirectedGraphMatrix(1, 2, 4)
 	t.Log(graph)
-	b := graph.IsEdgeInDirectedGraphMatrix(1, 2)
+	b := graph.IsEdgeInDirectedGraphMatrix(1, 3)
 	t.Log(b)
 }
