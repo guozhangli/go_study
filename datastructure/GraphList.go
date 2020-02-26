@@ -37,4 +37,18 @@ func checkGraphList(graphList *GraphList) {
 
 func (graphList *GraphList) AddEdgeInGraphList(i int, j int, weight int) {
 	checkGraphList(graphList)
+	edge := &EdgeNode{
+		Index:  j,
+		Weight: weight,
+		Next:   nil}
+	var flag = true
+	for i1, v := range graphList.Veriexs {
+		if i1 == i {
+			flag = false
+			v.FirstEdge = edge
+		}
+	}
+	if flag {
+		panic("输入参数不正确")
+	}
 }
