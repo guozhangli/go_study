@@ -8,7 +8,7 @@ func InitUnDirectedGraph() *GraphMatrix {
 }
 
 func InitDirectedGraph() *GraphMatrix {
-	graph := InitDirectedGraphMatrix(4, "V0", "V1", "V2", "V3")
+	graph := InitDirectedGraphMatrix(5, "V0", "V1", "V2", "V3", "V4")
 	return graph
 }
 func TestCreateGraphMatrix(t *testing.T) {
@@ -21,15 +21,32 @@ func TestCreateGraphMatrixDirected(t *testing.T) {
 	t.Log(graph)
 }
 
+//无向图添加边
 func TestAddElementInGraphMatrix(t *testing.T) {
 	graph := InitUnDirectedGraph()
+	graph.AddEdgeInUndirectedGraphMatrix(0, 1)
+	graph.AddEdgeInUndirectedGraphMatrix(0, 2)
+	graph.AddEdgeInUndirectedGraphMatrix(1, 0)
 	graph.AddEdgeInUndirectedGraphMatrix(1, 2)
+	graph.AddEdgeInUndirectedGraphMatrix(2, 0)
+	graph.AddEdgeInUndirectedGraphMatrix(2, 1)
+	graph.AddEdgeInUndirectedGraphMatrix(2, 3)
+	graph.AddEdgeInUndirectedGraphMatrix(3, 0)
+	graph.AddEdgeInUndirectedGraphMatrix(3, 2)
 	t.Log(graph)
 }
 
+//有相图添加边
 func TestAddElementInDirectedGraphMatrix(t *testing.T) {
 	graph := InitDirectedGraph()
-	graph.AddEdgeInDirectedGraphMatrix(1, 2, 8)
+	graph.AddEdgeInDirectedGraphMatrix(0, 1, 3)
+	graph.AddEdgeInDirectedGraphMatrix(0, 4, 4)
+	graph.AddEdgeInDirectedGraphMatrix(1, 2, 4)
+	graph.AddEdgeInDirectedGraphMatrix(2, 0, 10)
+	graph.AddEdgeInDirectedGraphMatrix(2, 1, 5)
+	graph.AddEdgeInDirectedGraphMatrix(2, 3, 7)
+	graph.AddEdgeInDirectedGraphMatrix(3, 1, 9)
+	graph.AddEdgeInDirectedGraphMatrix(4, 3, 6)
 	t.Log(graph)
 }
 
