@@ -35,6 +35,12 @@ func checkGraphList(graphList *GraphList) {
 	}
 }
 
+/*
+	add edge in graph list
+	param i Veriexs index
+      	  j Edge index
+		  weight Weight
+*/
 func (graphList *GraphList) AddEdgeInGraphList(i int, j int, weight int) {
 	checkGraphList(graphList)
 	edge := &EdgeNode{
@@ -45,7 +51,38 @@ func (graphList *GraphList) AddEdgeInGraphList(i int, j int, weight int) {
 	for i1, v := range graphList.Veriexs {
 		if i1 == i {
 			flag = false
-			v.FirstEdge = edge
+			if v.FirstEdge != nil {
+				var node = v.FirstEdge
+				for node.Next != nil {
+					node = node.Next
+				}
+				node.Next = edge
+			} else {
+				v.FirstEdge = edge
+			}
+		}
+	}
+	if flag {
+		panic("输入参数不正确")
+	}
+}
+
+func (graphList *GraphList) DeleteEdgeInGraphList(i int, j int) {
+	checkGraphList(graphList)
+	var flag = true
+	for i1, v := range graphList.Veriexs {
+		if i1 == i {
+
+			if v.FirstEdge != nil {
+				node := v.FirstEdge
+				for node != nil {
+					if node.Index == j {
+						flag = false
+					}
+					node = node.Next
+				}
+
+			}
 		}
 	}
 	if flag {
