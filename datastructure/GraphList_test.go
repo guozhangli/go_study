@@ -6,7 +6,7 @@ import (
 )
 
 func InitGL() *GraphList {
-	graph := InitGraphList(5, "V0", "V1", "V2", "V3", "V4")
+	graph := InitGraphList("V0", "V1", "V2", "V3", "V4")
 	return graph
 }
 
@@ -58,6 +58,6 @@ func TestGetOutDegreeGraphList(t *testing.T) {
 	graph := InitGL()
 	AddEdgeInGL(graph)
 	t.Log(printGL(graph))
-	degree := graph.GetOutDegreeGraphList("V5")
+	degree := graph.GetOutDegreeGraphList("V4")
 	t.Log(degree)
 }

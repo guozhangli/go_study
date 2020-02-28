@@ -20,7 +20,8 @@ type GraphList struct {
 	Veriexs []*VeriexNode
 }
 
-func InitGraphList(verNum int, value ...interface{}) *GraphList {
+func InitGraphList(value ...interface{}) *GraphList {
+	verNum := len(value)
 	graph := &GraphList{
 		Veriexs: make([]*VeriexNode, verNum),
 	}
