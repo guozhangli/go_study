@@ -124,3 +124,24 @@ func (graphList *GraphList) IsEdgeInGraphList(i int, j int) bool {
 	}
 	return flag
 }
+
+func (graphList *GraphList) GetOutDegreeGraphList(value interface{}) int {
+	checkGraphList(graphList)
+	flag := false
+	for _, v := range graphList.Veriexs {
+		if v.Veriex == value {
+			flag = true
+			node := v.FirstEdge
+			count := 0
+			for node != nil {
+				node = node.Next
+				count++
+			}
+			return count
+		}
+	}
+	if !flag {
+		panic("veriex is not exist")
+	}
+	return 0
+}
