@@ -38,6 +38,9 @@ func checkGraphList(graphList *GraphList) {
 	if graphList == nil {
 		panic("未创建图")
 	}
+	if graphList.Veriexs == nil {
+		panic("未创建图的顶点")
+	}
 }
 
 /*
@@ -48,14 +51,15 @@ func checkGraphList(graphList *GraphList) {
 */
 func (graphList *GraphList) AddEdgeInGraphList(i int, j int, weight int) {
 	checkGraphList(graphList)
+	if i < 0 || i >= len(graphList.Veriexs) || j >= len(graphList.Veriexs) || j < 0 {
+		panic("顶点索引不合法")
+	}
 	edge := &EdgeNode{
 		Index:  j,
 		Weight: weight,
 		Next:   nil}
-	var flag = true
 	for i1, v := range graphList.Veriexs {
 		if i1 == i {
-			flag = false
 			if v.FirstEdge != nil {
 				var node = v.FirstEdge
 				for node.Next != nil {
@@ -67,13 +71,13 @@ func (graphList *GraphList) AddEdgeInGraphList(i int, j int, weight int) {
 			}
 		}
 	}
-	if flag {
-		panic("输入参数不正确")
-	}
 }
 
 func (graphList *GraphList) DeleteEdgeInGraphList(i int, j int) {
 	checkGraphList(graphList)
+	if i < 0 || i >= len(graphList.Veriexs) || j >= len(graphList.Veriexs) || j < 0 {
+		panic("顶点索引不合法")
+	}
 	for i1, v := range graphList.Veriexs {
 		if i1 == i {
 			var pre *EdgeNode
@@ -98,4 +102,25 @@ func (graphList *GraphList) DeleteEdgeInGraphList(i int, j int) {
 		}
 	}
 
+}
+
+func (graphList *GraphList) IsEdgeInGraphList(i int, j int) bool {
+	checkGraphList(graphList)
+	if i < 0 || i >= len(graphList.Veriexs) || j >= len(graphList.Veriexs) || j < 0 {
+		panic("顶点索引不合法")
+	}
+	flag := false
+	for i1, v := range graphList.Veriexs {
+		if i1 == i {
+			node := v.FirstEdge
+			for node != nil {
+				if node.Index != j {
+					node = node.Next
+				} else {
+					return !flag
+				}
+			}
+		}
+	}
+	return flag
 }

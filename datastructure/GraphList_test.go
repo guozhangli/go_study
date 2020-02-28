@@ -48,3 +48,18 @@ func TestDeleteEdgeInGraphList(t *testing.T) {
 	graph.DeleteEdgeInGraphList(2, 1)
 	t.Log(printGL(graph))
 }
+
+func TestIsEdgeInGraphList(t *testing.T) {
+	graph := InitGL()
+	graph.AddEdgeInGraphList(0, 1, 3)
+	graph.AddEdgeInGraphList(0, 4, 4)
+	graph.AddEdgeInGraphList(1, 2, 4)
+	graph.AddEdgeInGraphList(2, 0, 10)
+	graph.AddEdgeInGraphList(2, 1, 5)
+	graph.AddEdgeInGraphList(2, 3, 7)
+	graph.AddEdgeInGraphList(3, 1, 9)
+	graph.AddEdgeInGraphList(4, 3, 6)
+	t.Log(printGL(graph))
+	b := graph.IsEdgeInGraphList(0, 4)
+	t.Log(b)
+}
