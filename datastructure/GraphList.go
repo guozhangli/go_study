@@ -1,5 +1,10 @@
 package TestProject
 
+import (
+	"encoding/json"
+	"fmt"
+)
+
 type EdgeNode struct {
 	Index  int
 	Weight int
@@ -69,23 +74,28 @@ func (graphList *GraphList) AddEdgeInGraphList(i int, j int, weight int) {
 
 func (graphList *GraphList) DeleteEdgeInGraphList(i int, j int) {
 	checkGraphList(graphList)
-	var flag = true
 	for i1, v := range graphList.Veriexs {
 		if i1 == i {
-
-			if v.FirstEdge != nil {
-				node := v.FirstEdge
-				for node != nil {
-					if node.Index == j {
-						flag = false
-					}
+			var pre *EdgeNode
+			node := v.FirstEdge
+			for {
+				if node != nil && node.Index != j {
+					pre = node
 					node = node.Next
 				}
-
+				if node.Index == j {
+					if pre != nil {
+						pre.Next = node.Next
+					} else {
+						pre = node.Next
+					}
+					break
+				}
 			}
+			v.FirstEdge = pre
+			str, _ := json.Marshal(pre)
+			fmt.Println(string(str))
 		}
 	}
-	if flag {
-		panic("输入参数不正确")
-	}
+
 }
