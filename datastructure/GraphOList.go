@@ -1,5 +1,7 @@
 package TestProject
 
+//十字链表（表示有向图--包含邻接表和逆邻接表）
+
 type LinkNode struct {
 	Link   *Arc
 	Weight int
@@ -18,7 +20,6 @@ type VeriexONode struct {
 	FirstOut *Arc
 }
 
-//十字链表
 type GraphOList struct {
 	Veriexs []*VeriexONode
 }
