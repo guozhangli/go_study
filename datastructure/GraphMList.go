@@ -5,7 +5,7 @@ type Edge struct {
 	IVex   int
 	ILink  *Edge
 	JVex   int
-	JLinke *Edge
+	JLink  *Edge
 	Weight int
 }
 
@@ -41,15 +41,34 @@ func checkGraphMList(graphMList *GraphMList) {
 	}
 }
 
-func (graphMList *GraphMList) AddEdgeInGraphMList(iVer int, jVer int, weight int) {
-	checkGraphMList(graphMList)
+func (graphMList *GraphMList) InitEdge(iVer int, jVer int, weight int) *Edge {
+	if iVer < 0 || iVer >= len(graphMList.Veriexs) || jVer < 0 || jVer >= len(graphMList.Veriexs) {
+		panic("顶点索引值不合法")
+	}
 	edge := &Edge{
 		IVex:   iVer,
 		ILink:  nil,
 		JVex:   jVer,
-		JLinke: nil,
+		JLink:  nil,
 		Weight: weight,
 	}
-	ver := graphMList.Veriexs[iVer]
+	return edge
+}
+
+func (graphMList *GraphMList) AddEdgeInGraphMList(edge *Edge) {
+	checkGraphMList(graphMList)
+	if edge != nil {
+		iVer := edge.IVex
+		ver := graphMList.Veriexs[iVer]
+		if ver.FirstEdge == nil {
+			ver.FirstEdge = edge
+		} else {
+			node := ver.FirstEdge
+			for node.ILink != nil {
+				node = node.ILink
+			}
+			node.ILink = edge
+		}
+	}
 
 }

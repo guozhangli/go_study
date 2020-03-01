@@ -21,6 +21,7 @@ func InitGML() *GraphMList {
 
 func TestAddEdgeInGraphMList(t *testing.T) {
 	graphMList := InitGML()
-	graphMList.AddEdgeInGraphMList(0, 1, 3)
+	graphMList.AddEdgeInGraphMList(graphMList.InitEdge(0, 1, 4))
+	graphMList.AddEdgeInGraphMList(graphMList.InitEdge(0, 2, 2))
 	printGML(graphMList, t)
 }
