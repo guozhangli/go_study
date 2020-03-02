@@ -1,5 +1,6 @@
 package TestProject
 
+//边集数组表示图
 type EdgeType struct {
 	Begin  int
 	End    int
