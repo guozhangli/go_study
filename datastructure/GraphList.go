@@ -1,5 +1,7 @@
 package TestProject
 
+import "fmt"
+
 type EdgeNode struct {
 	Index  int
 	Weight int
@@ -137,4 +139,66 @@ func (graphList *GraphList) GetOutDegreeGraphList(value interface{}) int {
 		panic("veriex is not exist")
 	}
 	return 0
+}
+
+var veriexFlag_1 []bool
+
+//深度优先遍历-邻接表（递归方式）
+func (graphList *GraphList) DfsTraverseList() {
+	checkGraphList(graphList)
+	veriexFlag_1 = make([]bool, len(graphList.Veriexs))
+	for i, _ := range graphList.Veriexs {
+		veriexFlag_1[i] = false
+	}
+	for i, _ := range graphList.Veriexs {
+		if !veriexFlag_1[i] {
+			graphList.DfsGraphList(i)
+		}
+	}
+}
+
+func (graphList *GraphList) DfsGraphList(i int) {
+	veriexFlag_1[i] = true
+	fmt.Println(graphList.Veriexs[i].Veriex)
+	p := graphList.Veriexs[i].FirstEdge
+	for p != nil {
+		if !veriexFlag_1[p.Index] {
+			graphList.DfsGraphList(p.Index)
+		}
+		p = p.Next
+	}
+}
+
+//深度优先遍历-邻接表（运用栈）
+func (graphList *GraphList) DfsTraverseListStack() {
+	checkGraphList(graphList)
+	veriexFlag_1 = make([]bool, len(graphList.Veriexs))
+	veriexFlag_1[0] = true
+	fmt.Println(graphList.Veriexs[0].Veriex)
+	stack := NewStackLinked()
+	stack.Push(0)
+	for !stack.IsEmpty() {
+		i := graphList.GetUnvisitedVeriex(stack.GetTop().(int))
+		if i == -1 {
+			stack.Pop()
+		} else {
+			veriexFlag_1[i] = true
+			fmt.Println(graphList.Veriexs[i].Veriex)
+			stack.Push(i)
+		}
+	}
+	for i, _ := range graphList.Veriexs {
+		veriexFlag_1[i] = false
+	}
+}
+
+func (graphList *GraphList) GetUnvisitedVeriex(v int) int {
+	p := graphList.Veriexs[v].FirstEdge
+	for p != nil {
+		if !veriexFlag_1[p.Index] {
+			return p.Index
+		}
+		p = p.Next
+	}
+	return -1
 }

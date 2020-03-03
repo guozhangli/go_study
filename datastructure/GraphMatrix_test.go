@@ -3,12 +3,12 @@ package TestProject
 import "testing"
 
 func InitUnDirectedGraph() *GraphMatrix {
-	graph := InitUndirectedGraphMatrix(4, "V0", "V1", "V2", "V3")
+	graph := InitUndirectedGraphMatrix("V0", "V1", "V2", "V3", "V4")
 	return graph
 }
 
 func InitDirectedGraph() *GraphMatrix {
-	graph := InitDirectedGraphMatrix(5, "V0", "V1", "V2", "V3", "V4")
+	graph := InitDirectedGraphMatrix("V0", "V1", "V2", "V3", "V4")
 	return graph
 }
 func TestCreateGraphMatrix(t *testing.T) {
@@ -24,11 +24,13 @@ func TestCreateGraphMatrixDirected(t *testing.T) {
 func AddEdgeInUnDirectedGraphMatrix(graph *GraphMatrix) {
 	graph.AddEdgeInUndirectedGraphMatrix(0, 1)
 	graph.AddEdgeInUndirectedGraphMatrix(0, 2)
+	graph.AddEdgeInUndirectedGraphMatrix(0, 3)
 	graph.AddEdgeInUndirectedGraphMatrix(1, 0)
 	graph.AddEdgeInUndirectedGraphMatrix(1, 2)
 	graph.AddEdgeInUndirectedGraphMatrix(2, 0)
 	graph.AddEdgeInUndirectedGraphMatrix(2, 1)
 	graph.AddEdgeInUndirectedGraphMatrix(2, 3)
+	graph.AddEdgeInUndirectedGraphMatrix(2, 4)
 	graph.AddEdgeInUndirectedGraphMatrix(3, 0)
 	graph.AddEdgeInUndirectedGraphMatrix(3, 2)
 }
@@ -94,5 +96,12 @@ func TestGraphMatrix_DfsTraverse(t *testing.T) {
 	graph := InitUnDirectedGraph()
 	AddEdgeInUnDirectedGraphMatrix(graph)
 	t.Log(graph)
-	graph.DfsTraverse()
+	graph.DfsTraverseMatirx()
+}
+
+func TestGraphMatrix_DfsTraverseStack(t *testing.T) {
+	graph := InitUnDirectedGraph()
+	AddEdgeInUnDirectedGraphMatrix(graph)
+	t.Log(graph)
+	graph.DfsTraverseMatirxStack()
 }

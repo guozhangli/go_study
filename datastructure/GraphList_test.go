@@ -61,3 +61,17 @@ func TestGetOutDegreeGraphList(t *testing.T) {
 	degree := graph.GetOutDegreeGraphList("V4")
 	t.Log(degree)
 }
+
+func TestGraphList_DfsTraverse(t *testing.T) {
+	graph := InitGL()
+	AddEdgeInGL(graph)
+	t.Log(graph)
+	graph.DfsTraverseList()
+}
+
+func TestGraphList_DfsTraverseStack(t *testing.T) {
+	graph := InitGL()
+	AddEdgeInGL(graph)
+	t.Log(graph)
+	graph.DfsTraverseListStack()
+}

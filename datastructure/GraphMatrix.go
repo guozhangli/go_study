@@ -23,7 +23,8 @@ func checkGraphMatrix(graph *GraphMatrix) {
 	}
 }
 
-func InitUndirectedGraphMatrix(verNum int, value ...interface{}) *GraphMatrix {
+func InitUndirectedGraphMatrix(value ...interface{}) *GraphMatrix {
+	verNum := len(value)
 	graph := &GraphMatrix{
 		Veriex: make([]interface{}, verNum),
 		Edge:   make([][]MyEdgeType, verNum),
@@ -40,7 +41,8 @@ func InitUndirectedGraphMatrix(verNum int, value ...interface{}) *GraphMatrix {
 	return graph
 }
 
-func InitDirectedGraphMatrix(verNum int, value ...interface{}) *GraphMatrix {
+func InitDirectedGraphMatrix(value ...interface{}) *GraphMatrix {
+	verNum := len(value)
 	graph := &GraphMatrix{
 		Veriex: make([]interface{}, verNum),
 		Edge:   make([][]MyEdgeType, verNum),
@@ -127,17 +129,8 @@ func (graphMatrix *GraphMatrix) IsEdgeInDirectedGraphMatrix(i int, j int) interf
 	}
 }
 
-func (graphMatrix *GraphMatrix) DfsGraphMatirx(i int) {
-	veriexFlag[i] = true
-	fmt.Println(graphMatrix.Veriex[i])
-	for j, _ := range graphMatrix.Veriex {
-		if graphMatrix.Edge[i][j] == 1 && !veriexFlag[j] {
-			graphMatrix.DfsGraphMatirx(j)
-		}
-	}
-}
-
-func (graphMatrix *GraphMatrix) DfsTraverse() {
+//深度优先遍历-邻接矩阵（递归遍历）
+func (graphMatrix *GraphMatrix) DfsTraverseMatirx() {
 	checkGraphMatrix(graphMatrix)
 	veriexFlag = make([]bool, len(graphMatrix.Veriex))
 	for i, _ := range graphMatrix.Veriex {
@@ -148,4 +141,46 @@ func (graphMatrix *GraphMatrix) DfsTraverse() {
 			graphMatrix.DfsGraphMatirx(i)
 		}
 	}
+}
+
+func (graphMatrix *GraphMatrix) DfsGraphMatirx(i int) {
+	veriexFlag[i] = true
+	fmt.Println(graphMatrix.Veriex[i])
+	for j, _ := range graphMatrix.Veriex {
+		if graphMatrix.Edge[i][j] == 1 && !veriexFlag[j] {
+			graphMatrix.DfsGraphMatirx(j)
+		}
+	}
+}
+
+//深度优先遍历-邻接矩阵（运用栈）
+func (graphMatrix *GraphMatrix) DfsTraverseMatirxStack() {
+	checkGraphMatrix(graphMatrix)
+	veriexFlag = make([]bool, len(graphMatrix.Veriex))
+	veriexFlag[0] = true
+	fmt.Println(graphMatrix.Veriex[0])
+	stack := NewStackLinked()
+	stack.Push(0)
+	for !stack.IsEmpty() {
+		i := graphMatrix.GetUnvisitedVeriex(stack.GetTop().(int))
+		if i == -1 {
+			stack.Pop()
+		} else {
+			veriexFlag[i] = true
+			fmt.Println(graphMatrix.Veriex[i])
+			stack.Push(i)
+		}
+	}
+	for i, _ := range graphMatrix.Veriex {
+		veriexFlag[i] = false
+	}
+}
+
+func (graphMatrix *GraphMatrix) GetUnvisitedVeriex(v int) int {
+	for j, _ := range graphMatrix.Veriex {
+		if graphMatrix.Edge[v][j] == 1 && !veriexFlag[j] {
+			return j
+		}
+	}
+	return -1
 }
