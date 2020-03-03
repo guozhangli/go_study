@@ -202,3 +202,32 @@ func (graphList *GraphList) GetUnvisitedVeriex(v int) int {
 	}
 	return -1
 }
+
+//广度优先遍历-邻接表（运用队列）
+func (graphList *GraphList) BfsTraverseListQueue() {
+	checkGraphList(graphList)
+	veriexFlag_1 = make([]bool, len(graphList.Veriexs))
+	for i, _ := range graphList.Veriexs {
+		veriexFlag_1[i] = false
+	}
+	queue := NewQueueLinked()
+	for i, v := range graphList.Veriexs {
+		if !veriexFlag_1[i] {
+			veriexFlag_1[i] = true
+			fmt.Println(v.Veriex)
+			queue.EnQueue(i)
+			for !queue.IsEmpty() {
+				i = queue.DeQueue().(*Node).Data.(int)
+				p := graphList.Veriexs[i].FirstEdge
+				for p != nil {
+					if !veriexFlag_1[p.Index] {
+						veriexFlag_1[p.Index] = true
+						fmt.Println(graphList.Veriexs[p.Index].Veriex)
+						queue.EnQueue(p.Index)
+					}
+					p = p.Next
+				}
+			}
+		}
+	}
+}

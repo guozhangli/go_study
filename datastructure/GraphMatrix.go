@@ -184,3 +184,30 @@ func (graphMatrix *GraphMatrix) GetUnvisitedVeriex(v int) int {
 	}
 	return -1
 }
+
+//广度优先遍历-邻接矩阵（运用队列）
+func (graphMatrix *GraphMatrix) BfsTraverseMatirxQueue() {
+	checkGraphMatrix(graphMatrix)
+	veriexFlag = make([]bool, len(graphMatrix.Veriex))
+	for i, _ := range graphMatrix.Veriex {
+		veriexFlag[i] = false
+	}
+	queue := NewQueueLinked()
+	for i, _ := range graphMatrix.Veriex {
+		if !veriexFlag[i] {
+			veriexFlag[i] = true
+			fmt.Println(graphMatrix.Veriex[i])
+			queue.EnQueue(i)
+			for !queue.IsEmpty() {
+				i = queue.DeQueue().(*Node).Data.(int)
+				for j, _ := range graphMatrix.Veriex {
+					if graphMatrix.Edge[i][j] == 1 && !veriexFlag[j] {
+						veriexFlag[j] = true
+						fmt.Println(graphMatrix.Veriex[j])
+						queue.EnQueue(j)
+					}
+				}
+			}
+		}
+	}
+}

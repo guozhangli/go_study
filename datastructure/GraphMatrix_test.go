@@ -105,3 +105,10 @@ func TestGraphMatrix_DfsTraverseStack(t *testing.T) {
 	t.Log(graph)
 	graph.DfsTraverseMatirxStack()
 }
+
+func TestGraphMatrix_BfsTraverseQueue(t *testing.T) {
+	graph := InitUnDirectedGraph()
+	AddEdgeInUnDirectedGraphMatrix(graph)
+	t.Log(graph)
+	graph.BfsTraverseMatirxQueue()
+}

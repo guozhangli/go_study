@@ -75,3 +75,10 @@ func TestGraphList_DfsTraverseStack(t *testing.T) {
 	t.Log(graph)
 	graph.DfsTraverseListStack()
 }
+
+func TestGraphList_BfsTraverseStack(t *testing.T) {
+	graph := InitGL()
+	AddEdgeInGL(graph)
+	t.Log(graph)
+	graph.BfsTraverseListQueue()
+}
