@@ -103,6 +103,7 @@ func (tree *BinaryTree) CreateLevelBinaryTree(n *BinaryTreeNode, str []string) *
 	return n
 }
 
+//二叉树遍历-递归方式（先序遍历）
 func (tree *BinaryTree) BinaryTreePreOrder(n *BinaryTreeNode) {
 	checkBinaryTree(tree)
 	if n != nil {
@@ -112,6 +113,7 @@ func (tree *BinaryTree) BinaryTreePreOrder(n *BinaryTreeNode) {
 	}
 }
 
+//二叉树遍历-递归方式（中序遍历）
 func (tree *BinaryTree) BinaryTreeMidOrder(n *BinaryTreeNode) {
 	checkBinaryTree(tree)
 	if n != nil {
@@ -121,6 +123,7 @@ func (tree *BinaryTree) BinaryTreeMidOrder(n *BinaryTreeNode) {
 	}
 }
 
+//二叉树遍历-递归方式（后序遍历）
 func (tree *BinaryTree) BinaryTreePostOrder(n *BinaryTreeNode) {
 	checkBinaryTree(tree)
 	if n != nil {
@@ -130,6 +133,7 @@ func (tree *BinaryTree) BinaryTreePostOrder(n *BinaryTreeNode) {
 	}
 }
 
+//二叉树遍历-栈方式（先序遍历）
 func (tree *BinaryTree) BinaryTreePreOrderStack() {
 	if tree.Root != nil {
 		stack := NewStackLinked()
@@ -149,6 +153,7 @@ func (tree *BinaryTree) BinaryTreePreOrderStack() {
 	}
 }
 
+//二叉树遍历-栈方式（中序遍历）
 func (tree *BinaryTree) BinaryTreeMidOrderStack() {
 	if tree.Root != nil {
 		stack := NewStackLinked()
@@ -168,6 +173,7 @@ func (tree *BinaryTree) BinaryTreeMidOrderStack() {
 	}
 }
 
+//二叉树遍历-栈方式（后序遍历）
 func (tree *BinaryTree) BinaryTreePostOrderStack() {
 	if tree.Root != nil {
 		stack := NewStackLinked()
@@ -191,6 +197,7 @@ func (tree *BinaryTree) BinaryTreePostOrderStack() {
 	}
 }
 
+//二叉树遍历-队列方式（层级遍历）
 func (tree *BinaryTree) BinaryTreeLevelOrderQueue() {
 	if tree.Root != nil {
 		queue := NewQueueLinked()
