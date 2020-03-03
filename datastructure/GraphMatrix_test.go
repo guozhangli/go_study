@@ -21,9 +21,7 @@ func TestCreateGraphMatrixDirected(t *testing.T) {
 	t.Log(graph)
 }
 
-//无向图添加边
-func TestAddElementInGraphMatrix(t *testing.T) {
-	graph := InitUnDirectedGraph()
+func AddEdgeInUnDirectedGraphMatrix(graph *GraphMatrix) {
 	graph.AddEdgeInUndirectedGraphMatrix(0, 1)
 	graph.AddEdgeInUndirectedGraphMatrix(0, 2)
 	graph.AddEdgeInUndirectedGraphMatrix(1, 0)
@@ -33,12 +31,16 @@ func TestAddElementInGraphMatrix(t *testing.T) {
 	graph.AddEdgeInUndirectedGraphMatrix(2, 3)
 	graph.AddEdgeInUndirectedGraphMatrix(3, 0)
 	graph.AddEdgeInUndirectedGraphMatrix(3, 2)
+}
+
+//无向图添加边
+func TestAddElementInGraphMatrix(t *testing.T) {
+	graph := InitUnDirectedGraph()
+	AddEdgeInUnDirectedGraphMatrix(graph)
 	t.Log(graph)
 }
 
-//有相图添加边
-func TestAddElementInDirectedGraphMatrix(t *testing.T) {
-	graph := InitDirectedGraph()
+func AddEdgeInUndriectedGraphMatrix(graph *GraphMatrix) {
 	graph.AddEdgeInDirectedGraphMatrix(0, 1, 3)
 	graph.AddEdgeInDirectedGraphMatrix(0, 4, 4)
 	graph.AddEdgeInDirectedGraphMatrix(1, 2, 4)
@@ -47,6 +49,12 @@ func TestAddElementInDirectedGraphMatrix(t *testing.T) {
 	graph.AddEdgeInDirectedGraphMatrix(2, 3, 7)
 	graph.AddEdgeInDirectedGraphMatrix(3, 1, 9)
 	graph.AddEdgeInDirectedGraphMatrix(4, 3, 6)
+}
+
+//有相图添加边
+func TestAddElementInDirectedGraphMatrix(t *testing.T) {
+	graph := InitDirectedGraph()
+	AddEdgeInUndriectedGraphMatrix(graph)
 	t.Log(graph)
 }
 
@@ -80,4 +88,11 @@ func TestIsEdgeInDirectedGraphMatrix(t *testing.T) {
 	t.Log(graph)
 	b := graph.IsEdgeInDirectedGraphMatrix(1, 3)
 	t.Log(b)
+}
+
+func TestGraphMatrix_DfsTraverse(t *testing.T) {
+	graph := InitUnDirectedGraph()
+	AddEdgeInUnDirectedGraphMatrix(graph)
+	t.Log(graph)
+	graph.DfsTraverse()
 }

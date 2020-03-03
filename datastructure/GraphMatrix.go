@@ -1,10 +1,15 @@
 package TestProject
 
-import "math"
+import (
+	"fmt"
+	"math"
+)
 
 type MyEdgeType int
 
 const INFINITY = math.MaxInt32
+
+var veriexFlag []bool
 
 //图（邻接矩阵）
 type GraphMatrix struct {
@@ -119,5 +124,28 @@ func (graphMatrix *GraphMatrix) IsEdgeInDirectedGraphMatrix(i int, j int) interf
 		}
 	} else {
 		return false
+	}
+}
+
+func (graphMatrix *GraphMatrix) DfsGraphMatirx(i int) {
+	veriexFlag[i] = true
+	fmt.Println(graphMatrix.Veriex[i])
+	for j, _ := range graphMatrix.Veriex {
+		if graphMatrix.Edge[i][j] == 1 && !veriexFlag[j] {
+			graphMatrix.DfsGraphMatirx(j)
+		}
+	}
+}
+
+func (graphMatrix *GraphMatrix) DfsTraverse() {
+	checkGraphMatrix(graphMatrix)
+	veriexFlag = make([]bool, len(graphMatrix.Veriex))
+	for i, _ := range graphMatrix.Veriex {
+		veriexFlag[i] = false
+	}
+	for i, _ := range graphMatrix.Veriex {
+		if !veriexFlag[i] {
+			graphMatrix.DfsGraphMatirx(i)
+		}
 	}
 }
