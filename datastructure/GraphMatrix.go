@@ -211,3 +211,50 @@ func (graphMatrix *GraphMatrix) BfsTraverseMatirxQueue() {
 		}
 	}
 }
+
+//最小生成树-普鲁姆算法
+func (graphMatrix *GraphMatrix) MiniSpanTree_Prim() *GraphMatrix {
+	checkGraphMatrix(graphMatrix)
+	vNum := len(graphMatrix.Veriex)
+	lowcost := make([]int, vNum) //以i为终点的最小权值
+	adjvex := make([]int, vNum)  //对应lowcost[i]的起点
+	lowcost[0] = 0
+	adjvex[0] = 0
+	list := NewArray(vNum)
+	for i := 1; i < vNum; i++ {
+		lowcost[i] = int(graphMatrix.Edge[0][i])
+		adjvex[i] = 0
+	}
+	var min, index int
+	for i := 1; i < vNum; i++ {
+		min = INFINITY
+		var j = 1
+		for j < vNum {
+			if lowcost[j] != 0 && lowcost[j] < min {
+				min = lowcost[j]
+				index = j
+			}
+			j++
+		}
+		fmt.Println(adjvex[index], index, min)
+		arr := [3]int{adjvex[index], index, min}
+		list.Add(arr)
+		lowcost[index] = 0
+		for j = 1; j < vNum; j++ {
+			if lowcost[j] != 0 && int(graphMatrix.Edge[index][j]) < lowcost[j] {
+				lowcost[j] = int(graphMatrix.Edge[index][j])
+				adjvex[j] = index
+			}
+		}
+	}
+	return CreateMiniSpanTreeByPrim(list, graphMatrix.Veriex...)
+}
+
+func CreateMiniSpanTreeByPrim(list *ArrayList, ver ...interface{}) *GraphMatrix {
+	graph := InitDirectedGraphMatrix(ver...)
+	for i := 0; i < list.length; i++ {
+		arr := list.GetValue(i)
+		graph.AddEdgeInDirectedGraphMatrix(arr.([3]int)[0], arr.([3]int)[1], arr.([3]int)[2])
+	}
+	return graph
+}
