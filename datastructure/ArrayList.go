@@ -11,7 +11,7 @@ var capacity = func(list *ArrayList) int {
 	return cap(list.data)
 }
 
-func newArray(cap uint) *ArrayList {
+func NewArray(cap int) *ArrayList {
 	if cap == 0 {
 		return new(ArrayList)
 	}

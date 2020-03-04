@@ -4,8 +4,8 @@ import (
 	"testing"
 )
 
-func initArrayList(capacity uint) *ArrayList {
-	list := newArray(capacity)
+func initArrayList(capacity int) *ArrayList {
+	list := NewArray(capacity)
 	return list
 }
 
