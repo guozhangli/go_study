@@ -148,6 +148,7 @@ func TestMSTByPrim(t *testing.T) {
 	graph := InitDirectedGraph_Prim()
 	AddEdgeInDirectedGraphMatrix_Prim(graph)
 	t.Log(graph)
-	MST := graph.MiniSpanTree_Prim()
+	MST, sum := graph.MiniSpanTree_Prim()
 	t.Log(MST)
+	t.Log(sum)
 }

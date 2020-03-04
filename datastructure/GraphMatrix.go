@@ -213,7 +213,7 @@ func (graphMatrix *GraphMatrix) BfsTraverseMatirxQueue() {
 }
 
 //最小生成树-普鲁姆算法
-func (graphMatrix *GraphMatrix) MiniSpanTree_Prim() *GraphMatrix {
+func (graphMatrix *GraphMatrix) MiniSpanTree_Prim() (*GraphMatrix, int) {
 	checkGraphMatrix(graphMatrix)
 	vNum := len(graphMatrix.Veriex)
 	lowcost := make([]int, vNum) //以i为终点的最小权值
@@ -225,7 +225,7 @@ func (graphMatrix *GraphMatrix) MiniSpanTree_Prim() *GraphMatrix {
 		lowcost[i] = int(graphMatrix.Edge[0][i])
 		adjvex[i] = 0
 	}
-	var min, index int
+	var min, index, sum int
 	for i := 1; i < vNum; i++ {
 		min = INFINITY
 		var j = 1
@@ -239,6 +239,7 @@ func (graphMatrix *GraphMatrix) MiniSpanTree_Prim() *GraphMatrix {
 		fmt.Println(adjvex[index], index, min)
 		arr := [3]int{adjvex[index], index, min}
 		list.Add(arr)
+		sum += min
 		lowcost[index] = 0
 		for j = 1; j < vNum; j++ {
 			if lowcost[j] != 0 && int(graphMatrix.Edge[index][j]) < lowcost[j] {
@@ -247,7 +248,7 @@ func (graphMatrix *GraphMatrix) MiniSpanTree_Prim() *GraphMatrix {
 			}
 		}
 	}
-	return CreateMiniSpanTreeByPrim(list, graphMatrix.Veriex...)
+	return CreateMiniSpanTreeByPrim(list, graphMatrix.Veriex...), sum
 }
 
 func CreateMiniSpanTreeByPrim(list *ArrayList, ver ...interface{}) *GraphMatrix {
