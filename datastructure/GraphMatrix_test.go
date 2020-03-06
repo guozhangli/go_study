@@ -154,3 +154,56 @@ func TestMSTByPrim(t *testing.T) {
 	t.Log(MST)
 	t.Log(sum)
 }
+
+func InitDirectedGraph_Dijkstra() *GraphMatrix {
+	graph := InitDirectedGraphMatrix("V0", "V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8")
+	return graph
+}
+func AddEdgeInDirectedGraphMatrix_Dijkstra(graph *GraphMatrix) {
+	graph.AddEdgeInDirectedGraphMatrix(0, 1, 1)
+	graph.AddEdgeInDirectedGraphMatrix(0, 2, 5)
+	graph.AddEdgeInDirectedGraphMatrix(1, 0, 1)
+	graph.AddEdgeInDirectedGraphMatrix(1, 2, 3)
+	graph.AddEdgeInDirectedGraphMatrix(1, 3, 7)
+	graph.AddEdgeInDirectedGraphMatrix(1, 4, 5)
+	graph.AddEdgeInDirectedGraphMatrix(2, 0, 5)
+	graph.AddEdgeInDirectedGraphMatrix(2, 1, 3)
+	graph.AddEdgeInDirectedGraphMatrix(2, 4, 1)
+	graph.AddEdgeInDirectedGraphMatrix(2, 5, 7)
+	graph.AddEdgeInDirectedGraphMatrix(3, 1, 7)
+	graph.AddEdgeInDirectedGraphMatrix(3, 4, 2)
+	graph.AddEdgeInDirectedGraphMatrix(3, 6, 3)
+	graph.AddEdgeInDirectedGraphMatrix(4, 1, 5)
+	graph.AddEdgeInDirectedGraphMatrix(4, 2, 1)
+	graph.AddEdgeInDirectedGraphMatrix(4, 3, 2)
+	graph.AddEdgeInDirectedGraphMatrix(4, 5, 3)
+	graph.AddEdgeInDirectedGraphMatrix(4, 6, 6)
+	graph.AddEdgeInDirectedGraphMatrix(4, 7, 9)
+	graph.AddEdgeInDirectedGraphMatrix(5, 2, 7)
+	graph.AddEdgeInDirectedGraphMatrix(5, 4, 3)
+	graph.AddEdgeInDirectedGraphMatrix(5, 7, 5)
+	graph.AddEdgeInDirectedGraphMatrix(6, 3, 3)
+	graph.AddEdgeInDirectedGraphMatrix(6, 4, 6)
+	graph.AddEdgeInDirectedGraphMatrix(6, 7, 2)
+	graph.AddEdgeInDirectedGraphMatrix(6, 8, 7)
+	graph.AddEdgeInDirectedGraphMatrix(7, 4, 9)
+	graph.AddEdgeInDirectedGraphMatrix(7, 5, 5)
+	graph.AddEdgeInDirectedGraphMatrix(7, 6, 2)
+	graph.AddEdgeInDirectedGraphMatrix(7, 8, 4)
+	graph.AddEdgeInDirectedGraphMatrix(8, 6, 7)
+	graph.AddEdgeInDirectedGraphMatrix(8, 7, 4)
+}
+func TestShortestPathByDijkstra(t *testing.T) {
+	graph := InitDirectedGraph_Dijkstra()
+	AddEdgeInDirectedGraphMatrix_Dijkstra(graph)
+	t.Log(graph)
+	sp := graph.ShortestPath_Dijkstra(0, 8)
+	t.Log(sp)
+}
+
+func TestShortestPathByFolyd(t *testing.T) {
+	graph := InitDirectedGraph_Dijkstra()
+	AddEdgeInDirectedGraphMatrix_Dijkstra(graph)
+	t.Log(graph)
+	graph.ShortestPath_Floyd()
+}

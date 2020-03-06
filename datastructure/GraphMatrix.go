@@ -259,3 +259,77 @@ func CreateMiniSpanTreeByPrim(list *ArrayList, ver ...interface{}) *GraphMatrix 
 	}
 	return graph
 }
+
+//迪杰斯特拉算法求最短路径
+func (graphMatrix *GraphMatrix) ShortestPath_Dijkstra(i int, j int) int {
+	checkGraphMatrix(graphMatrix)
+	vNum := len(graphMatrix.Veriex)
+	pathIndex := make([]int, vNum)  //对应最短路径节点的起点的下标
+	shortTable := make([]int, vNum) //最短路径的数组
+	final := make([]bool, vNum)
+	for v := 0; v < vNum; v++ {
+		pathIndex[v] = 0
+		shortTable[v] = int(graphMatrix.Edge[i][v])
+		final[v] = false
+
+	}
+	shortTable[i] = 0
+	final[i] = true
+	fmt.Printf("path:%v\n", shortTable)
+	fmt.Printf("index:%v\n", pathIndex)
+	fmt.Printf("final:%v\n\n", final)
+	var min, k int
+	for v := 1; v < vNum; v++ {
+		min = INFINITY
+		for w := 1; w < vNum; w++ {
+			if shortTable[w] < min && !final[w] {
+				min = shortTable[w]
+				k = w
+			}
+		}
+		final[k] = true
+		fmt.Printf("min:%d,k:%d\n", min, k)
+		fmt.Printf("final:%v\n", final)
+		fmt.Printf("short:%v\n", shortTable)
+		fmt.Printf("k  %v\n", graphMatrix.Edge[k])
+		for w := 1; w < vNum; w++ {
+			if !final[w] && (min+int(graphMatrix.Edge[k][w])) < shortTable[w] {
+				shortTable[w] = min + int(graphMatrix.Edge[k][w])
+				pathIndex[w] = k
+			}
+		}
+		fmt.Printf("path:%v\n", shortTable)
+		fmt.Printf("index:%v\n\n", pathIndex)
+
+	}
+	return shortTable[j]
+}
+
+//弗洛伊德算法求最短路径
+func (graphMatrix *GraphMatrix) ShortestPath_Floyd() {
+	checkGraphMatrix(graphMatrix)
+	vNum := len(graphMatrix.Veriex)
+	pathIndex := make([][]int, vNum)
+	shortTable := make([][]int, vNum)
+	for v := 0; v < vNum; v++ {
+		pathIndex[v] = make([]int, vNum)
+		shortTable[v] = make([]int, vNum)
+		for w := 0; w < vNum; w++ {
+			pathIndex[v][w] = w
+			shortTable[v][w] = int(graphMatrix.Edge[v][w])
+		}
+	}
+	for k := 0; k < vNum; k++ {
+		for v := 0; v < vNum; v++ {
+			for w := 0; w < vNum; w++ {
+				if shortTable[v][w] > shortTable[v][k]+shortTable[k][w] {
+					shortTable[v][w] = shortTable[v][k] + shortTable[k][w]
+					pathIndex[v][w] = pathIndex[v][k]
+				}
+			}
+		}
+	}
+	fmt.Println(shortTable)
+	fmt.Println(pathIndex)
+
+}
