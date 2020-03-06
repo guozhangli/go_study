@@ -120,6 +120,7 @@ func (graphList *GraphList) IsEdgeInGraphList(i int, j int) bool {
 	return flag
 }
 
+//计算图顶点的出度
 func (graphList *GraphList) GetOutDegreeGraphList(value interface{}) int {
 	checkGraphList(graphList)
 	flag := false
@@ -139,6 +140,32 @@ func (graphList *GraphList) GetOutDegreeGraphList(value interface{}) int {
 		panic("veriex is not exist")
 	}
 	return 0
+}
+
+//计算图顶点的入度
+func (graphList *GraphList) GetInDegreeGraphList(value interface{}) int {
+	checkGraphList(graphList)
+	index := -1
+	for i, v := range graphList.Veriexs {
+		if v.Veriex == value {
+			index = i
+			break
+		}
+	}
+	if index == -1 {
+		panic("未查找到顶点")
+	}
+	var count int
+	for _, v := range graphList.Veriexs {
+		node := v.FirstEdge
+		for node != nil {
+			if node.Index == index {
+				count++
+			}
+			node = node.Next
+		}
+	}
+	return count
 }
 
 var veriexFlag_1 []bool
@@ -229,5 +256,37 @@ func (graphList *GraphList) BfsTraverseListQueue() {
 				}
 			}
 		}
+	}
+}
+
+//拓扑排序
+func (graphList *GraphList) TopologicalSort() {
+	checkGraphList(graphList)
+	vNum := len(graphList.Veriexs)
+	inDegree := make([]int, vNum)
+	stack := NewStackLinked()
+	for i, v := range graphList.Veriexs {
+		inDegree[i] = graphList.GetInDegreeGraphList(v.Veriex)
+		if inDegree[i] == 0 {
+			stack.Push(i)
+		}
+	}
+	var e *EdgeNode
+	var count int
+	for !stack.IsEmpty() {
+		gettop := stack.Pop().(*Node).Data.(int)
+		fmt.Println(graphList.Veriexs[gettop].Veriex)
+		count++
+		e = graphList.Veriexs[gettop].FirstEdge
+		for e != nil {
+			k := e.Index
+			if inDegree[k]--; inDegree[k] == 0 {
+				stack.Push(k)
+			}
+			e = e.Next
+		}
+	}
+	if count < vNum {
+		panic("存在环")
 	}
 }
