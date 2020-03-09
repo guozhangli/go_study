@@ -263,7 +263,7 @@ func (graphList *GraphList) BfsTraverseListQueue() {
 func (graphList *GraphList) TopologicalSort() {
 	checkGraphList(graphList)
 	vNum := len(graphList.Veriexs)
-	inDegree := make([]int, vNum)
+	inDegree := make([]int, vNum) //入度
 	stack := NewStackLinked()
 	for i, v := range graphList.Veriexs {
 		inDegree[i] = graphList.GetInDegreeGraphList(v.Veriex)
@@ -288,5 +288,77 @@ func (graphList *GraphList) TopologicalSort() {
 	}
 	if count < vNum {
 		panic("存在环")
+	}
+}
+
+func (graphList *GraphList) TopologicalSort_1() (Stack, []int) {
+	checkGraphList(graphList)
+	vNum := len(graphList.Veriexs)
+	inDegree := make([]int, vNum) //入度
+	stack := NewStackLinked()     //用于存储入度为0的栈
+	etv := make([]int, vNum)      //事件最早发生时间
+	stack2 := NewStackLinked()    //用于存储拓扑序列的栈
+	for i, v := range graphList.Veriexs {
+		etv[i] = 0 //初始化为0
+		inDegree[i] = graphList.GetInDegreeGraphList(v.Veriex)
+		if inDegree[i] == 0 {
+			stack.Push(i)
+		}
+	}
+	var e *EdgeNode
+	var count int
+	for !stack.IsEmpty() {
+		gettop := stack.Pop().(*Node).Data.(int)
+		stack2.Push(gettop)
+		count++
+		e = graphList.Veriexs[gettop].FirstEdge
+		for e != nil {
+			k := e.Index
+			if inDegree[k]--; inDegree[k] == 0 {
+				stack.Push(k)
+			}
+			if etv[gettop]+e.Weight > etv[k] {
+				etv[k] = etv[gettop] + e.Weight
+			}
+			e = e.Next
+		}
+	}
+	if count < vNum {
+		panic("存在环")
+	}
+	return stack2, etv
+}
+
+//关键路径算法
+func (graphList *GraphList) KeyPath() {
+	sk, etv := graphList.TopologicalSort_1()
+	vNum := len(graphList.Veriexs)
+	ltv := make([]int, vNum)
+	for i := 0; i < vNum; i++ {
+		ltv[i] = etv[vNum-1]
+	}
+	var ete, lte int
+	var e *EdgeNode
+	stack := sk.(*StackLinked)
+	for !stack.IsEmpty() {
+		gettop := stack.Pop().(*Node).Data.(int)
+		e = graphList.Veriexs[gettop].FirstEdge
+		for e != nil {
+			k := e.Index
+			if ltv[k]-e.Weight < ltv[gettop] {
+				ltv[gettop] = ltv[k] - e.Weight
+			}
+			e = e.Next
+		}
+	}
+	for j := 0; j < vNum; j++ {
+		for e := graphList.Veriexs[j].FirstEdge; e != nil; e = e.Next {
+			k := e.Index
+			ete = etv[j]
+			lte = ltv[k] - e.Weight
+			if ete == lte {
+				fmt.Printf("<%v,%v> length: %d,", graphList.Veriexs[j].Veriex, graphList.Veriexs[k].Veriex, e.Weight)
+			}
+		}
 	}
 }

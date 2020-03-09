@@ -124,3 +124,32 @@ func TestTopologicalSort(t *testing.T) {
 	t.Log(printGL(graph))
 	graph.TopologicalSort()
 }
+func printStack(stack Stack) string {
+	str, _ := json.Marshal(stack)
+	return string(str)
+}
+func InitGL_KeyPath() *GraphList {
+	graph := InitGraphList("V0", "V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9")
+	return graph
+}
+func AddEdgeInGL_KeyPath(graph *GraphList) {
+	graph.AddEdgeInGraphList(0, 2, 4)
+	graph.AddEdgeInGraphList(0, 1, 3)
+	graph.AddEdgeInGraphList(1, 4, 6)
+	graph.AddEdgeInGraphList(1, 3, 5)
+	graph.AddEdgeInGraphList(2, 5, 7)
+	graph.AddEdgeInGraphList(2, 3, 8)
+	graph.AddEdgeInGraphList(3, 4, 3)
+	graph.AddEdgeInGraphList(4, 7, 4)
+	graph.AddEdgeInGraphList(4, 6, 9)
+	graph.AddEdgeInGraphList(5, 7, 6)
+	graph.AddEdgeInGraphList(6, 9, 2)
+	graph.AddEdgeInGraphList(7, 8, 5)
+	graph.AddEdgeInGraphList(8, 9, 3)
+}
+func TestKeyPath(t *testing.T) {
+	graph := InitGL_KeyPath()
+	AddEdgeInGL_KeyPath(graph)
+	t.Log(printGL(graph))
+	graph.KeyPath()
+}
