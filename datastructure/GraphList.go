@@ -333,11 +333,11 @@ func (graphList *GraphList) TopologicalSort_1() (Stack, []int) {
 func (graphList *GraphList) KeyPath() {
 	sk, etv := graphList.TopologicalSort_1()
 	vNum := len(graphList.Veriexs)
-	ltv := make([]int, vNum)
+	ltv := make([]int, vNum) //事件最迟发生时间
 	for i := 0; i < vNum; i++ {
 		ltv[i] = etv[vNum-1]
 	}
-	var ete, lte int
+	var ete, lte int //活动最早发生时间和最迟发生时间
 	var e *EdgeNode
 	stack := sk.(*StackLinked)
 	for !stack.IsEmpty() {
@@ -354,8 +354,8 @@ func (graphList *GraphList) KeyPath() {
 	for j := 0; j < vNum; j++ {
 		for e := graphList.Veriexs[j].FirstEdge; e != nil; e = e.Next {
 			k := e.Index
-			ete = etv[j]
-			lte = ltv[k] - e.Weight
+			ete = etv[j]            //活动最早发生时间
+			lte = ltv[k] - e.Weight //活动最迟发生时间
 			if ete == lte {
 				fmt.Printf("<%v,%v> length: %d,", graphList.Veriexs[j].Veriex, graphList.Veriexs[k].Veriex, e.Weight)
 			}
