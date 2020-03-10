@@ -14,6 +14,19 @@ func InitBalancedBinaryTree() *BalancedBinaryTree {
 	return new(BalancedBinaryTree)
 }
 
-func (tree *BalancedBinaryTree) InsertNodeInBalancedBinaryTree(value int) {
+func checkBalancedBinaryTree(tree *BalancedBinaryTree) {
+	if tree == nil {
+		panic("未创建平衡二叉树")
+	}
+}
 
+func (tree *BalancedBinaryTree) InsertNodeInBalancedBinaryTree(value int) {
+	checkBalancedBinaryTree(tree)
+	node := &BalancedBinaryNode{
+		Data:  value,
+		Bf:    0,
+		Left:  nil,
+		Right: nil,
+	}
+	tree.Root = node
 }
