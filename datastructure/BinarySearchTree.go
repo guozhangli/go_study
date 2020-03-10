@@ -5,8 +5,7 @@ import (
 )
 
 type BinarySearchTree struct {
-	Root  *BinarySearchNode
-	index int
+	Root *BinarySearchNode
 }
 
 type BinarySearchNode struct {

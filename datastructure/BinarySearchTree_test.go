@@ -7,8 +7,8 @@ import (
 
 func TestCreateBinarySearchTree(t *testing.T) {
 	bst := NewBinarySearchTree()
-	str_p := []string{"7", "4", "2", "5", "9", "10"}
-	str_m := []string{"2", "4", "5", "7", "9", "10"}
+	str_p := []string{"7", "4", "2", "5", "9", "10"} //先序
+	str_m := []string{"2", "4", "5", "7", "9", "10"} //中序
 	bst.InitBinarySearchTree(str_p, str_m)
 	str, _ := json.Marshal(bst)
 	t.Log(string(str))
