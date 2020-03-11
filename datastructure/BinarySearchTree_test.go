@@ -87,7 +87,7 @@ func TestBinarySearchTree_InsertElementInBinarySearchTree(t *testing.T) {
 	bst.InitBinarySearchTree(str_p, str_m)
 	str, _ := json.Marshal(bst)
 	t.Log(string(str))
-	bst.InsertElementInBinarySearchTree(bst.Root, 5)
+	bst.InsertElementInBinarySearchTree(bst.Root, 8)
 	str1, _ := json.Marshal(bst)
 	t.Log(string(str1))
 }

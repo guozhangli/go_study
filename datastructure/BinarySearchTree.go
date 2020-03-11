@@ -129,29 +129,29 @@ func (tree *BinarySearchTree) SearchElementInBinarySearchTreeForeach(root *Binar
 func (tree *BinarySearchTree) InsertElementInBinarySearchTree(root *BinarySearchNode, element int) {
 	checkBinarySearchTree(tree)
 	node := NewBinarySearchTreeNode(element)
-	var pre, next *BinarySearchNode
+	var pre *BinarySearchNode
 	for root != nil {
 		if root.Data < element {
-			root = root.Right
-			if root != nil {
-				next = root
-			}
-
-		} else if root.Data > element {
-			root = root.Left
 			if root != nil {
 				pre = root
 			}
+			root = root.Right
+		} else if root.Data > element {
+			if root != nil {
+				pre = root
+			}
+			root = root.Left
 		} else {
 			pre = nil
-			next = nil
 			break
 		}
 	}
-	if pre != nil && next != nil {
-		node.Left = next
+	if pre.Data > node.Data {
+		pre.Left = node
+	} else {
 		pre.Right = node
 	}
+
 }
 
 func (tree *BinarySearchTree) DeleteElementInBinarySearchTree(root **BinarySearchNode, element int) {
