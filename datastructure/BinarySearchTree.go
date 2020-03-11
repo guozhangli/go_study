@@ -146,12 +146,13 @@ func (tree *BinarySearchTree) InsertElementInBinarySearchTree(root *BinarySearch
 			break
 		}
 	}
-	if pre.Data > node.Data {
-		pre.Left = node
-	} else {
-		pre.Right = node
+	if pre != nil {
+		if pre.Data > node.Data {
+			pre.Left = node
+		} else {
+			pre.Right = node
+		}
 	}
-
 }
 
 func (tree *BinarySearchTree) DeleteElementInBinarySearchTree(root **BinarySearchNode, element int) {
