@@ -129,28 +129,32 @@ func (tree *BinarySearchTree) SearchElementInBinarySearchTreeForeach(root *Binar
 func (tree *BinarySearchTree) InsertElementInBinarySearchTree(root *BinarySearchNode, element int) {
 	checkBinarySearchTree(tree)
 	node := NewBinarySearchTreeNode(element)
-	var pre *BinarySearchNode
-	for root != nil {
-		if root.Data < element {
-			if root != nil {
-				pre = root
+	if root == nil {
+		root = node
+	} else {
+		var pre *BinarySearchNode
+		for root != nil {
+			if root.Data < element {
+				if root != nil {
+					pre = root
+				}
+				root = root.Right
+			} else if root.Data > element {
+				if root != nil {
+					pre = root
+				}
+				root = root.Left
+			} else {
+				pre = nil
+				break
 			}
-			root = root.Right
-		} else if root.Data > element {
-			if root != nil {
-				pre = root
-			}
-			root = root.Left
-		} else {
-			pre = nil
-			break
 		}
-	}
-	if pre != nil {
-		if pre.Data > node.Data {
-			pre.Left = node
-		} else {
-			pre.Right = node
+		if pre != nil {
+			if pre.Data > node.Data {
+				pre.Left = node
+			} else {
+				pre.Right = node
+			}
 		}
 	}
 }
@@ -167,9 +171,9 @@ func (tree *BinarySearchTree) DeleteElementInBinarySearchTree(root **BinarySearc
 			if (*root).Left == nil && (*root).Right == nil {
 				*root = nil
 			} else if (*root).Left != nil && (*root).Right != nil {
-				temp = tree.SearchMaxElementInBinarySearchTreeForeach((*root).Right)
+				temp = tree.SearchMaxElementInBinarySearchTreeForeach((*root).Left)
 				(*root).Data = temp.Data
-				tree.DeleteElementInBinarySearchTree(&(*root).Right, (*root).Data)
+				tree.DeleteElementInBinarySearchTree(&(*root).Left, (*root).Data)
 			} else if (*root).Left != nil && (*root).Right == nil {
 				*root = (*root).Left
 			} else if (*root).Left == nil && (*root).Right != nil {
@@ -177,4 +181,33 @@ func (tree *BinarySearchTree) DeleteElementInBinarySearchTree(root **BinarySearc
 			}
 		}
 	}
+}
+
+func (tree *BinarySearchTree) GetHight() int {
+	checkBinarySearchTree(tree)
+	queue := NewQueueLinked()
+	queue.EnQueue(tree.Root)
+	queue.EnQueue(nil)
+	var level int
+	for !queue.IsEmpty() {
+		var node *BinarySearchNode
+		temp := queue.DeQueue().(*Node).Data
+		if temp != nil {
+			node = temp.(*BinarySearchNode)
+		}
+		if node == nil {
+			if !queue.IsEmpty() {
+				queue.EnQueue(nil)
+			}
+			level++
+		} else {
+			if node.Left != nil {
+				queue.EnQueue(node.Left)
+			}
+			if node.Right != nil {
+				queue.EnQueue(node.Right)
+			}
+		}
+	}
+	return level
 }
