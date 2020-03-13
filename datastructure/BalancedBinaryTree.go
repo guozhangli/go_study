@@ -66,9 +66,49 @@ func (tree *BalancedBinaryTree) InsertNodeInBalancedBinaryTree(node **BalancedBi
 	}
 }
 
-func (tree *BalancedBinaryTree) DeleteNodeInBalancedBinaryTree(element int) {
+func (tree *BalancedBinaryTree) DeleteNodeInBalancedBinaryTree(node **BalancedBinaryNode, element int) {
 	checkBalancedBinaryTree(tree)
+	if *node == nil {
+		return
+	}
+	if (*node).Data > element {
+		tree.DeleteNodeInBalancedBinaryTree(&(*node).Left, element)
+		(*node).Bf = GetHight((*node).Left) - GetHight((*node).Right)
+		if (*node).Bf > LH {
+			if (*node).Left.Bf == LH {
+				R_Rotate(node)
+			} else {
+				LR_Rotate(node)
+			}
+		}
+	} else if (*node).Data < element {
+		tree.DeleteNodeInBalancedBinaryTree(&(*node).Right, element)
+		(*node).Bf = GetHight((*node).Left) - GetHight((*node).Right)
+		if (*node).Bf < RH {
+			if (*node).Right.Bf == RH {
+				L_Rotate(node)
+			} else {
+				RL_Rotate(node)
+			}
+		}
+	} else {
+		if (*node).Left != nil && (*node).Right != nil {
+			if (*node).Left.Bf > (*node).Right.Bf {
+				temp := tree.SearchMaxElementInBalancedBinaryTree_1((*node).Left)
+				tree.DeleteNodeInBalancedBinaryTree(&temp.Left, element)
+			} else {
+				temp := tree.SearchMinElementInBalancedBinaryTree_1((*node).Right)
+				tree.DeleteNodeInBalancedBinaryTree(&temp.Right, element)
+			}
 
+		} else if (*node).Left != nil && (*node).Right == nil {
+			*node = (*node).Left
+		} else if (*node).Left == nil && (*node).Right != nil {
+			*node = (*node).Right
+		} else {
+			*node = nil
+		}
+	}
 }
 
 func (tree *BalancedBinaryTree) SearchMaxElementInBalancedBinaryTree() *BalancedBinaryNode {

@@ -29,7 +29,8 @@ func TestDeleteNodeInBalancedBinaryTree(t *testing.T) {
 		tree.InsertNodeInBalancedBinaryTree(&tree.Root, v)
 		printTree(tree, t)
 	}
-	tree.DeleteNodeInBalancedBinaryTree(8)
+	tree.DeleteNodeInBalancedBinaryTree(&tree.Root, 8)
+	printTree(tree, t)
 }
 
 func TestSearchMaxElementInBalancedBinaryTree(t *testing.T) {
