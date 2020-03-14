@@ -29,7 +29,7 @@ func TestDeleteNodeInBalancedBinaryTree(t *testing.T) {
 		tree.InsertNodeInBalancedBinaryTree(&tree.Root, v)
 		printTree(tree, t)
 	}
-	tree.DeleteNodeInBalancedBinaryTree(&tree.Root, 8)
+	tree.DeleteNodeInBalancedBinaryTree(&tree.Root, 4)
 	printTree(tree, t)
 }
 

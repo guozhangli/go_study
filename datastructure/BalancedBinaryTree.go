@@ -95,10 +95,12 @@ func (tree *BalancedBinaryTree) DeleteNodeInBalancedBinaryTree(node **BalancedBi
 		if (*node).Left != nil && (*node).Right != nil {
 			if (*node).Left.Bf > (*node).Right.Bf {
 				temp := tree.SearchMaxElementInBalancedBinaryTree_1((*node).Left)
-				tree.DeleteNodeInBalancedBinaryTree(&temp.Left, element)
+				(*node).Data = temp.Data
+				tree.DeleteNodeInBalancedBinaryTree(&(*node).Left, (*node).Data)
 			} else {
 				temp := tree.SearchMinElementInBalancedBinaryTree_1((*node).Right)
-				tree.DeleteNodeInBalancedBinaryTree(&temp.Right, element)
+				(*node).Data = temp.Data
+				tree.DeleteNodeInBalancedBinaryTree(&(*node).Right, (*node).Data)
 			}
 
 		} else if (*node).Left != nil && (*node).Right == nil {
