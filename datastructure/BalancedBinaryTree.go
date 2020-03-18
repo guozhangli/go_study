@@ -5,6 +5,7 @@ const (
 	RH = -1
 )
 
+//AVL TREE
 type BalancedBinaryTree struct {
 	Root *BalancedBinaryNode
 }
