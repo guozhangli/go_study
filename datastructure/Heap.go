@@ -80,9 +80,26 @@ func (heap *Heap) Insert(data int) {
 	heap.Count++
 	i := heap.Count - 1
 	heap.Array = append(heap.Array, 0)
-	for i >= 0 && data > heap.Array[(i-1)/2] {
+	for i > 0 && data > heap.Array[(i-1)/2] {
 		heap.Array[i] = heap.Array[(i-1)/2]
 		i = (i - 1) / 2
 	}
 	heap.Array[i] = data
+}
+
+func (heap *Heap) DestoryHeap() {
+	heap.Count = 0
+	heap.Array = nil
+}
+
+func (heap *Heap) BuildHeap(arr []int) {
+	if heap == nil {
+		return
+	}
+	for i := 0; i < len(arr); i++ {
+		heap.Array[i] = arr[i]
+	}
+	for i := (heap.Count - 1) / 2; i >= 0; i-- {
+		heap.PercolateDown(i)
+	}
 }

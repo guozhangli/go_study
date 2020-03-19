@@ -1,5 +1,7 @@
 package TestProject
 
+import "fmt"
+
 //冒泡排序
 func BubblingSort(arr []int) []int {
 	var flag = true
@@ -68,5 +70,16 @@ func InsertI(arr []int, gap int, i int) {
 
 //堆排序
 func HeapSort(arr []int) []int {
-	return arr
+	n := len(arr)
+	heap := NewHeap(n)
+	heap.BuildHeap(arr)
+	for i := 0; i < n; i++ {
+		fmt.Println(heap.Array[0])
+		heap.Array[0] = heap.Array[heap.Count-1]
+		heap.Count--
+		heap.PercolateDown(i)
+		fmt.Println(heap.Array)
+	}
+	heap.Count = n
+	return heap.Array
 }

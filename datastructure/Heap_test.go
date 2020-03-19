@@ -50,3 +50,22 @@ func TestInsert(t *testing.T) {
 	heap.Insert(6)
 	t.Log(heap)
 }
+
+func TestDestoryHeap(t *testing.T) {
+	heap := NewHeap(5)
+	heap.DestoryHeap()
+	t.Log(heap)
+}
+
+func TestBuildHeap(t *testing.T) {
+	var arr = []int{2, 4, 5, 9, 3, 6, 7, 1, 10, 8}
+	heap := NewHeap(len(arr))
+	heap.BuildHeap(arr)
+	t.Log(heap)
+}
+
+func TestHeapSort(t *testing.T) {
+	var arr = []int{2, 4, 5, 9, 3, 6, 7, 1, 10, 8}
+	a := HeapSort(arr)
+	t.Log(a)
+}
