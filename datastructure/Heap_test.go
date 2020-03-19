@@ -44,3 +44,9 @@ func TestDeleteMax(t *testing.T) {
 	val := heap.DeleteMax()
 	t.Log(val)
 }
+
+func TestInsert(t *testing.T) {
+	heap := NewHeap(5)
+	heap.Insert(6)
+	t.Log(heap)
+}

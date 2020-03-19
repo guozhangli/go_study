@@ -75,3 +75,14 @@ func (heap *Heap) DeleteMax() int {
 	heap.ParentIndex(0)
 	return data
 }
+
+func (heap *Heap) Insert(data int) {
+	heap.Count++
+	i := heap.Count - 1
+	heap.Array = append(heap.Array, 0)
+	for i >= 0 && data > heap.Array[(i-1)/2] {
+		heap.Array[i] = heap.Array[(i-1)/2]
+		i = (i - 1) / 2
+	}
+	heap.Array[i] = data
+}
