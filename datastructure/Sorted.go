@@ -75,12 +75,9 @@ func HeapSort(arr []int) []int {
 	heap.BuildHeap(arr)
 	fmt.Println(heap.Array)
 	for i := n - 1; i >= 0; i-- {
-		//fmt.Println(heap.Array[0])
-		heap.Array[0], heap.Array[heap.Count-1] = heap.Array[heap.Count-1], heap.Array[0]
+		heap.Array[0], heap.Array[i] = heap.Array[i], heap.Array[0]
 		heap.Count--
-		heap.PercolateDown(i)
-		fmt.Println(heap.Array)
+		heap.PercolateDown(0)
 	}
-	heap.Count = n
 	return heap.Array
 }

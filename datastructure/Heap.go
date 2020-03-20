@@ -48,21 +48,19 @@ func (heap *Heap) GetMaximum() int {
 func (heap *Heap) PercolateDown(index int) {
 	l := heap.LeftChildIndex(index)
 	r := heap.RightChildIndex(index)
-	var max int
-	if l != -1 && heap.Array[l] > heap.Array[index] {
-		max = l
-	} else {
-		max = index
+	var max = index
+	if index <= heap.Count/2 {
+		if l != -1 && heap.Array[l] > heap.Array[max] {
+			max = l
+		}
+		if r != -1 && heap.Array[r] > heap.Array[max] {
+			max = r
+		}
+		if max != index {
+			heap.Array[index], heap.Array[max] = heap.Array[max], heap.Array[index]
+			heap.PercolateDown(max)
+		}
 	}
-	if r != -1 && heap.Array[r] > heap.Array[max] {
-		max = r
-	}
-	if max != index {
-		heap.Array[max], heap.Array[index] = heap.Array[index], heap.Array[max]
-	} else {
-		return
-	}
-	heap.PercolateDown(max)
 }
 
 func (heap *Heap) DeleteMax() int {
