@@ -31,3 +31,9 @@ func TestHeapSorted(t *testing.T) {
 	arrsorted := HeapSort(arr)
 	t.Log(arrsorted)
 }
+
+func TestMergeSorted(t *testing.T) {
+	var arr = []int{2, 4, 5, 9, 3, 6, 7, 1, 10, 8}
+	arrsorted := MergeSort(arr)
+	t.Log(arrsorted)
+}

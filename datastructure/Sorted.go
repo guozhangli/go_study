@@ -81,3 +81,52 @@ func HeapSort(arr []int) []int {
 	}
 	return heap.Array
 }
+
+//归并排序
+func MergeSort(arr []int) []int {
+	var temp = make([]int, len(arr))
+	MSort(arr, 0, len(arr)-1, temp)
+	return temp
+}
+
+func MSort(arr []int, left int, right int, temp []int) {
+	if left < right {
+		mid := (left + right) / 2
+		MSort(arr, left, mid, temp)
+		MSort(arr, mid+1, right, temp)
+		Marge(arr, left, mid, right, temp)
+	}
+}
+
+func Marge(arr []int, left int, mid int, right int, temp []int) {
+	i := left
+	j := mid + 1
+	t := 0
+	for i <= mid && j <= right {
+		if arr[i] <= arr[j] {
+			temp[t] = arr[i]
+			t++
+			i++
+		} else {
+			temp[t] = arr[j]
+			t++
+			j++
+		}
+	}
+	for i <= mid {
+		temp[t] = arr[i]
+		t++
+		i++
+	}
+	for j <= right {
+		temp[t] = arr[j]
+		t++
+		j++
+	}
+	t = 0
+	for left <= right {
+		arr[left] = temp[t]
+		left++
+		t++
+	}
+}
