@@ -130,3 +130,26 @@ func Marge(arr []int, left int, mid int, right int, temp []int) {
 		t++
 	}
 }
+
+//快速排序
+func QuickSort(arr []int, low int, high int) {
+	if low < high {
+		index := GetIndex(arr, low, high)
+		QuickSort(arr, 0, index-1)
+		QuickSort(arr, index+1, high)
+	}
+}
+
+func GetIndex(arr []int, low int, high int) int {
+	temp := arr[low]
+	for low < high && temp <= arr[high] {
+		high--
+	}
+	arr[low] = arr[high]
+	for low < high && temp >= arr[low] {
+		low++
+	}
+	arr[high] = arr[low]
+	arr[low] = temp
+	return low
+}
