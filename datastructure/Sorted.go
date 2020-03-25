@@ -142,14 +142,16 @@ func QuickSort(arr []int, low int, high int) {
 
 func GetIndex(arr []int, low int, high int) int {
 	temp := arr[low]
-	for low < high && temp <= arr[high] {
-		high--
+	for low < high {
+		for low < high && temp <= arr[high] {
+			high--
+		}
+		arr[low] = arr[high]
+		for low < high && temp >= arr[low] {
+			low++
+		}
+		arr[high] = arr[low]
 	}
-	arr[low] = arr[high]
-	for low < high && temp >= arr[low] {
-		low++
-	}
-	arr[high] = arr[low]
 	arr[low] = temp
 	return low
 }

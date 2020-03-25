@@ -39,7 +39,7 @@ func TestMergeSorted(t *testing.T) {
 }
 
 func TestQuickSorted(t *testing.T) {
-	var arr = []int{2, 4, 5, 9, 3, 6, 7, 1, 10, 8}
+	var arr = []int{2, 4, 5, 9, 6, 3, 7, 1, 10, 8}
 	QuickSort(arr, 0, len(arr)-1)
 	t.Log(arr)
 }
