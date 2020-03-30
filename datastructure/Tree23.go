@@ -236,9 +236,9 @@ func (tree *Tree23) Split(node **Node23, key string, value interface{}) {
 		tree.NoParent(node, key, value)
 		tree.Root = *node
 	} else {
-		if (*parent).GetItemNum() == 1 {
+		if parent.GetItemNum() == 1 {
 			tree.OneParent(node, &parent, key, value)
-		} else if (*parent).GetItemNum() == 2 {
+		} else if parent.GetItemNum() == 2 {
 			tree.TwoParent(node, &parent, key, value)
 		}
 	}

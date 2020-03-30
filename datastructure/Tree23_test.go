@@ -56,13 +56,14 @@ func TestFindNode(t *testing.T) {
 
 func TestTree23Insert(t *testing.T) {
 	tree := InitTree23()
-	tree.Insert("A", "aaaaa")
-	tree.Insert("B", "bbbbb")
-	tree.Insert("C", "ccccc")
-	tree.Insert("D", "ddddd")
+	tree.Insert("S", "sssss")
 	tree.Insert("E", "eeeee")
-	tree.Insert("F", "fffff")
-	tree.Insert("G", "ggggg")
+	tree.Insert("A", "aaaaa")
+	tree.Insert("R", "rrrrr")
+	tree.Insert("C", "ccccc")
+	tree.Insert("H", "hhhhh")
+	tree.Insert("X", "xxxxx")
+	tree.Insert("M", "mmmmm")
 	t.Log(tree)
 	//printTree23(tree,t)  //嵌套调用，死循环
 }
