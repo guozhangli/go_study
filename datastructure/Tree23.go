@@ -12,14 +12,14 @@ type Tree23 struct {
 const NUM = 3
 
 type Node23 struct {
-	Data       []map[interface{}]interface{}
+	Data       []*map[string]interface{}
 	ChirdNode  []*Node23
 	ParentNode *Node23
 }
 
 func InitTree23() *Tree23 {
 	tree := new(Tree23)
-	tree.Root = tree.CreateNode23()
+	tree.Root = CreateNode23()
 	return tree
 }
 
@@ -49,12 +49,20 @@ func CompareTo(val1 interface{}, val2 interface{}) int {
 	panic("compare error")
 }
 
-func (tree *Tree23) CreateNode23() *Node23 {
+func CreateNode23() *Node23 {
 	return &Node23{
-		Data:       make([]map[interface{}]interface{}, NUM-1),
+		Data:       make([]*map[string]interface{}, NUM-1),
 		ChirdNode:  make([]*Node23, NUM),
 		ParentNode: nil,
 	}
+}
+
+func CreateNode23HasValue(key string, value interface{}) *Node23 {
+	node := CreateNode23()
+	m := make(map[string]interface{})
+	m[key] = value
+	node.Data[0] = &m
+	return node
 }
 
 func (node *Node23) IsLeaf() bool {
@@ -95,7 +103,7 @@ func (node *Node23) GetItemNum() int {
 	return count
 }
 
-func (node *Node23) GetData(index int) interface{} {
+func (node *Node23) GetData(index int) *map[string]interface{} {
 	if index != 0 && index != 1 {
 		panic("input index is error")
 	}
@@ -131,50 +139,52 @@ func (node *Node23) DisConnectChildNode(index int) *Node23 {
 	return temp
 }
 
-func (node *Node23) FindData(key interface{}) int {
+func (node *Node23) FindData(key string) int {
 	for i, v := range node.Data {
-		if _, ok := v[key]; ok {
-			return i
+		if v != nil {
+			if _, ok := (*v)[key]; ok {
+				return i
+			}
 		}
 	}
 	return -1
 }
 
-func (node *Node23) InsertData(key interface{}, value interface{}) int {
+func (node *Node23) InsertData(key string, value interface{}) int {
 	for i := NUM - 2; i >= 0; i-- {
 		if node.Data[i] == nil {
 			continue
 		} else {
-			v1 := reflect.ValueOf(node.Data[i]).MapKeys()[0]
-			if CompareTo(v1, value) > 0 {
+			v1 := reflect.ValueOf(*node.Data[i]).MapKeys()[0]
+			if CompareTo(v1.Interface(), value) > 0 {
 				node.Data[i+1] = node.Data[i]
 			} else {
-				m := make(map[interface{}]interface{})
+				m := make(map[string]interface{})
 				m[key] = value
-				node.Data[i+1] = m
+				node.Data[i+1] = &m
 				return i + 1
 			}
 		}
 	}
-	m := make(map[interface{}]interface{})
+	m := make(map[string]interface{})
 	m[key] = value
-	node.Data[0] = m
+	node.Data[0] = &m
 	return 0
 }
 
-func (node *Node23) RemoveData() interface{} {
+func (node *Node23) RemoveData() *map[string]interface{} {
 	index := node.GetItemNum()
-	temp := node.Data[index]
-	node.Data[index] = nil
+	temp := node.Data[index-1]
+	node.Data[index-1] = nil
 	return temp
 }
 
-func (tree *Tree23) Find(key interface{}) interface{} {
+func (tree *Tree23) Find(key string) interface{} {
 	node := tree.Root
 	var curIndex int
 	for {
 		if curIndex = node.FindData(key); curIndex != -1 {
-			return node.Data[curIndex][key]
+			return (*(node.Data[curIndex]))[key]
 		} else if node.IsLeaf() {
 			return nil
 		} else {
@@ -183,19 +193,19 @@ func (tree *Tree23) Find(key interface{}) interface{} {
 	}
 }
 
-func GetNextChild(node *Node23, key interface{}) *Node23 {
+func GetNextChild(node *Node23, key string) *Node23 {
 	for i := 0; i < node.GetItemNum(); i++ {
-		k := reflect.ValueOf(node.Data[i]).MapKeys()[0]
-		if CompareTo(k, key) > 0 {
+		k := reflect.ValueOf(*node.Data[i]).MapKeys()[0]
+		if CompareTo(k.Interface(), key) > 0 {
 			return node.GetChildNode(i)
-		} else if CompareTo(k, key) == 0 {
+		} else if CompareTo(k.Interface(), key) == 0 {
 			return node
 		}
 	}
 	return node.GetChildNode(node.GetItemNum())
 }
 
-func (tree *Tree23) Insert(key interface{}, value interface{}) {
+func (tree *Tree23) Insert(key string, value interface{}) {
 	node := tree.Root
 	for {
 		if node.IsLeaf() {
@@ -203,30 +213,161 @@ func (tree *Tree23) Insert(key interface{}, value interface{}) {
 		} else {
 			node = GetNextChild(node, key)
 			for _, v := range node.Data {
-				k := reflect.ValueOf(v).MapKeys()[0]
-				if CompareTo(k, key) == 0 {
-					v[k] = value
-					return
+				if v != nil {
+					k := reflect.ValueOf(*v).MapKeys()[0]
+					if CompareTo(k.Interface(), key) == 0 {
+						(*v)[k.String()] = value
+						return
+					}
 				}
 			}
 		}
 	}
 	if node.IsFull() {
-		node.Split(key, value)
+		tree.Split(&node, key, value)
 	} else {
 		node.InsertData(key, value)
 	}
 }
 
-func (node *Node23) Split(key interface{}, value interface{}) {
-	parent := node.ParentNode
+func (tree *Tree23) Split(node **Node23, key string, value interface{}) {
+	parent := (*node).ParentNode
 	if parent == nil {
-
+		tree.NoParent(node, key, value)
+		tree.Root = *node
 	} else {
-		if parent.GetItemNum() == 1 {
-
-		} else if parent.GetItemNum() == 2 {
-
+		if (*parent).GetItemNum() == 1 {
+			tree.OneParent(node, &parent, key, value)
+		} else if (*parent).GetItemNum() == 2 {
+			tree.TwoParent(node, &parent, key, value)
 		}
+	}
+}
+
+func (tree *Tree23) NoParent(node **Node23, key string, value interface{}) {
+	var leftNode, midNode, rightNode *Node23
+	k0 := reflect.ValueOf(*(*node).Data[0]).MapKeys()[0]
+	k1 := reflect.ValueOf(*(*node).Data[1]).MapKeys()[0]
+	if CompareTo(k0.Interface(), key) > 0 {
+		midNode = CreateNode23HasValue(k0.String(), (*(*node).Data[0])[k0.String()])
+		leftNode = CreateNode23HasValue(key, value)
+		leftNode.ChirdNode[0] = (*node).ChirdNode[0]
+		rightNode = CreateNode23HasValue(k1.String(), (*(*node).Data[1])[k1.String()])
+		rightNode.ChirdNode[0] = (*node).ChirdNode[1]
+		rightNode.ChirdNode[1] = (*node).ChirdNode[2]
+		midNode.ChirdNode[0] = leftNode
+		midNode.ChirdNode[1] = rightNode
+		leftNode.ParentNode = midNode
+		rightNode.ParentNode = midNode
+	} else if CompareTo(k1.Interface(), key) < 0 {
+		midNode = CreateNode23HasValue(k1.String(), (*(*node).Data[1])[k1.String()])
+		leftNode = CreateNode23HasValue(k0.String(), (*(*node).Data[0])[k0.String()])
+		leftNode.ChirdNode[0] = (*node).ChirdNode[0]
+		rightNode = CreateNode23HasValue(key, value)
+		rightNode.ChirdNode[0] = (*node).ChirdNode[1]
+		rightNode.ChirdNode[1] = (*node).ChirdNode[2]
+		midNode.ChirdNode[0] = leftNode
+		midNode.ChirdNode[1] = rightNode
+		leftNode.ParentNode = midNode
+		rightNode.ParentNode = midNode
+	} else {
+		midNode = CreateNode23HasValue(key, value)
+		leftNode = CreateNode23HasValue(k0.String(), (*(*node).Data[0])[k0.String()])
+		leftNode.ChirdNode[0] = (*node).ChirdNode[0]
+		rightNode = CreateNode23HasValue(k1.String(), (*(*node).Data[1])[k1.String()])
+		rightNode.ChirdNode[0] = (*node).ChirdNode[1]
+		rightNode.ChirdNode[1] = (*node).ChirdNode[2]
+		midNode.ChirdNode[0] = leftNode
+		midNode.ChirdNode[1] = rightNode
+		leftNode.ParentNode = midNode
+		rightNode.ParentNode = midNode
+	}
+	*node = midNode
+}
+
+func (tree *Tree23) OneParent(node **Node23, parent **Node23, key string, value interface{}) {
+	var leftNode, rightNode *Node23
+	k0 := reflect.ValueOf(*(*node).Data[0]).MapKeys()[0]
+	k1 := reflect.ValueOf(*(*node).Data[1]).MapKeys()[0]
+	if CompareTo(k0.Interface(), key) > 0 {
+		leftNode = CreateNode23HasValue(key, value)
+		rightNode = CreateNode23HasValue(k1.String(), (*(*node).Data[1])[k1.String()])
+		(*parent).Data[1] = (*node).Data[0]
+		(*parent).ChirdNode[1] = leftNode
+		(*parent).ChirdNode[2] = rightNode
+		leftNode.ChirdNode[0] = (*node).ChirdNode[0]
+		rightNode.ChirdNode[0] = (*node).ChirdNode[1]
+		rightNode.ChirdNode[1] = (*node).ChirdNode[2]
+		leftNode.ParentNode = *parent
+		rightNode.ParentNode = *parent
+	} else if CompareTo(k1.Interface(), key) < 0 {
+		leftNode = CreateNode23HasValue(k0.String(), (*(*node).Data[0])[k0.String()])
+		rightNode = CreateNode23HasValue(key, value)
+		(*parent).Data[1] = (*node).Data[1]
+		(*parent).ChirdNode[1] = leftNode
+		(*parent).ChirdNode[2] = rightNode
+		leftNode.ChirdNode[0] = (*node).ChirdNode[0]
+		rightNode.ChirdNode[0] = (*node).ChirdNode[1]
+		rightNode.ChirdNode[1] = (*node).ChirdNode[2]
+		leftNode.ParentNode = *parent
+		rightNode.ParentNode = *parent
+	} else {
+		leftNode = CreateNode23HasValue(k0.String(), (*(*node).Data[0])[k0.String()])
+		rightNode = CreateNode23HasValue(k1.String(), (*(*node).Data[1])[k1.String()])
+		m := make(map[string]interface{})
+		m[key] = value
+		(*parent).Data[1] = &m
+		(*parent).ChirdNode[1] = leftNode
+		(*parent).ChirdNode[2] = rightNode
+		leftNode.ChirdNode[0] = (*node).ChirdNode[0]
+		rightNode.ChirdNode[0] = (*node).ChirdNode[1]
+		rightNode.ChirdNode[1] = (*node).ChirdNode[2]
+		leftNode.ParentNode = *parent
+		rightNode.ParentNode = *parent
+	}
+}
+
+func (tree *Tree23) TwoParent(node **Node23, parent **Node23, key string, value interface{}) {
+	var leftNode, rightNode *Node23
+	k0 := reflect.ValueOf(*(*node).Data[0]).MapKeys()[0]
+	k1 := reflect.ValueOf(*(*node).Data[1]).MapKeys()[0]
+	if CompareTo(k0.Interface(), key) > 0 {
+		leftNode = CreateNode23HasValue(key, value)
+		rightNode = CreateNode23HasValue(k1.String(), (*(*node).Data[1])[k1.String()])
+		tree.Split(parent, key, value)
+		(*parent).Data[1] = (*node).Data[0]
+		(*parent).ChirdNode[1] = leftNode
+		(*parent).ChirdNode[2] = rightNode
+		leftNode.ChirdNode[0] = (*node).ChirdNode[0]
+		rightNode.ChirdNode[0] = (*node).ChirdNode[1]
+		rightNode.ChirdNode[1] = (*node).ChirdNode[2]
+		leftNode.ParentNode = *parent
+		rightNode.ParentNode = *parent
+	} else if CompareTo(k1.Interface(), key) < 0 {
+		leftNode = CreateNode23HasValue(k0.String(), (*(*node).Data[0])[k0.String()])
+		rightNode = CreateNode23HasValue(key, value)
+		tree.Split(parent, key, value)
+		(*parent).Data[1] = (*node).Data[1]
+		(*parent).ChirdNode[1] = leftNode
+		(*parent).ChirdNode[2] = rightNode
+		leftNode.ChirdNode[0] = (*node).ChirdNode[0]
+		rightNode.ChirdNode[0] = (*node).ChirdNode[1]
+		rightNode.ChirdNode[1] = (*node).ChirdNode[2]
+		leftNode.ParentNode = *parent
+		rightNode.ParentNode = *parent
+	} else {
+		leftNode = CreateNode23HasValue(k0.String(), (*(*node).Data[0])[k0.String()])
+		rightNode = CreateNode23HasValue(k1.String(), (*(*node).Data[1])[k1.String()])
+		tree.Split(parent, key, value)
+		m := make(map[string]interface{})
+		m[key] = value
+		(*parent).Data[1] = &m
+		(*parent).ChirdNode[1] = leftNode
+		(*parent).ChirdNode[2] = rightNode
+		leftNode.ChirdNode[0] = (*node).ChirdNode[0]
+		rightNode.ChirdNode[0] = (*node).ChirdNode[1]
+		rightNode.ChirdNode[1] = (*node).ChirdNode[2]
+		leftNode.ParentNode = *parent
+		rightNode.ParentNode = *parent
 	}
 }
