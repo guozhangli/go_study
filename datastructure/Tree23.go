@@ -244,56 +244,57 @@ func (tree *Tree23) Split(node **Node23, key string, value interface{}) {
 	}
 }
 
+func (node *Node23) GetNodeKey(index int) reflect.Value {
+	k0 := reflect.ValueOf(*(*node).Data[index]).MapKeys()[0]
+	return k0
+}
+
+func (node *Node23) GetNodeValue(index int) interface{} {
+	k0 := reflect.ValueOf(*(*node).Data[index]).MapKeys()[0]
+	return reflect.ValueOf(*(*node).Data[index]).MapIndex(k0).Interface()
+}
+
+//越编越复杂，越编越复杂。。。
 func (tree *Tree23) NoParent(node **Node23, key string, value interface{}) {
 	var leftNode, midNode, rightNode *Node23
-	k0 := reflect.ValueOf(*(*node).Data[0]).MapKeys()[0]
-	k1 := reflect.ValueOf(*(*node).Data[1]).MapKeys()[0]
+	k0 := (*node).GetNodeKey(0)
+	k1 := (*node).GetNodeKey(1)
 	if CompareTo(k0.Interface(), key) > 0 {
-		midNode = CreateNode23HasValue(k0.String(), (*(*node).Data[0])[k0.String()])
+		midNode = CreateNode23HasValue(k0.String(), (*node).GetNodeValue(0))
 		leftNode = CreateNode23HasValue(key, value)
-		rightNode = CreateNode23HasValue(k1.String(), (*(*node).Data[1])[k1.String()])
-		leftNode.ChirdNode[0] = (*node).ChirdNode[0]
-		rightNode.ChirdNode[0] = (*node).ChirdNode[1]
-		rightNode.ChirdNode[1] = (*node).ChirdNode[2]
-		midNode.ChirdNode[0] = leftNode
-		midNode.ChirdNode[1] = rightNode
-		leftNode.ParentNode = midNode
-		rightNode.ParentNode = midNode
+		rightNode = CreateNode23HasValue(k1.String(), (*node).GetNodeValue(1))
 	} else if CompareTo(k1.Interface(), key) < 0 {
-		midNode = CreateNode23HasValue(k1.String(), (*(*node).Data[1])[k1.String()])
-		leftNode = CreateNode23HasValue(k0.String(), (*(*node).Data[0])[k0.String()])
+		midNode = CreateNode23HasValue(k1.String(), (*node).GetNodeValue(1))
+		leftNode = CreateNode23HasValue(k0.String(), (*node).GetNodeValue(0))
 		rightNode = CreateNode23HasValue(key, value)
-		leftNode.ChirdNode[0] = (*node).ChirdNode[0]
-		rightNode.ChirdNode[0] = (*node).ChirdNode[1]
-		rightNode.ChirdNode[1] = (*node).ChirdNode[2]
-		midNode.ChirdNode[0] = leftNode
-		midNode.ChirdNode[1] = rightNode
-		leftNode.ParentNode = midNode
-		rightNode.ParentNode = midNode
 	} else {
 		midNode = CreateNode23HasValue(key, value)
-		leftNode = CreateNode23HasValue(k0.String(), (*(*node).Data[0])[k0.String()])
-		rightNode = CreateNode23HasValue(k1.String(), (*(*node).Data[1])[k1.String()])
-		leftNode.ChirdNode[0] = (*node).ChirdNode[0]
-		rightNode.ChirdNode[0] = (*node).ChirdNode[1]
-		rightNode.ChirdNode[1] = (*node).ChirdNode[2]
-		midNode.ChirdNode[0] = leftNode
-		midNode.ChirdNode[1] = rightNode
-		leftNode.ParentNode = midNode
-		rightNode.ParentNode = midNode
+		leftNode = CreateNode23HasValue(k0.String(), (*node).GetNodeValue(0))
+		rightNode = CreateNode23HasValue(k1.String(), (*node).GetNodeValue(1))
 	}
+	leftNode.ChirdNode[0] = (*node).GetChildNode(0)
+	rightNode.ChirdNode[0] = (*node).GetChildNode(1)
+	rightNode.ChirdNode[1] = (*node).GetChildNode(2)
+	midNode.ConnectChildNode(leftNode, 0)
+	midNode.ConnectChildNode(rightNode, 2)
 	*node = midNode
 }
 
 func (tree *Tree23) OneParent(node **Node23, key string, value interface{}) {
-	var leftNode, rightNode *Node23
+	var leftNode, midNode, rightNode *Node23
 	parent := &(*node).ParentNode
-	k0 := reflect.ValueOf(*(*node).Data[0]).MapKeys()[0]
-	k1 := reflect.ValueOf(*(*node).Data[1]).MapKeys()[0]
+	k0 := (*node).GetNodeKey(0)
+	k1 := (*node).GetNodeKey(1)
 	if CompareTo(k0.Interface(), key) > 0 {
 		leftNode = CreateNode23HasValue(key, value)
-		rightNode = CreateNode23HasValue(k1.String(), (*(*node).Data[1])[k1.String()])
-		(*parent).Data[1] = (*node).Data[0]
+		midNode = CreateNode23HasValue(k0.String(), (*node).GetNodeValue(0))
+		rightNode = CreateNode23HasValue(k1.String(), (*node).GetNodeValue(1))
+		if CompareTo(k0.Interface(), (*parent).GetNodeKey(0)) > 0 {
+			(*parent).Data[1] = (*parent).Data[0]
+			(*parent).Data[0] = midNode.Data[0]
+		} else {
+			(*parent).Data[1] = midNode.Data[0]
+		}
 		(*parent).ChirdNode[1] = leftNode
 		(*parent).ChirdNode[2] = rightNode
 		leftNode.ChirdNode[0] = (*node).ChirdNode[0]
