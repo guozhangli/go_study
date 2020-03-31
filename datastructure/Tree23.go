@@ -342,31 +342,31 @@ func (tree *Tree23) TwoParent(node **Node23, key string, value interface{}) {
 		leftNode.ChirdNode[0] = (*node).ChirdNode[0]
 		rightNode.ChirdNode[0] = (*node).ChirdNode[1]
 		rightNode.ChirdNode[1] = (*node).ChirdNode[2]
+		leftNode.ParentNode = *parent
+		rightNode.ParentNode = *parent
 		tree.Split(parent, k0.String(), (*(*node).Data[0])[k0.String()])
-		/*leftNode.ParentNode = *parent
-		rightNode.ParentNode = *parent*/
 	} else if CompareTo(k1.Interface(), key) < 0 {
 		leftNode = CreateNode23HasValue(k0.String(), (*(*node).Data[0])[k0.String()])
 		rightNode = CreateNode23HasValue(key, value)
-
-		(*parent).ChirdNode[1] = rightNode
-		leftNode.ChirdNode[0] = (*node).ChirdNode[0]
-		rightNode.ChirdNode[0] = (*node).ChirdNode[1]
-		rightNode.ChirdNode[1] = (*node).ChirdNode[2]
-		tree.Split(parent, k1.String(), (*(*node).Data[1])[k1.String()])
-		/*leftNode.ParentNode = *parent
-		rightNode.ParentNode = *parent*/
-	} else {
-		leftNode = CreateNode23HasValue(k0.String(), (*(*node).Data[0])[k0.String()])
-		rightNode = CreateNode23HasValue(k1.String(), (*(*node).Data[1])[k1.String()])
-
 		(*parent).ChirdNode[0] = leftNode
 		(*parent).ChirdNode[1] = rightNode
 		leftNode.ChirdNode[0] = (*node).ChirdNode[0]
 		rightNode.ChirdNode[0] = (*node).ChirdNode[1]
 		rightNode.ChirdNode[1] = (*node).ChirdNode[2]
+		leftNode.ParentNode = *parent
+		rightNode.ParentNode = *parent
+		tree.Split(parent, k1.String(), (*(*node).Data[1])[k1.String()])
+	} else {
+		leftNode = CreateNode23HasValue(k0.String(), (*(*node).Data[0])[k0.String()])
+		rightNode = CreateNode23HasValue(k1.String(), (*(*node).Data[1])[k1.String()])
+		(*parent).ChirdNode[0] = leftNode
+		(*parent).ChirdNode[1] = rightNode
+		leftNode.ChirdNode[0] = (*node).ChirdNode[0]
+		rightNode.ChirdNode[0] = (*node).ChirdNode[1]
+		rightNode.ChirdNode[1] = (*node).ChirdNode[2]
+		leftNode.ParentNode = *parent
+		rightNode.ParentNode = *parent
 		tree.Split(parent, key, value)
-		/*leftNode.ParentNode = *parent
-		rightNode.ParentNode = *parent*/
+
 	}
 }
