@@ -237,9 +237,9 @@ func (tree *Tree23) Split(node **Node23, key string, value interface{}) {
 		tree.Root = *node
 	} else {
 		if parent.GetItemNum() == 1 {
-			tree.OneParent(node, &parent, key, value)
+			tree.OneParent(node, key, value)
 		} else if parent.GetItemNum() == 2 {
-			tree.TwoParent(node, &parent, key, value)
+			tree.TwoParent(node, key, value)
 		}
 	}
 }
@@ -251,8 +251,8 @@ func (tree *Tree23) NoParent(node **Node23, key string, value interface{}) {
 	if CompareTo(k0.Interface(), key) > 0 {
 		midNode = CreateNode23HasValue(k0.String(), (*(*node).Data[0])[k0.String()])
 		leftNode = CreateNode23HasValue(key, value)
-		leftNode.ChirdNode[0] = (*node).ChirdNode[0]
 		rightNode = CreateNode23HasValue(k1.String(), (*(*node).Data[1])[k1.String()])
+		leftNode.ChirdNode[0] = (*node).ChirdNode[0]
 		rightNode.ChirdNode[0] = (*node).ChirdNode[1]
 		rightNode.ChirdNode[1] = (*node).ChirdNode[2]
 		midNode.ChirdNode[0] = leftNode
@@ -262,8 +262,8 @@ func (tree *Tree23) NoParent(node **Node23, key string, value interface{}) {
 	} else if CompareTo(k1.Interface(), key) < 0 {
 		midNode = CreateNode23HasValue(k1.String(), (*(*node).Data[1])[k1.String()])
 		leftNode = CreateNode23HasValue(k0.String(), (*(*node).Data[0])[k0.String()])
-		leftNode.ChirdNode[0] = (*node).ChirdNode[0]
 		rightNode = CreateNode23HasValue(key, value)
+		leftNode.ChirdNode[0] = (*node).ChirdNode[0]
 		rightNode.ChirdNode[0] = (*node).ChirdNode[1]
 		rightNode.ChirdNode[1] = (*node).ChirdNode[2]
 		midNode.ChirdNode[0] = leftNode
@@ -273,8 +273,8 @@ func (tree *Tree23) NoParent(node **Node23, key string, value interface{}) {
 	} else {
 		midNode = CreateNode23HasValue(key, value)
 		leftNode = CreateNode23HasValue(k0.String(), (*(*node).Data[0])[k0.String()])
-		leftNode.ChirdNode[0] = (*node).ChirdNode[0]
 		rightNode = CreateNode23HasValue(k1.String(), (*(*node).Data[1])[k1.String()])
+		leftNode.ChirdNode[0] = (*node).ChirdNode[0]
 		rightNode.ChirdNode[0] = (*node).ChirdNode[1]
 		rightNode.ChirdNode[1] = (*node).ChirdNode[2]
 		midNode.ChirdNode[0] = leftNode
@@ -285,8 +285,9 @@ func (tree *Tree23) NoParent(node **Node23, key string, value interface{}) {
 	*node = midNode
 }
 
-func (tree *Tree23) OneParent(node **Node23, parent **Node23, key string, value interface{}) {
+func (tree *Tree23) OneParent(node **Node23, key string, value interface{}) {
 	var leftNode, rightNode *Node23
+	parent := &(*node).ParentNode
 	k0 := reflect.ValueOf(*(*node).Data[0]).MapKeys()[0]
 	k1 := reflect.ValueOf(*(*node).Data[1]).MapKeys()[0]
 	if CompareTo(k0.Interface(), key) > 0 {
@@ -327,8 +328,9 @@ func (tree *Tree23) OneParent(node **Node23, parent **Node23, key string, value 
 	}
 }
 
-func (tree *Tree23) TwoParent(node **Node23, parent **Node23, key string, value interface{}) {
+func (tree *Tree23) TwoParent(node **Node23, key string, value interface{}) {
 	var leftNode, rightNode *Node23
+	parent := &(*node).ParentNode
 	k0 := reflect.ValueOf(*(*node).Data[0]).MapKeys()[0]
 	k1 := reflect.ValueOf(*(*node).Data[1]).MapKeys()[0]
 	if CompareTo(k0.Interface(), key) > 0 {

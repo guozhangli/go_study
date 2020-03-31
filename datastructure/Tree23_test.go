@@ -65,6 +65,7 @@ func TestTree23Insert(t *testing.T) {
 	tree.Insert("X", "xxxxx")
 	tree.Insert("M", "mmmmm")
 	tree.Insert("P", "ppppp")
+	//	tree.Insert("L", "lllll")
 	t.Log(tree)
 	//printTree23(tree,t)  //嵌套调用，死循环
 }
