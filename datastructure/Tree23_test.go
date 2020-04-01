@@ -45,12 +45,17 @@ func TestMap(t *testing.T) {
 
 func TestFindNode(t *testing.T) {
 	tree := InitTree23()
-	tree.Insert("A", "aaaaa")
-	tree.Insert("B", "bbbbb")
-	tree.Insert("C", "ccccc")
-	tree.Insert("D", "ddddd")
+	tree.Insert("S", "sssss")
 	tree.Insert("E", "eeeee")
-	node := tree.Find("E")
+	tree.Insert("A", "aaaaa")
+	tree.Insert("R", "rrrrr")
+	tree.Insert("C", "ccccc")
+	tree.Insert("H", "hhhhh")
+	tree.Insert("X", "xxxxx")
+	tree.Insert("M", "mmmmm")
+	tree.Insert("P", "ppppp")
+	tree.Insert("L", "lllll")
+	node := tree.Find("C")
 	t.Log(node)
 }
 
@@ -65,7 +70,7 @@ func TestTree23Insert(t *testing.T) {
 	tree.Insert("X", "xxxxx")
 	tree.Insert("M", "mmmmm")
 	tree.Insert("P", "ppppp")
-	//	tree.Insert("L", "lllll")
+	tree.Insert("L", "lllll")
 	t.Log(tree)
 	//printTree23(tree,t)  //嵌套调用，死循环
 }
