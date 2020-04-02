@@ -5,6 +5,7 @@ type Stack interface {
 	Length() int
 	Push(value interface{})
 	Pop() interface{}
+	Pop2() interface{}
 	Clear()
 	Distroy(s *Stack)
 	GetTop() interface{}

@@ -57,6 +57,10 @@ func (stack *StackArray) Pop() interface{} {
 	return val
 }
 
+func (stack *StackArray) Pop2() interface{} {
+	return stack.Pop()
+}
+
 func (stack *StackArray) Clear() {
 	checkStackArray(stack)
 	if stack.Length() > 0 {

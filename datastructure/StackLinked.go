@@ -32,6 +32,16 @@ func (stack *StackLinked) Pop() interface{} {
 	return top
 }
 
+func (stack *StackLinked) Pop2() interface{} {
+	checkStackLinked(stack)
+	var top = stack.Top
+	if top != nil {
+		stack.Top = top.Next
+		stack.Len--
+	}
+	return top.Data
+}
+
 func (stack *StackLinked) IsEmpty() bool {
 	checkStackLinked(stack)
 	if stack.Len == 0 {
