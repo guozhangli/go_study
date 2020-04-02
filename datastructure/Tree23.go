@@ -339,24 +339,20 @@ func (tree *Tree23) Split(node *Node23, _map Map) *Node23 {
 }
 
 func (tree *Tree23) MidOrderAndPrint() {
-	queueList := NewQueueList().(*QueueList)
-	tree.MidOrder(tree.Root, queueList)
-	queueList.Print()
+	queue := NewQueueList().(*QueueList)
+	tree.MidOrder(tree.Root, queue)
+	queue.Print()
 }
 
-//2-3树中序遍历
+//2-3树中序遍历（递归）
 func (tree *Tree23) MidOrder(node *Node23, queue *QueueList) {
 	if node != nil {
 		tree.MidOrder(node.GetChildNode(0), queue)
-		queue.AddDataInQueue(node.Data[0])
+		queue.EnQueue(node.Data[0])
 		tree.MidOrder(node.GetChildNode(1), queue)
 		if node.Data[1] != nil {
-			queue.AddDataInQueue(node.Data[1])
+			queue.EnQueue(node.Data[1])
 		}
 		tree.MidOrder(node.GetChildNode(2), queue)
 	}
-}
-
-func (queue *QueueList) AddDataInQueue(_map Map) {
-	queue.EnQueue(_map)
 }
