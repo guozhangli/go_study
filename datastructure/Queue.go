@@ -8,4 +8,5 @@ type Queue interface {
 	Clear()
 	GetFront() interface{}
 	Distroy(q *Queue)
+	IsExist(value interface{}) bool
 }

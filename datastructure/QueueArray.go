@@ -8,6 +8,10 @@ type QueueArray struct {
 	Array [capactity]interface{}
 }
 
+func (queue *QueueArray) IsExist(value interface{}) bool {
+	panic("implement me")
+}
+
 func NewQueueArray() Queue {
 	var arr [capactity]interface{}
 	queueArray := &QueueArray{

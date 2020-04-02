@@ -74,5 +74,5 @@ func InsertDataInTree23(tree *Tree23) {
 func TestTree23Order(t *testing.T) {
 	tree := InitTree23()
 	InsertDataInTree23(tree)
-	tree.Order()
+	tree.MidOrderAndPrint()
 }

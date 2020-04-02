@@ -5,6 +5,10 @@ type QueueLinked struct {
 	Rear  *Node
 }
 
+func (queue *QueueLinked) IsExist(value interface{}) bool {
+	panic("implement me")
+}
+
 func NewQueueLinked() Queue {
 	queueLinked := new(QueueLinked)
 	return queueLinked

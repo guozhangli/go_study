@@ -1,12 +1,17 @@
 package TestProject
 
+import (
+	"fmt"
+	"reflect"
+)
+
 type QueueList struct {
 	Array []interface{}
 }
 
-func NewQueueList(cap int) Queue {
+func NewQueueList() Queue {
 	queueList := &QueueList{
-		Array: make([]interface{}, 0, cap),
+		Array: make([]interface{}, 0),
 	}
 	return queueList
 }
@@ -55,4 +60,20 @@ func (queue *QueueList) GetFront() interface{} {
 func (queue *QueueList) Distroy(q *Queue) {
 	queue.Array = nil
 	*q = nil
+}
+
+func (queue *QueueList) IsExist(value interface{}) bool {
+	checkQueueList(queue)
+	for _, v := range queue.Array {
+		if reflect.DeepEqual(v, value) {
+			return true
+		}
+	}
+	return false
+}
+
+func (queue *QueueList) Print() {
+	for _, v := range queue.Array {
+		fmt.Println(v)
+	}
 }

@@ -3,7 +3,7 @@ package TestProject
 import "testing"
 
 func initQueueList() Queue {
-	queueList := NewQueueList(5)
+	queueList := NewQueueList()
 	return queueList
 }
 func TestCreateQueueList(t *testing.T) {

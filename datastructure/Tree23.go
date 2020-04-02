@@ -338,6 +338,60 @@ func (tree *Tree23) Split(node *Node23, _map Map) *Node23 {
 	return newBorther
 }
 
-func (tree *Tree23) Order() {
+func (tree *Tree23) MidOrderAndPrint() {
+	queueList := NewQueueList().(*QueueList)
+	tree.MidOrder(tree.Root, queueList)
+	queueList.Print()
+}
 
+func (tree *Tree23) MidOrder(node *Node23, queue *QueueList) {
+	if node != nil {
+		tree.MidOrder(node.GetChildNode(0), queue)
+		node.NodeOrder(queue)
+		tree.MidOrder(node.GetChildNode(1), queue)
+	}
+}
+
+func (node *Node23) NodeOrder(queue *QueueList) {
+	if !node.IsLeaf() {
+		if node.GetItemNum() == 1 { //2节点
+			left := node.GetChildNode(0)
+			queue.AddDataInQueue(left.Data[0])
+			if left.Data[1] != nil {
+				queue.AddDataInQueue(left.Data[1])
+			}
+			queue.AddDataInQueue(node.Data[0])
+			right := node.GetChildNode(1)
+			queue.AddDataInQueue(right.Data[0])
+			if right.Data[1] != nil {
+				queue.AddDataInQueue(right.Data[1])
+			}
+		} else if node.GetItemNum() == 2 { //3节点
+			left := node.GetChildNode(0)
+			queue.AddDataInQueue(left.Data[0])
+			if left.Data[1] != nil {
+				queue.AddDataInQueue(left.Data[1])
+			}
+			queue.AddDataInQueue(node.Data[0])
+			mid := node.GetChildNode(1)
+			queue.AddDataInQueue(mid.Data[0])
+			if mid.Data[1] != nil {
+				queue.AddDataInQueue(mid.Data[1])
+			}
+			queue.AddDataInQueue(node.Data[1])
+			right := node.GetChildNode(2)
+			queue.AddDataInQueue(right.Data[0])
+			if right.Data[1] != nil {
+				queue.AddDataInQueue(right.Data[1])
+			}
+		}
+	}
+}
+
+func (queue *QueueList) AddDataInQueue(_map Map) {
+	/*if queue.IsExist(_map){
+		return
+	}else{*/
+	queue.EnQueue(_map)
+	//}
 }
