@@ -216,6 +216,7 @@ func (_map Map) GetMapKey() reflect.Value {
 	k0 := reflect.ValueOf(_map).MapKeys()[0]
 	return k0
 }
+
 func (node *Node23) GetNodeValue(index int) interface{} {
 	k0 := reflect.ValueOf(node.Data[index]).MapKeys()[0]
 	return reflect.ValueOf(node.Data[index]).MapIndex(k0).Interface()
@@ -230,12 +231,12 @@ func (tree *Tree23) Find(key string) interface{} {
 		} else if node.IsLeaf() {
 			return nil
 		} else {
-			node = GetNextChild(node, key)
+			node = node.GetNextChild(key)
 		}
 	}
 }
 
-func GetNextChild(node *Node23, key string) *Node23 {
+func (node *Node23) GetNextChild(key string) *Node23 {
 	for i := 0; i < node.GetItemNum(); i++ {
 		k := node.GetNodeKey(i)
 		if CompareTo(k.Interface(), key) > 0 {
@@ -264,7 +265,7 @@ func (tree *Tree23) Insert(key string, value interface{}) {
 		if node.IsLeaf() {
 			break
 		} else {
-			node = GetNextChild(node, key)
+			node = node.GetNextChild(key)
 			for _, v := range node.Data {
 				if v != nil {
 					k := v.GetMapKey()
@@ -274,13 +275,12 @@ func (tree *Tree23) Insert(key string, value interface{}) {
 					}
 				}
 			}
+			if node.IsFull() {
+				tree.Split(node, CreateMap(key, value))
+			}
 		}
 	}
-	if node.IsFull() {
-		tree.Split(node, CreateMap(key, value))
-	} else {
-		node.InsertData(CreateMap(key, value))
-	}
+	node.InsertData(CreateMap(key, value))
 }
 
 func (tree *Tree23) Split(node *Node23, _map Map) *Node23 {
