@@ -275,12 +275,13 @@ func (tree *Tree23) Insert(key string, value interface{}) {
 					}
 				}
 			}
-			if node.IsFull() {
-				tree.Split(node, CreateMap(key, value))
-			}
 		}
 	}
-	node.InsertData(CreateMap(key, value))
+	if node.IsFull() {
+		tree.Split(node, CreateMap(key, value))
+	} else {
+		node.InsertData(CreateMap(key, value))
+	}
 }
 
 func (tree *Tree23) Split(node *Node23, _map Map) *Node23 {

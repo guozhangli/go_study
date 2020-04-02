@@ -29,10 +29,18 @@ func TestNode234_IsFull(t *testing.T) {
 
 func TestTree234_Find(t *testing.T) {
 	tree234 := NewTree234()
+	tree234.Insert("S", "sssss")
+	tree234.Insert("E", "eeeee")
 	tree234.Insert("A", "aaaaa")
+	tree234.Insert("R", "rrrrr")
 	tree234.Insert("C", "ccccc")
-	tree234.Insert("B", "bbbbb")
-	value := tree234.Find("A")
+	tree234.Insert("H", "hhhhh")
+	tree234.Insert("X", "xxxxx")
+	tree234.Insert("M", "mmmmm")
+	tree234.Insert("P", "ppppp")
+	tree234.Insert("L", "lllll")
+	tree234.Insert("J", "jjjjj")
+	value := tree234.Find("J")
 	t.Log(value)
 }
 
@@ -50,4 +58,20 @@ func TestTree234_Insert(t *testing.T) {
 	tree234.Insert("L", "lllll")
 	tree234.Insert("J", "jjjjj")
 	t.Log(tree234)
+}
+
+func TestTree234_MidOrder(t *testing.T) {
+	tree234 := NewTree234()
+	tree234.Insert("S", "sssss")
+	tree234.Insert("E", "eeeee")
+	tree234.Insert("A", "aaaaa")
+	tree234.Insert("R", "rrrrr")
+	tree234.Insert("C", "ccccc")
+	tree234.Insert("H", "hhhhh")
+	tree234.Insert("X", "xxxxx")
+	tree234.Insert("M", "mmmmm")
+	tree234.Insert("P", "ppppp")
+	tree234.Insert("L", "lllll")
+	tree234.Insert("J", "jjjjj")
+	tree234.MidOrderAndPrint()
 }

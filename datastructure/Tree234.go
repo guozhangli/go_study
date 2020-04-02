@@ -79,6 +79,17 @@ func (node *Node234) RemoveChildNode(index int) *Node234 {
 	return temp
 }
 
+func (node *Node234) GetChildNodeIndex(key string) int {
+	var postion int
+	for postion = 0; postion < node.GetDataNum(); postion++ {
+		k1 := node.GetNodeKey(postion)
+		if CompareTo(k1.Interface(), key) > 0 {
+			break
+		}
+	}
+	return postion
+}
+
 func (tree *Tree234) Find(key string) interface{} {
 	node := tree.Root
 	var curIndex int
@@ -188,10 +199,37 @@ func (tree *Tree234) Split(node *Node234) {
 		tree.Root = newRoot
 	} else {
 		(*parent).InsertData(node.Data[1])
-		(*parent).AddChildNode(newBorther, (*parent).ItemNum)
+		index := (*parent).GetChildNodeIndex(node.Data[2].GetMapKey().String())
+		for i := (*parent).GetDataNum(); i >= index; i-- {
+			(*parent).ChildNode[i] = (*parent).ChildNode[i-1]
+		}
+		(*parent).AddChildNode(newBorther, index)
+
 	}
 	node.RemoveData(node.Data[2])
 	node.RemoveData(node.Data[1])
 	node.RemoveChildNode(2)
 	node.RemoveChildNode(3)
+}
+
+func (tree *Tree234) MidOrder(node *Node234, queue *QueueList) {
+	if node != nil {
+		tree.MidOrder(node.GetChildNode(0), queue)
+		queue.EnQueue(node.Data[0])
+		tree.MidOrder(node.GetChildNode(1), queue)
+		if node.Data[1] != nil {
+			queue.EnQueue(node.Data[1])
+		}
+		tree.MidOrder(node.GetChildNode(2), queue)
+		if node.Data[2] != nil {
+			queue.EnQueue(node.Data[2])
+		}
+		tree.MidOrder(node.GetChildNode(3), queue)
+	}
+}
+
+func (tree *Tree234) MidOrderAndPrint() {
+	queue := NewQueueList().(*QueueList)
+	tree.MidOrder(tree.Root, queue)
+	queue.Print()
 }
