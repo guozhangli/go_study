@@ -187,7 +187,7 @@ func (tree *Tree234) Split(node *Node234) {
 		newRoot.AddChildNode(newBorther, 1)
 		tree.Root = newRoot
 	} else {
-		(*parent).Data[1] = node.Data[1]
+		(*parent).InsertData(node.Data[1])
 		(*parent).AddChildNode(newBorther, (*parent).ItemNum)
 	}
 	node.RemoveData(node.Data[2])
