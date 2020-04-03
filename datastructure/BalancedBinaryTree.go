@@ -190,7 +190,7 @@ func L_Rotate(P **BalancedBinaryNode) {
 //插入点位于P的左儿子的右子树
 func LR_Rotate(P **BalancedBinaryNode) {
 	//双旋转可以通过两次单旋转实现
-	// 对P的左结点进行R旋转，再对根节点进行L旋转
+	// 对P的左结点进行L旋转，再对根节点进行R旋转
 	L_Rotate(&(*P).Left)
 	R_Rotate(P)
 }
@@ -199,7 +199,7 @@ func LR_Rotate(P **BalancedBinaryNode) {
 //插入点位于P的右儿子的左子树
 func RL_Rotate(P **BalancedBinaryNode) {
 	//双旋转可以通过两次单旋转实现
-	// 对P的右结点进行L旋转，再对根节点进行R旋转
+	// 对P的右结点进行R旋转，再对根节点进行L旋转
 	R_Rotate(&(*P).Right)
 	L_Rotate(P)
 }
