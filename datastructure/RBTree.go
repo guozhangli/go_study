@@ -1,7 +1,9 @@
 package TestProject
 
-const RED = true
-const BLACK = false
+const (
+	RED   = true
+	BLACK = false
+)
 
 type RBTree struct {
 	Root *RBNode
