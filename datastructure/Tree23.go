@@ -309,7 +309,7 @@ func (tree *Tree23) Split(node *Node23, _map Map) *Node23 {
 		newParent.AddChildNode(newBorther, 1)
 		tree.Root = newParent
 	} else {
-		index := (*parent).GetNextIndex(key.String())
+		index := (*parent).GetNextIndex(key.String()) //获取插入位置
 		if (*parent).GetItemNum() == 1 {
 			(*parent).InsertData(mid)
 			if index == 0 {
