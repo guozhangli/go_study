@@ -83,6 +83,10 @@ func (tree *RBTree) Put(key string, value interface{}) {
 	tree.Root.Color = BLACK
 }
 
+func (tree *RBTree) DeleteMin() {
+
+}
+
 func Put(node **RBNode, key string, value interface{}) {
 	if *node == nil {
 		*node = NewRBNode(key, value, 1, RED)

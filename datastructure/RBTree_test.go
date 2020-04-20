@@ -59,3 +59,19 @@ func TestRBNode_Put(t *testing.T) {
 	rbTree.Put("L", "lllll")
 	printRBTree(rbTree, t)
 }
+
+func TestRBTree_DeleteMin(t *testing.T) {
+	rbTree := NewRBTree()
+	rbTree.Put("S", "sssss")
+	rbTree.Put("E", "eeeee")
+	rbTree.Put("A", "aaaaa")
+	rbTree.Put("R", "rrrrr")
+	rbTree.Put("C", "ccccc")
+	rbTree.Put("H", "hhhhh")
+	rbTree.Put("X", "xxxxx")
+	rbTree.Put("M", "mmmmm")
+	rbTree.Put("P", "ppppp")
+	rbTree.Put("L", "lllll")
+	rbTree.DeleteMin()
+	printRBTree(rbTree, t)
+}
