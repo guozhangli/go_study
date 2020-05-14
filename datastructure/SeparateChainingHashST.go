@@ -2,6 +2,7 @@ package TestProject
 
 import "fmt"
 
+//基于分离链接法的符号表
 type SeparateChainingHashST struct {
 	M  int //散列表大小
 	N  int //键值对总数
@@ -18,19 +19,6 @@ func NewSeparateChainingHashST(m int) *SeparateChainingHashST {
 		st.ST[i] = NewSequentialSearchST()
 	}
 	return st
-}
-
-type Str string
-
-func (s Str) hashCode() int {
-	h := 0
-	bs := []byte(s)
-	if h == 0 && len(bs) > 0 {
-		for _, b := range bs {
-			h = 31*h + int(b)
-		}
-	}
-	return h
 }
 
 func (s *SeparateChainingHashST) hashCode(key Str) int {
