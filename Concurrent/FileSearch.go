@@ -54,26 +54,28 @@ func FileSearchParallel(filePath, fileName string, result *Result) {
 	}
 	ch := make(chan string, len(files))
 	done := make(chan struct{})
-	go func(filePath string, files []os.FileInfo) {
-		for _, entry := range files {
+	for _, entry := range files {
+		go func(filePath string, entry os.FileInfo) {
+
 			subPath := filepath.Join(filePath, entry.Name())
 			ch <- subPath
-		}
-	}(filePath, files)
-	go func(fileName string, ch chan string, result *Result, done chan struct{}) {
-		for {
-			select {
-			case filePath, ok := <-ch:
-				if !ok {
+
+		}(filePath, entry)
+		go func(fileName string, ch chan string, result *Result, done chan struct{}) {
+			for {
+				select {
+				case filePath, ok := <-ch:
+					if !ok {
+						return
+					}
+					walkdir(filePath, fileName, result, done)
+				case <-done:
 					return
+					fmt.Println("exit chan")
 				}
-				walkdir(filePath, fileName, result, done)
-			case <-done:
-				return
-				fmt.Println("exit chan")
 			}
-		}
-	}(fileName, ch, result, done)
+		}(fileName, ch, result, done)
+	}
 	<-done
 }
 
