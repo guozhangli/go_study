@@ -12,18 +12,16 @@ type Walker interface {
 }
 
 type bird struct {
-
 }
 
-func (*bird) Fly(){
+func (*bird) Fly() {
 	fmt.Println("bird:fly")
 }
-func (*bird) Walk(){
+func (*bird) Walk() {
 	fmt.Println("bird:walk")
 }
 
 type pig struct {
-
 }
 
 func (*pig) Walk() {
@@ -31,43 +29,55 @@ func (*pig) Walk() {
 }
 
 func main() {
-	animals:=map[string]interface{}{
-		"bird":new(bird),
-		"pig":new(pig),
+	animals := map[string]interface{}{
+		"bird": new(bird),
+		"pig":  new(pig),
 	}
-	for name,obj:=range animals{
-		f,isFlyer:= obj.(Flyer)
-		w,isWalker:=obj.(Walker)
-		fmt.Printf("name:%s isFlyer:%v isWalker:%v\n",name,isFlyer,isWalker)
-		if isFlyer{
+	for name, obj := range animals {
+		f, isFlyer := obj.(Flyer)
+		w, isWalker := obj.(Walker)
+		fmt.Printf("name:%s isFlyer:%v isWalker:%v\n", name, isFlyer, isWalker)
+		if isFlyer {
 			f.Fly()
 		}
 
-		if isWalker{
+		if isWalker {
 			w.Walk()
 		}
 	}
 
-	p1:=new(pig)
-	var p Walker=p1
-	p2:=p.(*pig)
-	fmt.Printf("%+v\n",p2)
+	p1 := new(pig)
+	var p Walker = p1
+	p2 := p.(*pig)
+	fmt.Printf("%+v\n", p2)
 
 	var a interface{}
-	a=1
-	fmt.Printf("%v,%T\n",a,a)
-	a="hello"
+	a = 1
+	fmt.Printf("%v,%T\n", a, a)
+	a = "hello"
 	fmt.Println(a)
-	a=false
+	a = false
 	fmt.Println(a)
 
-	var b int=1
-	var i interface{}=b
+	var b int = 1
+	var i interface{} = b
 	fmt.Println(i)
-	var c int= i.(int)
+	var c int = i.(int)
 	fmt.Println(c)
 
- 	var e interface{}=1
- 	var f interface{}="hi"
- 	fmt.Println(e==f)
+	var e interface{} = 1
+	var f interface{} = "hi"
+	fmt.Println(e == f)
+
+	ch := make(chan int, 5)
+	func() {
+		for i := 0; i <= 5; i++ { //超过缓存大小会报dealline问题
+			ch <- i
+		}
+	}()
+	go func() {
+		for i := 0; i <= 5; i++ {
+			fmt.Println(<-ch)
+		}
+	}()
 }
