@@ -119,8 +119,8 @@ func IsSubSet(set1, set2 *Set) bool {
 
 //集合是否相等
 func IsEqual(set1, set2 *Set) bool {
-	if IsSubSet(set1, set2) && set1.Size() == set2.Size() {
-		return true
+	if set1.Size() != set2.Size() {
+		return false
 	}
-	return false
+	return IsSubSet(set1, set2)
 }
