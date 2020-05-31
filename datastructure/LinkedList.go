@@ -1,7 +1,7 @@
 package TestProject
 
 //链表
-
+//	使用链表的例子：页帧管理
 /*链表和数组的区别：
 1)、空间：数组被分配一块连续的内存空间(大小固定)，
   动态数组在数组存储满了时，动态的调整大小（扩容为两倍的大小）当删除到数数据量小于一半的数组大小时，则把数组大小减小到一半。
@@ -22,7 +22,7 @@ type LinkedList struct {
 	nextNode *LinkedList
 }
 
-func newLinkedList() *LinkedList {
+func NewLinkedList() *LinkedList {
 	var node = &LinkedList{
 		data:     nil,
 		nextNode: nil,

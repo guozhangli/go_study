@@ -2,6 +2,9 @@ package TestProject
 
 import "errors"
 
+/**
+基于数组的固定长度的List
+*/
 type ArrayList struct {
 	length int
 	data   []interface{}
