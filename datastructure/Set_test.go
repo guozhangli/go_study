@@ -5,18 +5,24 @@ import (
 )
 
 func TestNewSet(t *testing.T) {
-	set := NewSet()
+	set := NewSet(func(o, n interface{}) bool {
+		return o == n
+	})
 	t.Log(set)
 }
 
 func TestSet_Insert(t *testing.T) {
-	set := NewSet()
+	set := NewSet(func(o, n interface{}) bool {
+		return o == n
+	})
 	set.Insert("aaaa")
 	t.Log(set)
 }
 
 func TestSet_IsMember(t *testing.T) {
-	set := NewSet()
+	set := NewSet(func(o, n interface{}) bool {
+		return o == n
+	})
 	set.Insert("aaaa")
 	set.Insert("bbbb")
 	f := set.Insert("bbbb")
@@ -35,7 +41,9 @@ func TestSet_Delete(t *testing.T) {
 }
 
 func initSet() *Set {
-	set := NewSet()
+	set := NewSet(func(o, n interface{}) bool {
+		return o == n
+	})
 	set.Insert("aaaa")
 	set.Insert("bbbb")
 	set.Insert("cccc")
@@ -43,7 +51,9 @@ func initSet() *Set {
 }
 
 func initSet2() *Set {
-	set := NewSet()
+	set := NewSet(func(o, n interface{}) bool {
+		return o == n
+	})
 	set.Insert("cccc")
 	set.Insert("eeee")
 	set.Insert("ffff")
@@ -53,26 +63,37 @@ func initSet2() *Set {
 func TestUnion(t *testing.T) {
 	set1 := initSet()
 	set2 := initSet2()
-	set3 := Union(set1, set2)
+	set3 := NewSet(func(o, n interface{}) bool {
+		return o == n
+	})
+	Union(set1, set2, set3)
 	t.Log(set3.Size())
 }
 
 func TestIntersection(t *testing.T) {
 	set1 := initSet()
 	set2 := initSet2()
-	set3 := Intersection(set1, set2)
+	set3 := NewSet(func(o, n interface{}) bool {
+		return o == n
+	})
+	Intersection(set1, set2, set3)
 	t.Log(set3.Size())
 }
 
 func TestDifference(t *testing.T) {
 	set1 := initSet()
 	set2 := initSet2()
-	set3 := Difference(set1, set2)
+	set3 := NewSet(func(o, n interface{}) bool {
+		return o == n
+	})
+	Difference(set1, set2, set3)
 	t.Log(set3.Size())
 }
 
 func initSet3() *Set {
-	set := NewSet()
+	set := NewSet(func(o, n interface{}) bool {
+		return o == n
+	})
 	set.Insert("cccc")
 	set.Insert("aaaa")
 	set.Insert("bbbb")
@@ -91,4 +112,8 @@ func TestIsEqual(t *testing.T) {
 	set2 := initSet3()
 	flag := IsEqual(set1, set2)
 	t.Log(flag)
+}
+
+func TestConveringExample(t *testing.T) {
+	ConveringExample()
 }
