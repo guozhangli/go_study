@@ -109,3 +109,7 @@ func (list *ArrayList) GetIndex(value interface{}) (int, error) {
 	}
 	return 0, errors.New("未查询出数据")
 }
+
+func (list *ArrayList) ToArray() []interface{} {
+	return list.data
+}

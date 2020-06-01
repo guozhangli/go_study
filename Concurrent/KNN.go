@@ -1,9 +1,12 @@
 package Concurrent
 
 import (
-	"datastructure"
 	"errors"
+	"fmt"
+	TestProject "go_study/datastructure"
 	"io/ioutil"
+	"math"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -76,6 +79,11 @@ type BankMarketing struct {
 	euribor3m                   float64
 	nrEmployed                  float64
 	target                      string
+}
+
+type Distance struct {
+	index    int
+	distance float64
 }
 
 func NewBankMarketing() *BankMarketing {
@@ -155,6 +163,82 @@ func (b *BankMarketing) setData(data []string) {
 	b.target = data[66]
 }
 
+func bytes2Float64(bytes []byte) float64 {
+	f, _ := strconv.ParseFloat(string(bytes), 64)
+	return f
+}
+
+func (b *BankMarketing) getData() []float64 {
+	return []float64{
+		bytes2Float64(b.age),
+		bytes2Float64(b.jobAdmin),
+		bytes2Float64(b.jobBlueCollar),
+		bytes2Float64(b.jobEntrepreneur),
+		bytes2Float64(b.jobHousemaid),
+		bytes2Float64(b.jobManagement),
+		bytes2Float64(b.jobRetired),
+		bytes2Float64(b.jobSelfEmployed),
+		bytes2Float64(b.jobServices),
+		bytes2Float64(b.jobStudent),
+		bytes2Float64(b.jobTechnician),
+		bytes2Float64(b.jobUnemployed),
+		bytes2Float64(b.jobUnknown),
+		bytes2Float64(b.maritalDivorced),
+		bytes2Float64(b.maritalMarried),
+		bytes2Float64(b.maritalSingle),
+		bytes2Float64(b.maritalUnknown),
+		bytes2Float64(b.educationBasic4y),
+		bytes2Float64(b.educationBasic6y),
+		bytes2Float64(b.educationBasic9y),
+		bytes2Float64(b.educationHighSchool),
+		bytes2Float64(b.educationIlliterate),
+		bytes2Float64(b.educationProfessionalCourse),
+		bytes2Float64(b.educationUniversityDegree),
+		bytes2Float64(b.educationUnknown),
+		bytes2Float64(b.creditNo),
+		bytes2Float64(b.creditYes),
+		bytes2Float64(b.creditUnknown),
+		bytes2Float64(b.housingNo),
+		bytes2Float64(b.housingYes),
+		bytes2Float64(b.housingUnknown),
+		bytes2Float64(b.loanNo),
+		bytes2Float64(b.loanYes),
+		bytes2Float64(b.loanUnknown),
+		bytes2Float64(b.contactCellular),
+		bytes2Float64(b.contactTelephone),
+		bytes2Float64(b.contactJan),
+		bytes2Float64(b.contactFeb),
+		bytes2Float64(b.contactMar),
+		bytes2Float64(b.contactApr),
+		bytes2Float64(b.contactMay),
+		bytes2Float64(b.contactJun),
+		bytes2Float64(b.contactJul),
+		bytes2Float64(b.contactAug),
+		bytes2Float64(b.contactSep),
+		bytes2Float64(b.contactOct),
+		bytes2Float64(b.contactNov),
+		bytes2Float64(b.contactDec),
+		bytes2Float64(b.contactMon),
+		bytes2Float64(b.contactTue),
+		bytes2Float64(b.contactWed),
+		bytes2Float64(b.contactThu),
+		bytes2Float64(b.contactFri),
+		float64(b.duration),
+		bytes2Float64(b.campaign),
+		float64(b.pdays),
+		bytes2Float64(b.pdaysNever),
+		bytes2Float64(b.previous),
+		bytes2Float64(b.poutcomeFailure),
+		bytes2Float64(b.poutcomeNonexistent),
+		bytes2Float64(b.poutcomeSuccess),
+		b.empVarRate,
+		b.consPriceIdx,
+		b.consConfIdx,
+		b.euribor3m,
+		b.nrEmployed,
+	}
+}
+
 func Load(filePath string) (*TestProject.ArrayList, error) {
 	data, err := ioutil.ReadFile(filePath)
 	if err != nil {
@@ -171,4 +255,73 @@ func Load(filePath string) (*TestProject.ArrayList, error) {
 		}
 	}
 	return list, nil
+}
+
+func NewDistance() *Distance {
+	return &Distance{
+		index:    0,
+		distance: 0,
+	}
+}
+
+func KnnClassifier(dataset *TestProject.ArrayList, bankMarketing *BankMarketing, k int) string {
+	len := dataset.Length()
+	dList := TestProject.NewArray(len)
+	for i := 0; i < len; i++ {
+		distance := NewDistance()
+		distance.index = i
+		distance.distance = calculate(dataset.GetValue(i).(*BankMarketing), bankMarketing)
+		dList.Add(distance)
+	}
+	result := dList.ToArray()
+	sort.Slice(result, func(i, j int) bool {
+		return result[i].(*Distance).distance < result[j].(*Distance).distance
+	})
+	m := make(map[string]int)
+	for _, v := range result[:k] {
+		v1 := dataset.GetValue(v.(*Distance).index).(*BankMarketing).target
+		if _, ok := m[v1]; !ok {
+			m[v1] = 1
+		} else {
+			m[v1]++
+		}
+	}
+	var t string
+	var mx int
+	for tag, max := range m {
+		if max > mx {
+			t = tag
+			mx = max
+		}
+	}
+	return t
+}
+
+func calculate(data, test *BankMarketing) float64 {
+	dataF64 := data.getData()
+	testF64 := test.getData()
+	var res float64
+	len := len(dataF64)
+	for i := 0; i < len; i++ {
+		res += math.Pow(testF64[i]-dataF64[i], 2)
+	}
+	return math.Sqrt(res)
+}
+
+func Knn() {
+	train, _ := Load("data/bank.data")
+	test, _ := Load("data/bank.test")
+	var success, distaked int
+	len := test.Length()
+	for i := 0; i < len; i++ {
+		t := test.GetValue(i).(*BankMarketing)
+		tag := KnnClassifier(train, t, 10)
+		if tag == t.target {
+			success++
+		} else {
+			distaked++
+		}
+	}
+	fmt.Println("success:", success)
+	fmt.Println("distaked:", distaked)
 }
