@@ -279,6 +279,16 @@ func calculate(data, test *BankMarketing) float64 {
 }
 
 //k-最近邻算法串行版本
+/**
+k-最邻近算法的流程
+	1、计算已知类别数据集中的点与当前点之间的距离；
+	2、按照距离递增次序排序；
+	3、选取与当前点距离最小的 k 个点；
+	4、确定前 k 个点所在类别的出现频率；
+	5、返回前 k 个点出现频率最高的类别作为当前点的预测类别。
+kNN 的基本要素
+	由上述的流程可知，对于一个确定的训练集，只要确定了距离度量、k值和分类决策规则，就能对任何一个新的实例，确定它的分类。
+*/
 func KnnSerial() {
 	train, _ := Load("data/bank.data")
 	fmt.Printf("Train: %d\n", len(train))
