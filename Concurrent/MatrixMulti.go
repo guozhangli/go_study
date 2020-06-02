@@ -116,10 +116,10 @@ func parallel_group_multiply(a, b [][]int) [][]int {
 	for i := 0; i < 10; i++ {
 		go parallel_group(a, b, c, col_a, col_b, startIndex, endIndex, ch)
 		startIndex = endIndex
-		if i == 8 {
-			endIndex = row_a
-		} else {
+		if i < 8 {
 			endIndex = endIndex + step
+		} else {
+			endIndex = row_a
 		}
 	}
 	go read_chan(10, ch)

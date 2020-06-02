@@ -23,17 +23,14 @@ func TestCreateFile(t *testing.T) {
 	}
 }
 
-func BenchmarkKnnSerial(b *testing.B) {
-	KnnSerial()
-}
-
 /**
+k-邻近算法串行版本
 Train: 39129
 Test: 2059
 ******************************************
 Serial Classifier - K: 10
-Success: 1869
-Mistakes: 190
+Success: 1873
+Mistakes: 186
 Execution Time: 105 seconds.
 ******************************************
 goos: windows
@@ -44,3 +41,49 @@ PASS
 ok      Concurrent      106.793s
 
 */
+func BenchmarkKnnSerial(b *testing.B) {
+	KnnSerial()
+}
+
+/**
+k-邻近算法细粒度并行版本
+Train: 39129
+Test: 2059
+******************************************
+Serial Classifier - K: 10
+Success: 1873
+Mistakes: 186
+Execution Time: 48 seconds.
+******************************************
+goos: windows
+goarch: amd64
+pkg: Concurrent
+BenchmarkKnnParallelIndividual-8               1        48612000000 ns/op
+PASS
+ok      Concurrent      49.090s
+
+*/
+func BenchmarkKnnParallelIndividual(b *testing.B) {
+	KnnParallelIndividual()
+}
+
+/**
+k-邻近算法粗粒度并行
+Train: 39129
+Test: 2059
+******************************************
+Serial Classifier - K: 10
+Success: 1872
+Mistakes: 187
+Execution Time: 37 seconds.
+******************************************
+goos: windows
+goarch: amd64
+pkg: Concurrent
+BenchmarkKnnClassifierParallelGroup-8                  1        37419000000 ns/op
+PASS
+ok      Concurrent      37.839s
+*/
+func BenchmarkKnnClassifierParallelGroup(b *testing.B) {
+	KnnParallelGroup()
+}

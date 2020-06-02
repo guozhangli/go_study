@@ -263,38 +263,6 @@ func NewDistance() *Distance {
 	}
 }
 
-func KnnClassifier(dataset []*BankMarketing, bankMarketing *BankMarketing, k int) string {
-	len := len(dataset)
-	result := make([]*Distance, len)
-	for i := 0; i < len; i++ {
-		distance := NewDistance()
-		distance.index = i
-		distance.distance = calculate(dataset[i], bankMarketing)
-		result[i] = distance
-	}
-	sort.Slice(result, func(i, j int) bool {
-		return result[i].distance < result[j].distance
-	})
-	m := make(map[string]int)
-	for _, v := range result[:k] {
-		v1 := dataset[v.index].target
-		if _, ok := m[v1]; !ok {
-			m[v1] = 1
-		} else {
-			m[v1]++
-		}
-	}
-	var t string
-	var mx int
-	for tag, max := range m {
-		if max > mx {
-			t = tag
-			mx = max
-		}
-	}
-	return t
-}
-
 func calculate(data, test *BankMarketing) float64 {
 	dataF64 := data.getData()
 	testF64 := test.getData()
@@ -336,4 +304,182 @@ func KnnSerial() {
 	fmt.Printf("Mistakes: %d\n", mistakes)
 	fmt.Printf("Execution Time: %d seconds.\n", ((end - start) / 1000000000))
 	fmt.Println("******************************************")
+}
+
+func KnnClassifier(dataset []*BankMarketing, bankMarketing *BankMarketing, k int) string {
+	len := len(dataset)
+	result := make([]*Distance, len)
+	for i := 0; i < len; i++ {
+		distance := NewDistance()
+		distance.index = i
+		distance.distance = calculate(dataset[i], bankMarketing)
+		result[i] = distance
+	}
+	sort.Slice(result, func(i, j int) bool {
+		return result[i].distance < result[j].distance
+	})
+	m := make(map[string]int)
+	for _, v := range result[:k] {
+		v1 := dataset[v.index].target
+		if _, ok := m[v1]; !ok {
+			m[v1] = 1
+		} else {
+			m[v1]++
+		}
+	}
+	var t string
+	var mx int
+	for tag, max := range m {
+		if max > mx {
+			t = tag
+			mx = max
+		}
+	}
+	return t
+}
+
+//k-邻近算法并行版本（细粒度的并行）
+func KnnParallelIndividual() {
+	train, _ := Load("data/bank.data")
+	fmt.Printf("Train: %d\n", len(train))
+	test, _ := Load("data/bank.test")
+	fmt.Printf("Test: %d\n", len(test))
+	k := 10
+	start := time.Now().UnixNano()
+	ch := make(chan struct{}, len(train))
+	var success, mistakes int
+	len := len(test)
+	for i := 0; i < len; i++ {
+		t := test[i]
+		tag := KnnClassifierParallel(train, t, k, ch)
+		if tag == t.target {
+			success++
+		} else {
+			mistakes++
+		}
+	}
+	end := time.Now().UnixNano()
+	fmt.Println("******************************************")
+	fmt.Printf("Serial Classifier - K: %d\n", k)
+	fmt.Printf("Success: %d\n", success)
+	fmt.Printf("Mistakes: %d\n", mistakes)
+	fmt.Printf("Execution Time: %d seconds.\n", ((end - start) / 1000000000))
+	fmt.Println("******************************************")
+}
+
+func KnnClassifierParallel(dataset []*BankMarketing, bankMarketing *BankMarketing, k int, ch chan struct{}) string {
+	len := len(dataset)
+	result := make([]*Distance, len)
+	for i := 0; i < len; i++ {
+		go func(dataBM, testBM *BankMarketing, i int, ch chan struct{}) {
+			distance := NewDistance()
+			distance.index = i
+			distance.distance = calculate(dataset[i], bankMarketing)
+			result[i] = distance
+			ch <- struct{}{}
+		}(dataset[i], bankMarketing, i, ch)
+	}
+	for i := 0; i < len; i++ {
+		<-ch
+	}
+	sort.Slice(result, func(i, j int) bool {
+		return result[i].distance < result[j].distance
+	})
+	m := make(map[string]int)
+	for _, v := range result[:k] {
+		v1 := dataset[v.index].target
+		if _, ok := m[v1]; !ok {
+			m[v1] = 1
+		} else {
+			m[v1]++
+		}
+	}
+	var t string
+	var mx int
+	for tag, max := range m {
+		if max > mx {
+			t = tag
+			mx = max
+		}
+	}
+	return t
+}
+
+//k-邻近算法并行版本（粗粒度的并行）
+func KnnParallelGroup() {
+	train, _ := Load("data/bank.data")
+	fmt.Printf("Train: %d\n", len(train))
+	test, _ := Load("data/bank.test")
+	fmt.Printf("Test: %d\n", len(test))
+	k := 10
+	start := time.Now().UnixNano()
+	ch := make(chan struct{}, len(train))
+	var success, mistakes int
+	len := len(test)
+	for i := 0; i < len; i++ {
+		t := test[i]
+		tag := KnnClassifierParallelGroup(train, t, k, ch)
+		if tag == t.target {
+			success++
+		} else {
+			mistakes++
+		}
+	}
+	end := time.Now().UnixNano()
+	fmt.Println("******************************************")
+	fmt.Printf("Serial Classifier - K: %d\n", k)
+	fmt.Printf("Success: %d\n", success)
+	fmt.Printf("Mistakes: %d\n", mistakes)
+	fmt.Printf("Execution Time: %d seconds.\n", ((end - start) / 1000000000))
+	fmt.Println("******************************************")
+}
+
+func KnnClassifierParallelGroup(dataset []*BankMarketing, bankMarketing *BankMarketing, k int, ch chan struct{}) string {
+	len := len(dataset)
+	result := make([]*Distance, len)
+	var numThread = 10
+	var startIndex = 0
+	var step = len / numThread
+	var endIndex = step
+	for i := 0; i < numThread; i++ {
+		go func(startIndex, endIndex int, dataset []*BankMarketing, bankMarketing *BankMarketing, ch chan struct{}) {
+			for i := startIndex; i < endIndex; i++ {
+				distance := NewDistance()
+				distance.index = i
+				distance.distance = calculate(dataset[i], bankMarketing)
+				result[i] = distance
+			}
+			ch <- struct{}{}
+		}(startIndex, endIndex, dataset, bankMarketing, ch)
+		startIndex = endIndex
+		if i < numThread-2 {
+			endIndex = endIndex + step
+		} else {
+			endIndex = len
+		}
+	}
+	for i := 0; i < numThread; i++ {
+		<-ch
+	}
+	sort.Slice(result, func(i, j int) bool {
+		return result[i].distance < result[j].distance
+	})
+	m := make(map[string]int)
+	for _, v := range result[:k] {
+		v1 := dataset[v.index].target
+		if _, ok := m[v1]; !ok {
+			m[v1] = 1
+		} else {
+			m[v1]++
+		}
+	}
+	var t string
+	var mx int
+	for tag, max := range m {
+		if max > mx {
+			t = tag
+			mx = max
+		}
+	}
+	return t
 }
