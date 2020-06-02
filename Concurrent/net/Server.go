@@ -1,6 +1,7 @@
 package net
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"net"
@@ -24,8 +25,16 @@ func Server() {
 
 func handleConn(conn net.Conn) {
 	defer conn.Close()
+	b := make([]byte, 256)
 	for {
-		_, err := io.WriteString(conn, time.Now().Format("15:04:05\n"))
+		go func(bytes []byte) {
+			if _, err := conn.Read(bytes); err != nil {
+				log.Fatal(err)
+				return
+			}
+		}(b)
+
+		_, err := io.WriteString(conn, time.Now().Format(fmt.Sprintf("15:04:05%s\n", string(b))))
 		if err != nil {
 			return
 		}

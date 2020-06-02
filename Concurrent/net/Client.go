@@ -13,6 +13,7 @@ func Client() {
 		log.Fatal(err)
 	}
 	defer conn.Close()
+
 	mustCopy(os.Stdout, conn)
 }
 
