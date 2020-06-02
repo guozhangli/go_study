@@ -11,7 +11,7 @@ func BenchmarkFileSearchSerial(b *testing.B) {
 	start := time.Now().UnixNano()
 	FileSearchSerial("C:\\Windows\\", "hosts", result)
 	end := time.Now().UnixNano()
-	b.Log((end - start) / 1000000)
+	b.Log((end - start) / 1000000) //ms
 	str, _ := json.Marshal(result)
 	b.Log(string(str))
 }
@@ -21,7 +21,7 @@ func BenchmarkFileSearchParallel(b *testing.B) {
 	start := time.Now().UnixNano()
 	FileSearchParallel("C:\\Windows\\", "hosts", result)
 	end := time.Now().UnixNano()
-	b.Log((end - start) / 1000000)
+	b.Log((end - start) / 1000000) //ms
 	str, _ := json.Marshal(result)
 	b.Log(string(str))
 }
