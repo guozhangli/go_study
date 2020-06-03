@@ -1,9 +1,11 @@
 package net
 
 import (
+	"bufio"
 	"errors"
-	"io/ioutil"
+	"io"
 	"log"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -97,7 +99,7 @@ func getValue(s string) float64 {
 	}
 	f, err := strconv.ParseFloat(s, 64)
 	if err != nil {
-		log.Fatal("string convert float64 error")
+		log.Fatal("string convert float64 error", err)
 	}
 	return f
 }
@@ -144,33 +146,41 @@ func (w *WDI) getValue(year int) float64 {
 type WDIDAO struct{}
 
 var list []*WDI
-var DAO *WDIDAO
+var dao *WDIDAO
 
 func NewWDIDAO(route string) {
-	DAO = new(WDIDAO)
-	list = DAO.load(route)
+	dao = new(WDIDAO)
+	list = load(route)
 }
 
 func GetDAO() *WDIDAO {
-	if DAO == nil {
+	if dao == nil {
 		NewWDIDAO(FILEPATH)
 	}
-	return DAO
+	return dao
+}
+func (dao *WDIDAO) getData() []*WDI {
+	return list
 }
 
-const FILEPATH = "data/WDI_Data.csv"
+const FILEPATH = "../data/WDI_Data.csv"
 const FIRSTYEAR = 1960
 
-func (w *WDIDAO) load(route string) []*WDI {
-	data, err := ioutil.ReadFile(route)
+func load(route string) []*WDI {
+	file, err := os.Open(route)
 	if err != nil {
 		log.Fatal("read file error")
 	}
+	defer file.Close()
 	var list []*WDI
-	d := strings.Split(string(data), "/r/n")
-	len := len(d)
-	for _, line := range d[:len-1] {
-		res := parse(line)
+	rd := bufio.NewReader(file)
+	rd.ReadString('\n')
+	for {
+		line, _, err := rd.ReadLine()
+		if err != nil || io.EOF == err {
+			break
+		}
+		res := parse(string(line))
 		w := new(WDI)
 		w.setData(res)
 		list = append(list, w)
@@ -180,7 +190,7 @@ func (w *WDIDAO) load(route string) []*WDI {
 
 func (w *WDIDAO) query2(codCountry, codIndicator string) string {
 	var wdi *WDI
-	for _, v := range list {
+	for _, v := range w.getData() {
 		wdi = v
 		if wdi.countryCode == codCountry && wdi.indicatorCode == codIndicator {
 			break
@@ -204,7 +214,7 @@ func (w *WDIDAO) query2(codCountry, codIndicator string) string {
 
 func (w *WDIDAO) query3(codCountry, codIndicator string, year int) string {
 	var wdi *WDI
-	for _, v := range list {
+	for _, v := range w.getData() {
 		wdi = v
 		if wdi.countryCode == codCountry && wdi.indicatorCode == codIndicator {
 			break
@@ -225,7 +235,7 @@ func (w *WDIDAO) report(codIndicator string) string {
 	var writer string
 	writer += codIndicator
 	writer += ";"
-	for _, v := range list {
+	for _, v := range w.getData() {
 		wdi = v
 		if wdi.indicatorCode == codIndicator {
 			years := wdi.values
