@@ -1,6 +1,9 @@
 package TestProject
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 /**
 集合
@@ -28,8 +31,12 @@ func NewSet(f func(o, n interface{}) bool) *Set {
 	return new(Set)
 }
 
+var lock sync.Mutex
+
 //向集合中插入成员
 func (set *Set) Insert(value interface{}) bool {
+	defer lock.Unlock()
+	lock.Lock()
 	if set.IsMember(value) {
 		return false
 	}
@@ -52,6 +59,8 @@ func (set *Set) IsMember(value interface{}) bool {
 
 //从集合中删除成员
 func (set *Set) Delete(value interface{}) bool {
+	defer lock.Unlock()
+	lock.Lock()
 	if !set.IsMember(value) {
 		return false
 	}
@@ -61,8 +70,28 @@ func (set *Set) Delete(value interface{}) bool {
 
 //计算集合的成员数量
 func (set *Set) Size() int {
+	defer lock.Unlock()
+	lock.Lock()
 	ll := (*LinkedList)(set)
 	return ll.Length()
+}
+
+func (set *Set) Iterator() *LinkedList {
+	return set.nextNode
+}
+
+func (ll *LinkedList) NextNode() *LinkedList {
+	return ll.nextNode
+}
+
+func (ll *LinkedList) HasNode() bool {
+	if ll != nil {
+		return true
+	}
+	return false
+}
+func (ll *LinkedList) Data() interface{} {
+	return ll.data
 }
 
 //并集
