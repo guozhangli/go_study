@@ -99,7 +99,7 @@ func getValue(s string) float64 {
 	}
 	f, err := strconv.ParseFloat(s, 64)
 	if err != nil {
-		log.Fatal("string convert float64 error", err)
+		log.Println("string convert float64 error", err)
 	}
 	return f
 }
@@ -136,7 +136,7 @@ func parse(str string) [59]string {
 
 func (w *WDI) getValue(year int) float64 {
 	if year < FIRSTYEAR || year >= FIRSTYEAR+len(w.values) {
-		log.Fatal("No data for that year")
+		log.Println("No data for that year")
 	}
 
 	index := int(year - FIRSTYEAR)

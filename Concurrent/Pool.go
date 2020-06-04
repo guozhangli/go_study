@@ -71,7 +71,7 @@ func (p *Pool) Execute(f func() error) {
 func (p *Pool) ShutDown() {
 	close(p.jobChan)
 }
-func (p *Pool) workerSize() int {
+func (p *Pool) WorkerSize() int {
 	return p.workers.Size()
 }
 

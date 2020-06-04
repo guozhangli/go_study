@@ -11,30 +11,49 @@ import (
 
 func Client() {
 	dao := GetDAO()
-	list := dao.getData()
-	for i := 0; i < 10; i++ {
-		conn, err := net.Dial("tcp", "localhost:8000")
-		if err != nil {
-			log.Println(err)
-		}
-		log.Println("client connect")
-		sendQuery(conn, list)
+	l := dao.getData()
+	for i := 0; i < 1000; i++ {
+		go func(list []*WDI) {
+			conn, err := net.Dial("tcp", "localhost:6666")
+			if err != nil {
+				log.Println(err)
+			}
+			if conn == nil {
+				log.Println("conn error")
+				return
+			}
+			log.Println("client connect")
+			sendQuery(conn, list)
+		}(l)
+
 	}
-	for i := 0; i < 10; i++ {
-		conn, err := net.Dial("tcp", "localhost:8000")
-		if err != nil {
-			log.Println(err)
-		}
-		log.Println("client connect")
-		sendReport(conn, list)
+	for i := 0; i < 1000; i++ {
+		go func(list []*WDI) {
+			conn, err := net.Dial("tcp", "localhost:6666")
+			if err != nil {
+				log.Println(err)
+			}
+			if conn == nil {
+				log.Println("conn error")
+				return
+			}
+			log.Println("client connect")
+			sendReport(conn, list)
+		}(l)
 	}
-	for i := 0; i < 10; i++ {
-		conn, err := net.Dial("tcp", "localhost:8000")
-		if err != nil {
-			log.Println(err)
-		}
-		log.Println("client connect")
-		sendStop(conn)
+	for i := 0; i < 1; i++ {
+		func() {
+			conn, err := net.Dial("tcp", "localhost:6666")
+			if err != nil {
+				log.Println(err)
+			}
+			if conn == nil {
+				log.Println("conn error")
+				return
+			}
+			log.Println("client connect")
+			sendStop(conn)
+		}()
 	}
 }
 
@@ -45,7 +64,9 @@ func mustCopy(dst io.Writer, src io.Reader) {
 }
 
 func sendQuery(conn net.Conn, list []*WDI) {
-	defer conn.Close()
+	if conn != nil {
+		defer conn.Close()
+	}
 	rand.Seed(time.Now().UnixNano())
 	num := rand.Intn(len(list))
 	wdi := list[num]
@@ -55,17 +76,22 @@ func sendQuery(conn net.Conn, list []*WDI) {
 	commandData += ";"
 	commandData += wdi.indicatorCode
 	commandData += "\n"
-	io.WriteString(conn, commandData)
+	_, err := io.WriteString(conn, commandData)
+	if err != nil {
+		log.Println(err)
+	}
 	rd := bufio.NewReader(conn)
 	line, _, err := rd.ReadLine()
 	if err != nil {
-		log.Println("read conn io error")
+		log.Println(err)
 	}
 	log.Println(string(line))
 }
 
 func sendReport(conn net.Conn, list []*WDI) {
-	defer conn.Close()
+	if conn != nil {
+		defer conn.Close()
+	}
 	rand.Seed(time.Now().UnixNano())
 	num := rand.Intn(len(list))
 	wdi := list[num]
@@ -73,32 +99,34 @@ func sendReport(conn net.Conn, list []*WDI) {
 	commandData = "r;"
 	commandData += wdi.indicatorCode
 	commandData += "\n"
-	io.WriteString(conn, commandData)
+	_, err := io.WriteString(conn, commandData)
+	if err != nil {
+		log.Println(err)
+	}
 	rd := bufio.NewReader(conn)
 	line, _, err := rd.ReadLine()
 	if err != nil {
-		log.Println("read conn io error")
+		log.Println(err)
 	}
-	io.WriteString(conn, "EOF\n")
-	/*太快的关闭客户端连接，服务器端报
-	An existing connection was forcibly closed by the remote host.
-	远程主机强制关闭现有的连接。
-	*/
-	time.Sleep(time.Second)
 	log.Println(string(line))
 }
 
 func sendStop(conn net.Conn) {
-	defer conn.Close()
+	if conn != nil {
+		defer conn.Close()
+	}
 	rand.Seed(time.Now().UnixNano())
 	var commandData string
 	commandData = "z;"
 	commandData += "\n"
-	io.WriteString(conn, commandData)
+	_, err := io.WriteString(conn, commandData)
+	if err != nil {
+		log.Println(err)
+	}
 	rd := bufio.NewReader(conn)
 	line, _, err := rd.ReadLine()
 	if err != nil {
-		log.Println("read conn io error")
+		log.Println(err)
 	}
 	log.Println(string(line))
 }

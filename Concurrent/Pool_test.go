@@ -19,7 +19,7 @@ func TestPool(t *testing.T) {
 
 	for {
 		time.Sleep(time.Second)
-		fmt.Println("worker", pool.workerSize())
+		fmt.Println("worker", pool.WorkerSize())
 		fmt.Println("max", pool.maxNum)
 	}
 }
