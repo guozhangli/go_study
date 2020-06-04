@@ -32,7 +32,9 @@ func handleConn(conn net.Conn) {
 		rd := bufio.NewReader(conn)
 		line, _, err := rd.ReadLine()
 		if err != nil {
-			log.Println("read net io error")
+			if err != io.EOF {
+				log.Println(err)
+			}
 			break
 		}
 		commandData := strings.Split(string(line), ";")
