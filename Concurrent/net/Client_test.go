@@ -43,9 +43,9 @@ func BenchmarkClient3(b *testing.B) {
 }
 
 func TestClient(t *testing.T) {
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 3000; i++ {
 		go func() {
-			conn, err := net.Dial("tcp", "localhost:8888")
+			c, err := net.Dial("tcp", "localhost:8888")
 			if err != nil {
 				log.Println(err)
 			}
@@ -58,44 +58,9 @@ func TestClient(t *testing.T) {
 					log.Println(err)
 				}
 				log.Println(string(line))
-			}(conn)
+			}(c)
 		}()
 	}
-	for i := 0; i < 1000; i++ {
-		go func() {
-			conn, err := net.Dial("tcp", "localhost:8888")
-			if err != nil {
-				log.Println(err)
-			}
-			go func(conn net.Conn) {
-				defer conn.Close()
-				io.WriteString(conn, "send to server\n")
-				read := bufio.NewReader(conn)
-				line, _, err := read.ReadLine()
-				if err != nil {
-					log.Println(err)
-				}
-				log.Println(string(line))
-			}(conn)
-		}()
-	}
-	for i := 0; i < 1000; i++ {
-		go func() {
-			conn, err := net.Dial("tcp", "localhost:8888")
-			if err != nil {
-				log.Println(err)
-			}
-			go func(conn net.Conn) {
-				defer conn.Close()
-				io.WriteString(conn, "send to server\n")
-				read := bufio.NewReader(conn)
-				line, _, err := read.ReadLine()
-				if err != nil {
-					log.Println(err)
-				}
-				log.Println(string(line))
-			}(conn)
-		}()
-	}
+
 	select {}
 }

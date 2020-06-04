@@ -29,27 +29,24 @@ func TestServer(t *testing.T) {
 		log.Fatal("listen is error")
 	}
 	for {
-		conn, err := listen.Accept()
+		c, err := listen.Accept()
 		if err != nil {
 			log.Fatal("connect is error")
 			continue
 		}
-		go handle(conn)
-	}
-
-}
-
-func handle(conn net.Conn) {
-	defer conn.Close()
-	for {
-		read := bufio.NewReader(conn)
-		line, _, err := read.ReadLine()
-		if err != nil {
-			log.Println(err)
-			break
-		}
-		log.Println(string(line))
-		io.WriteString(conn, "send to client\n")
+		go func(conn net.Conn) {
+			defer conn.Close()
+			for {
+				read := bufio.NewReader(conn)
+				line, _, err := read.ReadLine()
+				if err != nil {
+					log.Println(err)
+					break
+				}
+				log.Println(string(line))
+				io.WriteString(conn, "send to client\n")
+			}
+		}(c)
 	}
 
 }
