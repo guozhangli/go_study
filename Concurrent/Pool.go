@@ -1,7 +1,8 @@
 package Concurrent
 
 import (
-	"datastructure"
+	TestProject "go_study/datastructure"
+	"sync"
 )
 
 type task struct {
@@ -75,6 +76,8 @@ func (p *Pool) WorkerSize() int {
 	return p.workers.Size()
 }
 
+var lock sync.Mutex
+
 func (p *Pool) addWorker(task interface{}) {
 	for {
 		ws := p.workers
@@ -89,7 +92,7 @@ func (p *Pool) addWorker(task interface{}) {
 			}
 			iterator = iterator.NextNode()
 		}
-		if ws.Size() < num {
+		if ws.Size() <= num {
 			wok = newWorker(task)
 			ws.Insert(wok)
 			wok.run()

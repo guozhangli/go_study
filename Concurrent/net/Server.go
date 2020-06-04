@@ -1,9 +1,9 @@
 package net
 
 import (
-	"Concurrent"
 	"bufio"
 	"fmt"
+	. "go_study/Concurrent"
 	"io"
 	"log"
 	"net"
@@ -53,7 +53,7 @@ func Server3() {
 		log.Println(err)
 	}
 	log.Println("waiting client connect")
-	pool := Concurrent.NewPool(100)
+	pool := NewPool(100)
 	for {
 		conn, err := listen.Accept() //阻塞
 		if err != nil {
@@ -74,7 +74,6 @@ func handleConn(conn net.Conn) {
 		rd := bufio.NewReader(conn)
 		line, _, err := rd.ReadLine() //阻塞
 		if err != nil {
-			log.Println(err)
 			break
 		}
 		commandData := strings.Split(string(line), ";")

@@ -40,7 +40,6 @@ func TestServer(t *testing.T) {
 				read := bufio.NewReader(conn)
 				line, _, err := read.ReadLine()
 				if err != nil {
-					log.Println(err)
 					break
 				}
 				log.Println(string(line))

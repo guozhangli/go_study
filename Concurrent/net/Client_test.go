@@ -49,7 +49,7 @@ func TestClient(t *testing.T) {
 			if err != nil {
 				log.Println(err)
 			}
-			go func(conn net.Conn) {
+			func(conn net.Conn) {
 				defer conn.Close()
 				io.WriteString(conn, "send to server\n")
 				read := bufio.NewReader(conn)

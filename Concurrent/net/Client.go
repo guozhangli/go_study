@@ -23,7 +23,7 @@ func Client() {
 				return
 			}
 			log.Println("client connect")
-			go sendQuery(conn, list)
+			sendQuery(conn, list)
 		}(l)
 
 	}
@@ -38,7 +38,7 @@ func Client() {
 				return
 			}
 			log.Println("client connect")
-			go sendReport(conn, list)
+			sendReport(conn, list)
 		}(l)
 	}
 	for i := 0; i < 1; i++ {
@@ -52,7 +52,7 @@ func Client() {
 				return
 			}
 			log.Println("client connect")
-			go sendStop(conn)
+			sendStop(conn)
 		}()
 	}
 }
