@@ -6,36 +6,46 @@ type ICommand interface {
 	execute() string
 }
 
-type QueryCommand struct{}
-type ReportCommand struct{}
-type StopCommand struct{}
-type ErrorCommand struct{}
-
-var command []string
+type QueryCommand struct {
+	command []string
+}
+type ReportCommand struct {
+	command []string
+}
+type StopCommand struct {
+	command []string
+}
+type ErrorCommand struct {
+	command []string
+}
 
 func NewQueryCommand(command []string) *QueryCommand {
-	command = command
-	return new(QueryCommand)
+	c := new(QueryCommand)
+	c.command = command
+	return c
 }
 func NewReportCommand(command []string) *ReportCommand {
-	command = command
-	return new(ReportCommand)
+	c := new(ReportCommand)
+	c.command = command
+	return c
 }
 func NewStopCommand(command []string) *StopCommand {
-	command = command
-	return new(StopCommand)
+	c := new(StopCommand)
+	c.command = command
+	return c
 }
-func NewErrorCommand(command []string) *ErrorCommand {
-	command = command
-	return new(ErrorCommand)
+func NewErrorCommand(command []string) *StopCommand {
+	c := new(StopCommand)
+	c.command = command
+	return c
 }
 func (q *QueryCommand) execute() string {
 	dao := GetDAO()
-	if len(command) == 3 {
-		return dao.query2(command[1], command[2])
-	} else if len(command) == 4 {
-		v, _ := strconv.Atoi(command[3])
-		return dao.query3(command[1], command[2], v)
+	if len(q.command) == 3 {
+		return dao.query2(q.command[1], q.command[2])
+	} else if len(q.command) == 4 {
+		v, _ := strconv.Atoi(q.command[3])
+		return dao.query3(q.command[1], q.command[2], v)
 
 	} else {
 		return "ERROR;Bad Command"
@@ -44,7 +54,7 @@ func (q *QueryCommand) execute() string {
 
 func (r *ReportCommand) execute() string {
 	dao := GetDAO()
-	return dao.report(command[1])
+	return dao.report(r.command[1])
 }
 
 func (s *StopCommand) execute() string {
@@ -52,5 +62,5 @@ func (s *StopCommand) execute() string {
 }
 
 func (e *ErrorCommand) execute() string {
-	return "Unknown command: " + command[0]
+	return "Unknown command: " + e.command[0]
 }

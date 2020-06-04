@@ -13,13 +13,13 @@ func Server() {
 	_ = GetDAO()
 	listen, err := net.Listen("tcp", "localhost:8000")
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	log.Println("waiting client connect")
 	for {
 		conn, err := listen.Accept()
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 			continue
 		}
 		handleConn(conn)
@@ -32,10 +32,11 @@ func handleConn(conn net.Conn) {
 		rd := bufio.NewReader(conn)
 		line, _, err := rd.ReadLine()
 		if err != nil {
-			log.Fatal("read net io error")
+			log.Println("read net io error")
+			break
 		}
 		commandData := strings.Split(string(line), ";")
-		fmt.Println("command:", commandData[0])
+		fmt.Println("command:", string(line))
 		var command ICommand
 		switch commandData[0] {
 		case "q":
@@ -51,6 +52,7 @@ func handleConn(conn net.Conn) {
 			command = NewErrorCommand(commandData)
 		}
 		res := command.execute()
+		res += "\n"
 		io.WriteString(conn, res)
 	}
 }
