@@ -70,28 +70,31 @@ func Server3() {
 
 func handleConn(conn net.Conn) {
 	defer conn.Close()
-	rd := bufio.NewReader(conn)
-	line, _, err := rd.ReadLine() //阻塞
-	if err != nil {
-		log.Println(err)
+	for {
+		rd := bufio.NewReader(conn)
+		line, _, err := rd.ReadLine() //阻塞
+		if err != nil {
+			log.Println(err)
+			break
+		}
+		commandData := strings.Split(string(line), ";")
+		fmt.Println("command:", string(line))
+		var command ICommand
+		switch commandData[0] {
+		case "q":
+			command = NewQueryCommand(commandData)
+			break
+		case "r":
+			command = NewReportCommand(commandData)
+			break
+		case "z":
+			command = NewStopCommand(commandData)
+			break
+		default:
+			command = NewErrorCommand(commandData)
+		}
+		res := command.execute()
+		res += "\n"
+		io.WriteString(conn, res)
 	}
-	commandData := strings.Split(string(line), ";")
-	fmt.Println("command:", string(line))
-	var command ICommand
-	switch commandData[0] {
-	case "q":
-		command = NewQueryCommand(commandData)
-		break
-	case "r":
-		command = NewReportCommand(commandData)
-		break
-	case "z":
-		command = NewStopCommand(commandData)
-		break
-	default:
-		command = NewErrorCommand(commandData)
-	}
-	res := command.execute()
-	res += "\n"
-	io.WriteString(conn, res)
 }
