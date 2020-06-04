@@ -22,7 +22,7 @@ func Server() {
 			log.Println(err)
 			continue
 		}
-		handleConn(conn)
+		go handleConn(conn)
 	}
 }
 
@@ -35,6 +35,8 @@ func handleConn(conn net.Conn) {
 			if err != io.EOF {
 				log.Println(err)
 			}
+			break
+		} else if string(line) == "EOF" {
 			break
 		}
 		commandData := strings.Split(string(line), ";")

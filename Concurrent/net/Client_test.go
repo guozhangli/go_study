@@ -4,6 +4,6 @@ import (
 	"testing"
 )
 
-func TestClient(t *testing.T) {
+func BenchmarkClient(b *testing.B) {
 	Client()
 }
