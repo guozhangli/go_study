@@ -1,9 +1,9 @@
 package net
 
 import (
-	"Concurrent"
 	"bufio"
 	"fmt"
+	"go_study/Concurrent"
 	"io"
 	"log"
 	"net"
@@ -11,9 +11,14 @@ import (
 	"sync"
 )
 
+var cache *ParallelCache
+
+var sp sync.Mutex
+
 //串行处理服务
-func Server1() {
+func ServerSerial() {
 	_ = GetDAO()
+	cache = NewParallelCache()
 	listen, err := net.Listen("tcp", "localhost:6666")
 	if err != nil {
 		log.Println(err)
@@ -32,8 +37,9 @@ func Server1() {
 var stoped = false
 
 //并行处理服务
-func Server2() {
+func ServerParallel() {
 	_ = GetDAO()
+	cache = NewParallelCache()
 	listen, err := net.Listen("tcp", "localhost:6666")
 	if err != nil {
 		log.Println(err)
@@ -49,8 +55,9 @@ func Server2() {
 	}
 }
 
-func Server3() {
+func ServerPool() {
 	_ = GetDAO()
+	cache = NewParallelCache()
 	listen, err := net.Listen("tcp", "127.0.0.1:6666")
 	if err != nil {
 		log.Println(err)
@@ -67,11 +74,11 @@ func Server3() {
 			handleConn(conn)
 			return nil
 		})
-		log.Println("pool worker size：", pool.WorkerSize())
 	}
 	if stoped {
 		pool.ShutDown()
 	}
+	log.Println("pool worker size：", pool.WorkerSize(), "cache size:", cache.getItemCount())
 }
 
 func handleConn(conn net.Conn) {
@@ -83,29 +90,34 @@ func handleConn(conn net.Conn) {
 	}
 	commandData := strings.Split(string(line), ";")
 	fmt.Println("command:", string(line))
-	var command ICommand
-	switch commandData[0] {
-	case "q":
-		command = NewQueryCommand(commandData)
-		break
-	case "r":
-		command = NewReportCommand(commandData)
-		break
-	case "z":
-		command = NewStopCommand(commandData)
-		break
-	default:
-		command = NewErrorCommand(commandData)
+	var res string
+	if v, ok := cache.get(string(line)); ok {
+		res = v
+	} else {
+		var command ICommand
+		switch commandData[0] {
+		case "q":
+			command = NewQueryCommand(commandData)
+			break
+		case "r":
+			command = NewReportCommand(commandData)
+			break
+		case "z":
+			command = NewStopCommand(commandData)
+			break
+		default:
+			command = NewErrorCommand(commandData)
+		}
+		res = command.execute()
+		cache.put(string(line), res)
 	}
-	res := command.execute()
 	res += "\n"
 	io.WriteString(conn, res)
 }
-
-var sp sync.Mutex
 
 func SetStoped() {
 	defer sp.Unlock()
 	sp.Lock()
 	stoped = true
+	cache.shutDown()
 }

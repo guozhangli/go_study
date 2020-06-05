@@ -1,9 +1,9 @@
 package net
 
 import (
-	"Concurrent"
 	"bufio"
 	"fmt"
+	"go_study/Concurrent"
 	"io"
 	"log"
 	"net"
@@ -12,17 +12,17 @@ import (
 
 //串行处理服务
 func BenchmarkServer1(b *testing.B) {
-	Server1()
+	ServerSerial()
 }
 
 //每个连接一个协程处理
 func BenchmarkServer2(b *testing.B) {
-	Server2()
+	ServerParallel()
 }
 
 //协程池处理
 func BenchmarkServer3(b *testing.B) {
-	Server3()
+	ServerPool()
 }
 
 func TestServer(t *testing.T) {
