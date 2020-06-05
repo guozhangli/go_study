@@ -58,6 +58,7 @@ func (r *ReportCommand) execute() string {
 }
 
 func (s *StopCommand) execute() string {
+	SetStoped()
 	return "Server stopped"
 }
 

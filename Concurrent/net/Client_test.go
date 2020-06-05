@@ -43,11 +43,15 @@ func BenchmarkClient3(b *testing.B) {
 }
 
 func TestClient(t *testing.T) {
-	for i := 0; i < 3000; i++ {
+	for i := 0; i < 1000; i++ {
 		go func() {
-			c, err := net.Dial("tcp", "localhost:8888")
+			c, err := net.Dial("tcp", "127.0.0.1:8888")
 			if err != nil {
 				log.Println(err)
+				return
+			}
+			if c == nil {
+				return
 			}
 			func(conn net.Conn) {
 				defer conn.Close()

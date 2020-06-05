@@ -1,7 +1,9 @@
 package net
 
 import (
+	"Concurrent"
 	"bufio"
+	"fmt"
 	"io"
 	"log"
 	"net"
@@ -28,24 +30,28 @@ func TestServer(t *testing.T) {
 	if err != nil {
 		log.Fatal("listen is error")
 	}
+	pool := Concurrent.NewPool(100)
 	for {
 		c, err := listen.Accept()
 		if err != nil {
 			log.Fatal("connect is error")
 			continue
 		}
-		go func(conn net.Conn) {
-			defer conn.Close()
-			for {
-				read := bufio.NewReader(conn)
-				line, _, err := read.ReadLine()
-				if err != nil {
-					break
+		pool.Execute(func() error {
+			func(conn net.Conn) {
+				defer conn.Close()
+				for {
+					read := bufio.NewReader(conn)
+					line, _, err := read.ReadLine()
+					if err != nil {
+						break
+					}
+					log.Println(string(line))
+					io.WriteString(conn, "send to client\n")
 				}
-				log.Println(string(line))
-				io.WriteString(conn, "send to client\n")
-			}
-		}(c)
+			}(c)
+			return nil
+		})
+		fmt.Println(pool.WorkerSize())
 	}
-
 }

@@ -2,7 +2,6 @@ package Concurrent
 
 import (
 	TestProject "datastructure"
-	"sync"
 )
 
 type task struct {
@@ -75,8 +74,6 @@ func (p *Pool) ShutDown() {
 func (p *Pool) WorkerSize() int {
 	return p.workers.Size()
 }
-
-var lock sync.Mutex
 
 func (p *Pool) addWorker(task interface{}) {
 	ch := make(chan int)

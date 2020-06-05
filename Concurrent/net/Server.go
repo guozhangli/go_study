@@ -1,13 +1,14 @@
 package net
 
 import (
+	"Concurrent"
 	"bufio"
 	"fmt"
-	. "go_study/Concurrent"
 	"io"
 	"log"
 	"net"
 	"strings"
+	"sync"
 )
 
 //串行处理服务
@@ -28,6 +29,8 @@ func Server1() {
 	}
 }
 
+var stoped = false
+
 //并行处理服务
 func Server2() {
 	_ = GetDAO()
@@ -36,7 +39,7 @@ func Server2() {
 		log.Println(err)
 	}
 	log.Println("waiting client connect")
-	for {
+	for !stoped {
 		conn, err := listen.Accept() //阻塞
 		if err != nil {
 			log.Println(err)
@@ -48,13 +51,13 @@ func Server2() {
 
 func Server3() {
 	_ = GetDAO()
-	listen, err := net.Listen("tcp", "localhost:6666")
+	listen, err := net.Listen("tcp", "127.0.0.1:6666")
 	if err != nil {
 		log.Println(err)
 	}
 	log.Println("waiting client connect")
-	pool := NewPool(100)
-	for {
+	pool := Concurrent.NewPool(100)
+	for !stoped {
 		conn, err := listen.Accept() //阻塞
 		if err != nil {
 			log.Println(err)
@@ -66,34 +69,43 @@ func Server3() {
 		})
 		log.Println("pool worker size：", pool.WorkerSize())
 	}
+	if stoped {
+		pool.ShutDown()
+	}
 }
 
 func handleConn(conn net.Conn) {
 	defer conn.Close()
-	for {
-		rd := bufio.NewReader(conn)
-		line, _, err := rd.ReadLine() //阻塞
-		if err != nil {
-			break
-		}
-		commandData := strings.Split(string(line), ";")
-		fmt.Println("command:", string(line))
-		var command ICommand
-		switch commandData[0] {
-		case "q":
-			command = NewQueryCommand(commandData)
-			break
-		case "r":
-			command = NewReportCommand(commandData)
-			break
-		case "z":
-			command = NewStopCommand(commandData)
-			break
-		default:
-			command = NewErrorCommand(commandData)
-		}
-		res := command.execute()
-		res += "\n"
-		io.WriteString(conn, res)
+	rd := bufio.NewReader(conn)
+	line, _, err := rd.ReadLine() //阻塞
+	if err != nil {
+		return
 	}
+	commandData := strings.Split(string(line), ";")
+	fmt.Println("command:", string(line))
+	var command ICommand
+	switch commandData[0] {
+	case "q":
+		command = NewQueryCommand(commandData)
+		break
+	case "r":
+		command = NewReportCommand(commandData)
+		break
+	case "z":
+		command = NewStopCommand(commandData)
+		break
+	default:
+		command = NewErrorCommand(commandData)
+	}
+	res := command.execute()
+	res += "\n"
+	io.WriteString(conn, res)
+}
+
+var sp sync.Mutex
+
+func SetStoped() {
+	defer sp.Unlock()
+	sp.Lock()
+	stoped = true
 }
