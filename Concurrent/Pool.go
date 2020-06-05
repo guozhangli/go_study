@@ -1,7 +1,7 @@
 package Concurrent
 
 import (
-	TestProject "go_study/datastructure"
+	TestProject "datastructure"
 	"sync"
 )
 
@@ -79,8 +79,12 @@ func (p *Pool) WorkerSize() int {
 var lock sync.Mutex
 
 func (p *Pool) addWorker(task interface{}) {
+	ch := make(chan int)
 	for {
 		ws := p.workers
+		go func(w *TestProject.Set, c chan int) {
+			c <- w.Size()
+		}(ws, ch)
 		num := p.maxNum
 		var wok *worker
 		var iterator = ws.Iterator()
@@ -92,7 +96,8 @@ func (p *Pool) addWorker(task interface{}) {
 			}
 			iterator = iterator.NextNode()
 		}
-		if ws.Size() <= num {
+		//同步集合的大小
+		if <-ch < num {
 			wok = newWorker(task)
 			ws.Insert(wok)
 			wok.run()
