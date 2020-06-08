@@ -63,7 +63,10 @@ func ServerPool() {
 		log.Println(err)
 	}
 	log.Println("waiting client connect")
-	pool := Concurrent.NewPool(100)
+	rejected := Concurrent.NewRejectedHandler(func() {
+		log.Println("rejected execute goroutine")
+	})
+	pool := Concurrent.NewPoolRejectedHandler(100, rejected)
 	for !stoped {
 		conn, err := listen.Accept() //阻塞
 		if err != nil {
@@ -76,7 +79,7 @@ func ServerPool() {
 		})
 	}
 	if stoped {
-		pool.ShutDown()
+		pool.ShutDown() //goroutine pool close
 	}
 	log.Println("pool worker size：", pool.WorkerSize(), "cache size:", cache.getItemCount())
 }

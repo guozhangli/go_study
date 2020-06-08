@@ -1,7 +1,8 @@
 package Concurrent
 
 import (
-	TestProject "datastructure"
+	TestProject "go_study/datastructure"
+	"sync"
 )
 
 type task struct {
@@ -36,18 +37,31 @@ func (w *worker) setTask(f interface{}) {
 }
 
 func (w *worker) run() {
+	defer wg.Done()
 	w.state = RUNNING
 	w.f()
 	w.state = TERMINATED
+}
+
+type RejectedHandler struct {
+	reject func()
+}
+
+func NewRejectedHandler(f func()) *RejectedHandler {
+	rejectedHandler := new(RejectedHandler)
+	rejectedHandler.reject = f
+	return rejectedHandler
 }
 
 /**
 协程池
 */
 type Pool struct {
-	jobChan chan interface{}
-	maxNum  int
-	workers *TestProject.Set
+	jobChan  chan interface{}
+	maxNum   int
+	workers  *TestProject.Set
+	rejected *RejectedHandler
+	closed   bool
 }
 
 func NewPool(num int) *Pool {
@@ -57,10 +71,32 @@ func NewPool(num int) *Pool {
 		workers: TestProject.NewSet(func(o, n interface{}) bool {
 			return o == n
 		}),
+		rejected: nil,
+		closed:   false,
 	}
-
 }
+
+func NewPoolRejectedHandler(num int, rejectedHandler *RejectedHandler) *Pool {
+	return &Pool{
+		jobChan: make(chan interface{}, num),
+		maxNum:  num,
+		workers: TestProject.NewSet(func(o, n interface{}) bool {
+			return o == n
+		}),
+		rejected: rejectedHandler,
+		closed:   false,
+	}
+}
+
+var wg sync.WaitGroup
+
 func (p *Pool) Execute(f func() error) {
+	if p.closed {
+		if p.rejected != nil {
+			p.rejected.reject()
+		}
+		return
+	}
 	task := &task{
 		f: f,
 	}
@@ -68,43 +104,60 @@ func (p *Pool) Execute(f func() error) {
 	go p.run()
 }
 
+var mu sync.Mutex
+
 func (p *Pool) ShutDown() {
+	defer mu.Unlock()
+	mu.Lock()
+	wg.Wait()
+	p.closed = true
+	p.workers.Clear()
 	close(p.jobChan)
 }
 func (p *Pool) WorkerSize() int {
 	return p.workers.Size()
 }
 
+var total int
+
 func (p *Pool) addWorker(task interface{}) {
 	ch := make(chan int)
 	for {
 		ws := p.workers
-		go func(w *TestProject.Set, c chan int) {
-			c <- w.Size()
-		}(ws, ch)
 		num := p.maxNum
+		go func() {
+			ch <- ws.Size()
+		}()
 		var wok *worker
 		var iterator = ws.Iterator()
 		for iterator.HasNode() {
 			wok = iterator.Data().(*worker)
 			if wok.state == TERMINATED {
-				wok.setTask(task)
+				go wok.setTask(task)
 				return
 			}
 			iterator = iterator.NextNode()
 		}
-		//同步集合的大小
-		if <-ch < num {
-			wok = newWorker(task)
-			ws.Insert(wok)
-			wok.run()
-			return
+
+		select {
+		case s := <-ch:
+			mu.Lock()
+			if s < num {
+				mu.Unlock()
+				wok = newWorker(task)
+				ws.Insert(wok)
+				go wok.run()
+				return
+			}
+
 		}
+
 	}
 }
 
 func (p *Pool) run() {
 	for task := range p.jobChan {
+		wg.Add(1)
 		p.addWorker(task)
 	}
 }
