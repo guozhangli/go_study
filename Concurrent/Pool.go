@@ -1,7 +1,7 @@
 package Concurrent
 
 import (
-	TestProject "datastructure"
+	TestProject "go_study/datastructure"
 	"sync"
 	"sync/atomic"
 )
@@ -35,7 +35,6 @@ func newWorker(f interface{}) *worker {
 		f: func() {
 			fn()
 		},
-		state: READY,
 	}
 	return w
 }
@@ -44,7 +43,6 @@ func (w *worker) setTask(f interface{}) {
 	w.f = func() {
 		fn()
 	}
-	w.state = READY
 }
 
 func (w *worker) run() {
@@ -85,7 +83,6 @@ func NewPool(num int32) *Pool {
 		rejected: nil,
 		closed:   false,
 	}
-	go pool.run()
 	return pool
 }
 
@@ -99,7 +96,6 @@ func NewPoolRejectedHandler(num int32, rejectedHandler *RejectedHandler) *Pool {
 		rejected: rejectedHandler,
 		closed:   false,
 	}
-	go pool.run()
 	return pool
 }
 
@@ -144,6 +140,7 @@ func (p *Pool) addWorker(task interface{}) {
 				wok = iterator.Data().(*worker)
 				if wok.state == TERMINATED {
 					wok.setTask(task)
+					go wok.run()
 					return iterator, true
 				}
 				return iterator.NextNode(), false
@@ -163,6 +160,7 @@ func (p *Pool) addWorker(task interface{}) {
 		if atomic.LoadInt32(&total) <= num {
 			wok = newWorker(task)
 			ws.Insert(wok)
+			wok.run()
 			return
 		}
 	}
@@ -172,21 +170,5 @@ func (p *Pool) addTask() {
 	for task := range p.jobChan {
 		wg.Add(1)
 		p.addWorker(task)
-	}
-}
-
-func (p *Pool) run() {
-	ws := p.workers
-	for {
-		var iterator = ws.Iterator()
-		for iterator.HasNode() {
-			muWork.Lock()
-			wok := iterator.Data().(*worker)
-			if wok.state == READY {
-				go wok.run()
-			}
-			iterator = iterator.NextNode()
-			muWork.Unlock()
-		}
 	}
 }
