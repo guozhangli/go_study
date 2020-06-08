@@ -11,7 +11,6 @@ type task struct {
 }
 
 const (
-	READY      = 0
 	RUNNING    = 1
 	TERMINATED = 2
 )
