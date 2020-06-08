@@ -1,8 +1,9 @@
 package Concurrent
 
 import (
-	TestProject "go_study/datastructure"
+	TestProject "datastructure"
 	"sync"
+	"sync/atomic"
 )
 
 type task struct {
@@ -10,8 +11,15 @@ type task struct {
 }
 
 const (
+	READY      = 0
 	RUNNING    = 1
 	TERMINATED = 2
+)
+
+var (
+	muWork sync.Mutex
+	muStop sync.Mutex
+	wg     sync.WaitGroup
 )
 
 type worker struct {
@@ -20,11 +28,14 @@ type worker struct {
 }
 
 func newWorker(f interface{}) *worker {
+	defer muWork.Unlock()
+	muWork.Lock()
 	fn := f.(*task).f
 	w := &worker{
 		f: func() {
 			fn()
 		},
+		state: READY,
 	}
 	return w
 }
@@ -33,7 +44,7 @@ func (w *worker) setTask(f interface{}) {
 	w.f = func() {
 		fn()
 	}
-	w.run()
+	w.state = READY
 }
 
 func (w *worker) run() {
@@ -58,14 +69,14 @@ func NewRejectedHandler(f func()) *RejectedHandler {
 */
 type Pool struct {
 	jobChan  chan interface{}
-	maxNum   int
+	maxNum   int32
 	workers  *TestProject.Set
 	rejected *RejectedHandler
 	closed   bool
 }
 
-func NewPool(num int) *Pool {
-	return &Pool{
+func NewPool(num int32) *Pool {
+	pool := &Pool{
 		jobChan: make(chan interface{}, num),
 		maxNum:  num,
 		workers: TestProject.NewSet(func(o, n interface{}) bool {
@@ -74,10 +85,12 @@ func NewPool(num int) *Pool {
 		rejected: nil,
 		closed:   false,
 	}
+	go pool.run()
+	return pool
 }
 
-func NewPoolRejectedHandler(num int, rejectedHandler *RejectedHandler) *Pool {
-	return &Pool{
+func NewPoolRejectedHandler(num int32, rejectedHandler *RejectedHandler) *Pool {
+	pool := &Pool{
 		jobChan: make(chan interface{}, num),
 		maxNum:  num,
 		workers: TestProject.NewSet(func(o, n interface{}) bool {
@@ -86,9 +99,9 @@ func NewPoolRejectedHandler(num int, rejectedHandler *RejectedHandler) *Pool {
 		rejected: rejectedHandler,
 		closed:   false,
 	}
+	go pool.run()
+	return pool
 }
-
-var wg sync.WaitGroup
 
 func (p *Pool) Execute(f func() error) {
 	if p.closed {
@@ -101,14 +114,12 @@ func (p *Pool) Execute(f func() error) {
 		f: f,
 	}
 	p.jobChan <- task
-	go p.run()
+	go p.addTask()
 }
 
-var mu sync.Mutex
-
 func (p *Pool) ShutDown() {
-	defer mu.Unlock()
-	mu.Lock()
+	defer muStop.Unlock()
+	muStop.Lock()
 	wg.Wait()
 	p.closed = true
 	p.workers.Clear()
@@ -118,46 +129,64 @@ func (p *Pool) WorkerSize() int {
 	return p.workers.Size()
 }
 
-var total int
+var total = int32(0)
 
 func (p *Pool) addWorker(task interface{}) {
-	ch := make(chan int)
+	var wok *worker
+	ws := p.workers
+	num := p.maxNum
 	for {
-		ws := p.workers
-		num := p.maxNum
-		go func() {
-			ch <- ws.Size()
-		}()
-		var wok *worker
 		var iterator = ws.Iterator()
 		for iterator.HasNode() {
-			wok = iterator.Data().(*worker)
-			if wok.state == TERMINATED {
-				go wok.setTask(task)
+			it, flag := func(it *TestProject.LinkedList, task interface{}) (*TestProject.LinkedList, bool) {
+				defer muWork.Unlock()
+				muWork.Lock()
+				wok = iterator.Data().(*worker)
+				if wok.state == TERMINATED {
+					wok.setTask(task)
+					return iterator, true
+				}
+				return iterator.NextNode(), false
+			}(iterator, task)
+			if flag {
 				return
+			} else {
+				iterator = it
 			}
-			iterator = iterator.NextNode()
 		}
-
-		select {
-		case s := <-ch:
-			mu.Lock()
-			if s < num {
-				mu.Unlock()
-				wok = newWorker(task)
-				ws.Insert(wok)
-				go wok.run()
-				return
+		for {
+			count := atomic.LoadInt32(&total)
+			if atomic.CompareAndSwapInt32(&total, count, count+1) {
+				break
 			}
-
 		}
+		if atomic.LoadInt32(&total) <= num {
+			wok = newWorker(task)
+			ws.Insert(wok)
+			return
+		}
+	}
+}
 
+func (p *Pool) addTask() {
+	for task := range p.jobChan {
+		wg.Add(1)
+		p.addWorker(task)
 	}
 }
 
 func (p *Pool) run() {
-	for task := range p.jobChan {
-		wg.Add(1)
-		p.addWorker(task)
+	ws := p.workers
+	for {
+		var iterator = ws.Iterator()
+		for iterator.HasNode() {
+			muWork.Lock()
+			wok := iterator.Data().(*worker)
+			if wok.state == READY {
+				go wok.run()
+			}
+			iterator = iterator.NextNode()
+			muWork.Unlock()
+		}
 	}
 }

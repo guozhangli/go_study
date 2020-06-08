@@ -68,6 +68,15 @@ func (set *Set) Delete(value interface{}) bool {
 	return true
 }
 
+func (set *Set) Clear() {
+	iterator := set.Iterator()
+	for iterator.HasNode() {
+		set.Delete(iterator.data)
+		iterator = iterator.NextNode()
+	}
+	set = nil
+}
+
 //计算集合的成员数量
 func (set *Set) Size() int {
 	defer lock.Unlock()

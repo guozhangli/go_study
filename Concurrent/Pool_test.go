@@ -10,8 +10,8 @@ func TestNewRejectedHandlerPool(t *testing.T) {
 	rejected := NewRejectedHandler(func() {
 		panic("rejected execute goroutine")
 	})
-	pool := NewPoolRejectedHandler(1000, rejected)
-	for i := 0; i < 4000; i++ {
+	pool := NewPoolRejectedHandler(2, rejected)
+	for i := 0; i < 5; i++ {
 		pool.Execute(func() error {
 			fmt.Println(time.Now())
 			fmt.Println(pool.WorkerSize())
@@ -26,9 +26,9 @@ func TestNewRejectedHandlerPool(t *testing.T) {
 	//	return nil
 	//})
 	for {
-		time.Sleep(time.Second)
-		fmt.Println("worker", pool.WorkerSize())
-		fmt.Println("max", pool.maxNum)
+		time.Sleep(20 * time.Second)
+		/*	fmt.Println("worker", pool.WorkerSize())
+			fmt.Println("max", pool.maxNum)*/
 	}
 }
 
