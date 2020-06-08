@@ -20,6 +20,7 @@ func checkQueueLinked(queue *QueueLinked) {
 	}
 }
 
+//从队列头部取出元素
 func (queue *QueueLinked) DeQueue() interface{} {
 	checkQueueLinked(queue)
 	if queue.Front == nil {
@@ -30,6 +31,7 @@ func (queue *QueueLinked) DeQueue() interface{} {
 	return top
 }
 
+//向队列尾部加入元素
 func (queue *QueueLinked) EnQueue(value interface{}) {
 	checkQueueLinked(queue)
 	node := NewNode(nil, value)
@@ -73,6 +75,7 @@ func (queue *QueueLinked) Clear() {
 	queue.Rear = nil
 }
 
+//得到队首元素
 func (queue *QueueLinked) GetFront() interface{} {
 	checkQueueLinked(queue)
 	if queue.Front == nil {
