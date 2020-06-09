@@ -1,8 +1,52 @@
 package TestProject
 
-import "testing"
+import (
+	json2 "encoding/json"
+	"testing"
+	"time"
+)
 
 func TestLinkedBlockingQueue(t *testing.T) {
-	lbq := NewLInkedBlockingQueue(10)
-	t.Log(lbq)
+	lbq := NewLinkedBlockingQueue(10)
+	str, _ := json2.Marshal(lbq)
+	t.Log(string(str))
+}
+
+func printLBQ(lbq *LinkedBlockingQueue, t *testing.T) {
+	str, _ := json2.Marshal(lbq)
+	t.Log(string(str))
+}
+func TestLinkedBlockingQueue_enqueue(t *testing.T) {
+	lbq := NewLinkedBlockingQueue(10)
+	lbq.enqueue("aaaaa")
+	lbq.enqueue("bbbbb")
+	lbq.enqueue("ccccc")
+	lbq.enqueue("ddddd")
+	printLBQ(lbq, t)
+}
+
+func TestLinkedBlockingQueue_dequeue(t *testing.T) {
+	lbq := NewLinkedBlockingQueue(10)
+	lbq.enqueue("aaaaa")
+	lbq.enqueue("bbbbb")
+	lbq.enqueue("ccccc")
+	lbq.enqueue("ddddd")
+	printLBQ(lbq, t)
+	lbq.dequeue()
+	printLBQ(lbq, t)
+}
+
+func TestLinkedBlockingQueue_take(t *testing.T) {
+	lbq := NewLinkedBlockingQueue(10)
+	go lbq.take()
+	time.Sleep(time.Minute)
+}
+
+func TestLinkedBlockingQueue_put(t *testing.T) {
+	lbq := NewLinkedBlockingQueue(10)
+	for i := 0; i < 5; i++ {
+		go lbq.put("aaaaa")
+	}
+	printLBQ(lbq, t)
+	time.Sleep(time.Minute)
 }

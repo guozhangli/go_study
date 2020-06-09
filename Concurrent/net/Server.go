@@ -1,9 +1,9 @@
 package net
 
 import (
+	"Concurrent"
 	"bufio"
 	"fmt"
-	"go_study/Concurrent"
 	"io"
 	"log"
 	"net"
