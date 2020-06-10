@@ -1,8 +1,8 @@
 package reader
 
 import (
-	"Concurrent"
 	"fmt"
+	"go_study/Concurrent"
 	"testing"
 	"time"
 )

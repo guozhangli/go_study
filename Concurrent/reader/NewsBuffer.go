@@ -1,8 +1,8 @@
 package reader
 
 import (
-	TestProject "datastructure"
 	"fmt"
+	TestProject "go_study/datastructure"
 	"math"
 	"sync"
 )

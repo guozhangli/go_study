@@ -1,7 +1,7 @@
 package Concurrent
 
 import (
-	TestProject "datastructure"
+	TestProject "go_study/datastructure"
 	"sync"
 	"sync/atomic"
 )
