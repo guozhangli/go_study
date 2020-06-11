@@ -49,7 +49,7 @@ func (reader *MyNewsReader) NewsReader() {
 		}
 		data := strings.Split(string(line), ";")
 		pool.Execute(func() error {
-			ticker := time.NewTicker(5 * time.Second)
+			ticker := time.NewTicker(30 * time.Second)
 			go func() {
 				for range ticker.C {
 					reader.newsTask(data[0], data[1], nb)
@@ -97,7 +97,7 @@ func (reader *MyNewsReader) shutdown() {
 
 func MyNewsReaderStart() {
 	myNewsReader := NewMyNewsReader()
-	myNewsReader.NewsReader()
-	time.Sleep(10 * time.Minute)
+	go myNewsReader.NewsReader()
+	time.Sleep(time.Minute)
 	myNewsReader.shutdown()
 }
