@@ -7,6 +7,7 @@ import (
 	"log"
 	"math"
 	"os"
+	"time"
 )
 
 /**
@@ -81,7 +82,6 @@ func LevenshteinDistance(str1, str2 string) int {
 	for j := 0; j < len2; j++ {
 		arr[0][j] = j
 	}
-	fmt.Println(arr)
 	for j := 1; j < len2; j++ {
 		for i := 1; i < len1; i++ {
 			top := arr[i-1][j] + 1
@@ -103,6 +103,13 @@ type BestMatchingData struct {
 	words    []string
 }
 
+func NewBestMatchingData(distance int, words []string) *BestMatchingData {
+	bestMatchingData := new(BestMatchingData)
+	bestMatchingData.words = words
+	bestMatchingData.distance = distance
+	return bestMatchingData
+}
+
 func load(path string) []string {
 	file, err := os.Open(path)
 	if err != nil {
@@ -122,5 +129,107 @@ func load(path string) []string {
 
 func getBestMatchingWords(word string, dictionary []string) *BestMatchingData {
 	min := math.MaxInt32
-	return nil
+	var result []string
+	for _, d := range dictionary {
+		distance := LevenshteinDistance(word, d)
+		if distance < min {
+			min = distance
+			result = nil
+			result = append(result, d)
+		} else if distance == min {
+			result = append(result, d)
+		}
+	}
+	bestMatchingData := NewBestMatchingData(min, result)
+	return bestMatchingData
+}
+
+//最佳匹配算法的串行版本
+func MatchingData() {
+	dictionary := load("data/UK Advanced Cryptics Dictionary.txt")
+	fmt.Println("Dictionary Size: ", len(dictionary))
+	startTime := time.Now().UnixNano()
+	word := "stitter"
+	bestMatchingData := getBestMatchingWords(word, dictionary)
+	results := bestMatchingData.words
+	endTime := time.Now().UnixNano()
+	fmt.Printf("Word: %s\n", word)
+	fmt.Printf("Minimun distance: %d\n", bestMatchingData.distance)
+	fmt.Printf("List of best matching words: %d\n", len(results))
+	for _, r := range results {
+		fmt.Println(r)
+	}
+	fmt.Printf("Execution Time: %dms\n", (endTime-startTime)/1000000)
+}
+
+func getBestMatchingWordsParallel(word string, dictionary []string, startIndex, endIndex int) *BestMatchingData {
+	min := math.MaxInt32
+	var result []string
+	for i := startIndex; i < endIndex; i++ {
+		distance := LevenshteinDistance(word, dictionary[i])
+		if distance < min {
+			min = distance
+			result = nil
+			result = append(result, dictionary[i])
+		} else if distance == min {
+			result = append(result, dictionary[i])
+		}
+	}
+	bestMatchingData := NewBestMatchingData(min, result)
+	return bestMatchingData
+}
+
+//最佳匹配算法的并行版本
+func MatchingDataParallel() {
+	dictionary := load("data/UK Advanced Cryptics Dictionary.txt")
+	fmt.Println("Dictionary Size: ", len(dictionary))
+	startTime := time.Now().UnixNano()
+	word := "stitter"
+	rejected := NewRejectedHandler(func() {
+		log.Fatal("pool closed,rejected task")
+
+	})
+	var poolNum = int32(100)
+	pool := NewPoolRejectedHandler(poolNum, rejected)
+	step := len(dictionary) / int(poolNum)
+	startIndex := 0
+	endIndex := step
+	ch := make(chan *BestMatchingData)
+	for i := 0; i < step; i++ {
+		pool.Execute(func() error {
+			bestMatchingData := getBestMatchingWordsParallel(word, dictionary, startIndex, endIndex)
+			ch <- bestMatchingData
+			return nil
+		})
+		startIndex = endIndex
+		if i < step-2 {
+			endIndex = endIndex + step
+		} else {
+			endIndex = len(dictionary)
+		}
+	}
+	var min = math.MaxInt32
+	var results []string
+	for v := range ch {
+		if v.distance < min {
+			min = v.distance
+			results = nil
+			for _, w := range v.words {
+				results = append(results, w)
+			}
+
+		} else if v.distance == min {
+			for _, w := range v.words {
+				results = append(results, w)
+			}
+		}
+	}
+	endTime := time.Now().UnixNano()
+	fmt.Printf("Word: %s\n", word)
+	fmt.Printf("Minimun distance: %d\n", min)
+	fmt.Printf("List of best matching words: %d\n", len(results))
+	for _, r := range results {
+		fmt.Println(r)
+	}
+	fmt.Printf("Execution Time: %dms\n", (endTime-startTime)/1000000)
 }

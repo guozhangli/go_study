@@ -15,3 +15,11 @@ func TestLevenshtein(t *testing.T) {
 	v := Levenshtein("abc", "abe")
 	fmt.Printf("%f\n", v)
 }
+
+func TestMatchingData(t *testing.T) {
+	MatchingData()
+}
+
+func TestMatchingDataParallel(t *testing.T) {
+	MatchingDataParallel()
+}
