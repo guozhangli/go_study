@@ -1,8 +1,8 @@
 package reader
 
 import (
+	"Concurrent"
 	"fmt"
-	"go_study/Concurrent"
 	"testing"
 	"time"
 )
@@ -54,6 +54,11 @@ func startTimer(f func()) {
 	}()
 }
 
-func TestNewsReader(t *testing.T) {
+func TestNewsReaderLoad(t *testing.T) {
+	rss := new(RSSDataCapturer)
+	rss.load("http://www.matrix67.com/blog/feed.asp")
+}
 
+func TestMyNewsReader_NewsReader(t *testing.T) {
+	MyNewsReaderStart()
 }

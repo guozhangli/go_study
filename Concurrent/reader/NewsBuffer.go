@@ -1,8 +1,8 @@
 package reader
 
 import (
+	TestProject "datastructure"
 	"fmt"
-	TestProject "go_study/datastructure"
 	"math"
 	"sync"
 )
@@ -28,5 +28,5 @@ func (nb *NewsBuffer) add(item *CommonInformationItem) {
 }
 
 func (nb *NewsBuffer) get() *CommonInformationItem {
-	return nb.buffer.Take().(*CommonInformationItem)
+	return nb.buffer.Take().(*TestProject.Node).Data.(*CommonInformationItem)
 }

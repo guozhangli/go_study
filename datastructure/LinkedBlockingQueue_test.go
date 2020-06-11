@@ -38,14 +38,14 @@ func TestLinkedBlockingQueue_dequeue(t *testing.T) {
 
 func TestLinkedBlockingQueue_take(t *testing.T) {
 	lbq := NewLinkedBlockingQueue(10)
-	go lbq.take()
+	go lbq.Take()
 	time.Sleep(time.Minute)
 }
 
 func TestLinkedBlockingQueue_put(t *testing.T) {
 	lbq := NewLinkedBlockingQueue(10)
 	for i := 0; i < 5; i++ {
-		go lbq.put("aaaaa")
+		go lbq.Put("aaaaa")
 	}
 	printLBQ(lbq, t)
 	time.Sleep(time.Minute)

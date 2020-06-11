@@ -32,8 +32,9 @@ func (lbq *LinkedBlockingQueue) dequeue() interface{} {
 	if lbq.Head == nil {
 		return nil
 	}
+	var top = lbq.Head
 	lbq.Head = lbq.Head.Next
-	return lbq.Head.Data
+	return top
 }
 
 //从队尾添加一个元素
