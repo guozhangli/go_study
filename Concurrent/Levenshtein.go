@@ -181,6 +181,22 @@ func getBestMatchingWordsParallel(word string, dictionary []string, startIndex, 
 	return bestMatchingData
 }
 
+type taskDistance struct {
+	startIndex, endIndex int
+	word                 string
+	dictionary           []string
+	lbq                  *TestProject.LinkedBlockingQueue
+}
+
+func (t taskDistance) Run() error {
+	log.Printf("startIndex:%d,endIndex:%d", t.startIndex, t.endIndex)
+	bestMatchingData := getBestMatchingWordsParallel(t.word, t.dictionary, t.startIndex, t.endIndex) //不正确
+	t.lbq.Put(bestMatchingData)
+	str, _ := json.Marshal(bestMatchingData)
+	log.Println(string(str))
+	return nil
+}
+
 //最佳匹配算法的并行版本
 func MatchingDataParallel() {
 	dictionary := load("data/UK Advanced Cryptics Dictionary.txt")
@@ -197,14 +213,14 @@ func MatchingDataParallel() {
 	endIndex := step
 	lbq := TestProject.NewLinkedBlockingQueue(math.MaxInt32)
 	for i := 0; i < poolNum; i++ {
-		pool.Execute(func() error {
-			log.Printf("startIndex:%d,endIndex:%d", startIndex, endIndex)
-			bestMatchingData := getBestMatchingWordsParallel(word, dictionary, startIndex, endIndex) //不正确
-			lbq.Put(bestMatchingData)
-			str, _ := json.Marshal(bestMatchingData)
-			log.Println(string(str))
-			return nil
-		})
+		task := taskDistance{
+			startIndex: startIndex,
+			endIndex:   endIndex,
+			word:       word,
+			dictionary: dictionary,
+			lbq:        lbq,
+		}
+		pool.Execute(task)
 		startIndex = endIndex
 		if i < poolNum-2 {
 			endIndex = endIndex + step

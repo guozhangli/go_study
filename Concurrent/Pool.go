@@ -99,7 +99,11 @@ func NewPoolRejectedHandler(num int32, rejectedHandler *RejectedHandler) *Pool {
 	return pool
 }
 
-func (p *Pool) Execute(f func() error) {
+type Runnable interface {
+	Run() error
+}
+
+func (p *Pool) Execute(r Runnable) {
 	if p.closed {
 		if p.rejected != nil {
 			p.rejected.reject()
@@ -107,7 +111,7 @@ func (p *Pool) Execute(f func() error) {
 		return
 	}
 	task := &task{
-		f: f,
+		f: r.Run,
 	}
 	p.jobChan <- task
 	go p.addTask()

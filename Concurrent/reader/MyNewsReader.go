@@ -23,6 +23,22 @@ type MyNewsReader struct {
 	stoped bool
 }
 
+type task struct {
+	reader *MyNewsReader
+	data   []string
+	nb     *NewsBuffer
+}
+
+func (t task) Run() error {
+	ticker := time.NewTicker(30 * time.Second)
+	go func() {
+		for range ticker.C {
+			t.reader.newsTask(t.data[0], t.data[1], t.nb)
+		}
+	}()
+	return nil
+}
+
 func NewMyNewsReader() *MyNewsReader {
 	reader := new(MyNewsReader)
 	reader.stoped = false
@@ -48,15 +64,12 @@ func (reader *MyNewsReader) NewsReader() {
 			break
 		}
 		data := strings.Split(string(line), ";")
-		pool.Execute(func() error {
-			ticker := time.NewTicker(30 * time.Second)
-			go func() {
-				for range ticker.C {
-					reader.newsTask(data[0], data[1], nb)
-				}
-			}()
-			return nil
-		})
+		task := task{
+			reader: reader,
+			data:   data,
+			nb:     nb,
+		}
+		pool.Execute(task)
 	}
 	reader.wg.Wait()
 	log.Println("Shutting down the executor.")
