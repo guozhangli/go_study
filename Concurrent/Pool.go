@@ -2,6 +2,7 @@ package Concurrent
 
 import (
 	TestProject "datastructure"
+	"log"
 	"sync"
 	"sync/atomic"
 )
@@ -113,13 +114,19 @@ func (p *Pool) Execute(f func() error) {
 }
 
 func (p *Pool) ShutDown() {
-	defer muStop.Unlock()
 	muStop.Lock()
-	wg.Wait()
-	p.closed = true
-	p.workers.Clear()
-	close(p.jobChan)
+	p.closed = true  //设置关闭标志位
+	close(p.jobChan) //关闭工作任务队列
+	muStop.Unlock()
+	go func() {
+		wg.Wait() //等待所有的协程执行完毕
+		log.Println("all goroutine execute finish")
+		p.workers.Clear() //清空工作集合
+		log.Printf("worker num:%d\n", p.WorkerSize())
+		p.workers = nil
+	}()
 }
+
 func (p *Pool) WorkerSize() int {
 	return p.workers.Size()
 }

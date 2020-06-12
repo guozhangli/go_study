@@ -74,7 +74,6 @@ func (set *Set) Clear() {
 		set.Delete(iterator.data)
 		iterator = iterator.NextNode()
 	}
-	set = nil
 }
 
 //计算集合的成员数量

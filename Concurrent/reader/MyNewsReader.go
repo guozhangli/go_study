@@ -98,6 +98,6 @@ func (reader *MyNewsReader) shutdown() {
 func MyNewsReaderStart() {
 	myNewsReader := NewMyNewsReader()
 	go myNewsReader.NewsReader()
-	time.Sleep(time.Minute)
+	time.Sleep(5 * time.Minute)
 	myNewsReader.shutdown()
 }

@@ -2,6 +2,8 @@ package Concurrent
 
 import (
 	"bufio"
+	"datastructure"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -187,44 +189,50 @@ func MatchingDataParallel() {
 	word := "stitter"
 	rejected := NewRejectedHandler(func() {
 		log.Fatal("pool closed,rejected task")
-
 	})
-	var poolNum = int32(100)
-	pool := NewPoolRejectedHandler(poolNum, rejected)
+	var poolNum = 100
+	pool := NewPoolRejectedHandler(int32(poolNum), rejected)
 	step := len(dictionary) / int(poolNum)
 	startIndex := 0
 	endIndex := step
-	ch := make(chan *BestMatchingData)
-	for i := 0; i < step; i++ {
+	lbq := TestProject.NewLinkedBlockingQueue(math.MaxInt32)
+	for i := 0; i < poolNum; i++ {
 		pool.Execute(func() error {
-			bestMatchingData := getBestMatchingWordsParallel(word, dictionary, startIndex, endIndex)
-			ch <- bestMatchingData
+			log.Printf("startIndex:%d,endIndex:%d", startIndex, endIndex)
+			bestMatchingData := getBestMatchingWordsParallel(word, dictionary, startIndex, endIndex) //不正确
+			lbq.Put(bestMatchingData)
+			str, _ := json.Marshal(bestMatchingData)
+			log.Println(string(str))
 			return nil
 		})
 		startIndex = endIndex
-		if i < step-2 {
+		if i < poolNum-2 {
 			endIndex = endIndex + step
 		} else {
 			endIndex = len(dictionary)
 		}
 	}
+	pool.ShutDown()
 	var min = math.MaxInt32
 	var results []string
-	for v := range ch {
-		if v.distance < min {
-			min = v.distance
-			results = nil
-			for _, w := range v.words {
-				results = append(results, w)
-			}
-
-		} else if v.distance == min {
-			for _, w := range v.words {
-				results = append(results, w)
+	go func() {
+		for {
+			v := lbq.Take().(*TestProject.Node).Data.(*BestMatchingData)
+			if v.distance < min {
+				min = v.distance
+				results = nil
+				for _, w := range v.words {
+					results = append(results, w)
+				}
+			} else if v.distance == min {
+				for _, w := range v.words {
+					results = append(results, w)
+				}
 			}
 		}
-	}
+	}()
 	endTime := time.Now().UnixNano()
+	time.Sleep(1 * time.Minute)
 	fmt.Printf("Word: %s\n", word)
 	fmt.Printf("Minimun distance: %d\n", min)
 	fmt.Printf("List of best matching words: %d\n", len(results))
