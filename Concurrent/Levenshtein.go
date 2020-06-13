@@ -205,7 +205,7 @@ func MatchingDataParallel() {
 		log.Fatal("pool closed,rejected task")
 	})
 	var poolNum = 100
-	pool := NewPoolRejectedHandler(int32(10), rejected)
+	pool := NewPoolRejectedHandler(int32(50), rejected)
 	step := len(dictionary) / poolNum
 	startIndex := 0
 	endIndex := step

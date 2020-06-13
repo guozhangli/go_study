@@ -4,51 +4,19 @@ import (
 	TestProject "go_study/datastructure"
 	"log"
 	"sync"
-	"sync/atomic"
 )
 
 type task struct {
 	f func() error
 }
 
-const (
-	RUNNABLE = 0 //就绪状态
-	RUNNING  = 1 //运行状态
-)
-
 var (
-	muWork sync.Mutex
 	muStop sync.Mutex
 	wg     sync.WaitGroup
 )
 
 type worker struct {
-	f     func()
-	state int
-}
-
-func newWorker(f interface{}) *worker {
-	fn := f.(*task).f
-	w := &worker{
-		f: func() {
-			fn()
-		},
-		state: RUNNABLE,
-	}
-	return w
-}
-func (w *worker) setTask(f interface{}) {
-	fn := f.(*task).f
-	w.f = func() {
-		fn()
-	}
-}
-
-func (w *worker) run() {
-	defer wg.Done()
-	w.state = RUNNING
-	w.f()
-	w.state = RUNNABLE
+	f func()
 }
 
 type RejectedHandler struct {
@@ -82,6 +50,7 @@ func NewPool(num int32) *Pool {
 		rejected: nil,
 		closed:   false,
 	}
+	go pool.start()
 	return pool
 }
 
@@ -95,6 +64,7 @@ func NewPoolRejectedHandler(num int32, rejectedHandler *RejectedHandler) *Pool {
 		rejected: rejectedHandler,
 		closed:   false,
 	}
+	go pool.start()
 	return pool
 }
 
@@ -112,8 +82,8 @@ func (p *Pool) Execute(r Runnable) {
 	task := &task{
 		f: r.Run,
 	}
+	wg.Add(1)
 	p.jobChan <- task
-	go p.addTask()
 }
 
 func (p *Pool) ShutDown() {
@@ -134,50 +104,33 @@ func (p *Pool) WorkerSize() int {
 	return p.workers.Size()
 }
 
-var total = int32(0)
+func (p *Pool) start() {
+	//初始化，添加工作者
+	p.addWorker()
+}
 
-func (p *Pool) addWorker(task interface{}) {
-	var wok *worker
+func (p *Pool) addWorker() {
 	ws := p.workers
 	num := p.maxNum
-	for {
-		var iterator = ws.Iterator()
-		for iterator.HasNode() {
-			it, flag := func(it *TestProject.LinkedList, task interface{}) (*TestProject.LinkedList, bool) {
-				defer muWork.Unlock()
-				muWork.Lock()
-				wok = iterator.Data().(*worker)
-				if wok.state == RUNNABLE {
-					wok.setTask(task)
-					wok.run()
-					return iterator, true
-				}
-				return iterator.NextNode(), false
-			}(iterator, task)
-			if flag {
-				return
-			} else {
-				iterator = it
-			}
-		}
-		for {
-			count := atomic.LoadInt32(&total)
-			if atomic.CompareAndSwapInt32(&total, count, count+1) {
-				break
-			}
-		}
-		if atomic.LoadInt32(&total) <= num {
-			wok = newWorker(task)
-			ws.Insert(wok)
-			wok.run()
-			return
-		}
+	for ws.Size() < int(num) {
+		wok := new(worker)
+		ws.Insert(wok)
+		go wok.run(p)
 	}
 }
 
-func (p *Pool) addTask() {
-	for task := range p.jobChan {
-		wg.Add(1)
-		p.addWorker(task)
+func (w *worker) setTask(f interface{}) {
+	fn := f.(*task).f
+	w.f = func() {
+		fn()
 	}
+}
+
+func (w *worker) run(p *Pool) {
+	for task := range p.jobChan {
+		w.setTask(task)
+		w.f() //执行任务
+		wg.Done()
+	}
+
 }

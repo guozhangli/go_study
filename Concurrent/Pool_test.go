@@ -21,16 +21,16 @@ func TestNewRejectedHandlerPool(t *testing.T) {
 	rejected := NewRejectedHandler(func() {
 		log.Println("rejected execute goroutine")
 	})
-	pool := NewPoolRejectedHandler(500, rejected)
+	pool := NewPoolRejectedHandler(100, rejected)
 	task := taskTest{
 		pool: pool,
 	}
-	for i := 0; i < 3000; i++ {
-		panic("rejected execute goroutine")
+	for i := 0; i < 1000; i++ {
+		pool.Execute(task)
 	}
 	pool.ShutDown()
 	pool.Execute(task)
-	time.Sleep(30 * time.Second)
+	time.Sleep(20 * time.Second)
 }
 
 func TestNewPool(t *testing.T) {
