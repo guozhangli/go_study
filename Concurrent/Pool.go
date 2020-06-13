@@ -1,7 +1,7 @@
 package Concurrent
 
 import (
-	TestProject "datastructure"
+	TestProject "go_study/datastructure"
 	"log"
 	"sync"
 	"sync/atomic"
@@ -12,8 +12,8 @@ type task struct {
 }
 
 const (
-	RUNNING    = 1
-	TERMINATED = 2
+	RUNNABLE = 0 //就绪状态
+	RUNNING  = 1 //运行状态
 )
 
 var (
@@ -28,13 +28,12 @@ type worker struct {
 }
 
 func newWorker(f interface{}) *worker {
-	defer muWork.Unlock()
-	muWork.Lock()
 	fn := f.(*task).f
 	w := &worker{
 		f: func() {
 			fn()
 		},
+		state: RUNNABLE,
 	}
 	return w
 }
@@ -49,7 +48,7 @@ func (w *worker) run() {
 	defer wg.Done()
 	w.state = RUNNING
 	w.f()
-	w.state = TERMINATED
+	w.state = RUNNABLE
 }
 
 type RejectedHandler struct {
@@ -122,7 +121,7 @@ func (p *Pool) ShutDown() {
 	p.closed = true  //设置关闭标志位
 	close(p.jobChan) //关闭工作任务队列
 	muStop.Unlock()
-	go func() {
+	func() {
 		wg.Wait() //等待所有的协程执行完毕
 		log.Println("all goroutine execute finish")
 		p.workers.Clear() //清空工作集合
@@ -148,9 +147,9 @@ func (p *Pool) addWorker(task interface{}) {
 				defer muWork.Unlock()
 				muWork.Lock()
 				wok = iterator.Data().(*worker)
-				if wok.state == TERMINATED {
+				if wok.state == RUNNABLE {
 					wok.setTask(task)
-					go wok.run()
+					wok.run()
 					return iterator, true
 				}
 				return iterator.NextNode(), false

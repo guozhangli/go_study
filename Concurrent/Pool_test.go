@@ -2,6 +2,7 @@ package Concurrent
 
 import (
 	"fmt"
+	"log"
 	"testing"
 	"time"
 )
@@ -18,22 +19,18 @@ func (t taskTest) Run() error {
 }
 func TestNewRejectedHandlerPool(t *testing.T) {
 	rejected := NewRejectedHandler(func() {
-		panic("rejected execute goroutine")
+		log.Println("rejected execute goroutine")
 	})
-	pool := NewPoolRejectedHandler(2, rejected)
+	pool := NewPoolRejectedHandler(500, rejected)
 	task := taskTest{
 		pool: pool,
 	}
-	for i := 0; i < 10; i++ {
-		pool.Execute(task)
+	for i := 0; i < 3000; i++ {
+		panic("rejected execute goroutine")
 	}
 	pool.ShutDown()
 	pool.Execute(task)
-	for {
-		time.Sleep(20 * time.Second)
-		/*	fmt.Println("worker", pool.WorkerSize())
-			fmt.Println("max", pool.maxNum)*/
-	}
+	time.Sleep(30 * time.Second)
 }
 
 func TestNewPool(t *testing.T) {

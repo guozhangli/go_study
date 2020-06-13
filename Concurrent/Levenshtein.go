@@ -2,9 +2,8 @@ package Concurrent
 
 import (
 	"bufio"
-	"datastructure"
-	"encoding/json"
 	"fmt"
+	TestProject "go_study/datastructure"
 	"io"
 	"log"
 	"math"
@@ -188,32 +187,30 @@ type taskDistance struct {
 	lbq                  *TestProject.LinkedBlockingQueue
 }
 
-func (t taskDistance) Run() error {
-	log.Printf("startIndex:%d,endIndex:%d", t.startIndex, t.endIndex)
-	bestMatchingData := getBestMatchingWordsParallel(t.word, t.dictionary, t.startIndex, t.endIndex) //不正确
+func (t *taskDistance) Run() error {
+	//log.Printf("startIndex:%d,endIndex:%d", t.startIndex, t.endIndex)
+	bestMatchingData := getBestMatchingWordsParallel(t.word, t.dictionary, t.startIndex, t.endIndex)
 	t.lbq.Put(bestMatchingData)
-	str, _ := json.Marshal(bestMatchingData)
-	log.Println(string(str))
 	return nil
 }
 
 //最佳匹配算法的并行版本
 func MatchingDataParallel() {
-	dictionary := load("data/UK Advanced Cryptics Dictionary.txt")
-	fmt.Println("Dictionary Size: ", len(dictionary))
 	startTime := time.Now().UnixNano()
 	word := "stitter"
+	lbq := TestProject.NewLinkedBlockingQueue(math.MaxInt32)
+	dictionary := load("data/UK Advanced Cryptics Dictionary.txt")
+	fmt.Println("Dictionary Size: ", len(dictionary))
 	rejected := NewRejectedHandler(func() {
 		log.Fatal("pool closed,rejected task")
 	})
 	var poolNum = 100
-	pool := NewPoolRejectedHandler(int32(poolNum), rejected)
-	step := len(dictionary) / int(poolNum)
+	pool := NewPoolRejectedHandler(int32(10), rejected)
+	step := len(dictionary) / poolNum
 	startIndex := 0
 	endIndex := step
-	lbq := TestProject.NewLinkedBlockingQueue(math.MaxInt32)
 	for i := 0; i < poolNum; i++ {
-		task := taskDistance{
+		task := &taskDistance{
 			startIndex: startIndex,
 			endIndex:   endIndex,
 			word:       word,
@@ -228,12 +225,16 @@ func MatchingDataParallel() {
 			endIndex = len(dictionary)
 		}
 	}
+	//log.Printf("worker num:%d\n",pool.WorkerSize())
 	pool.ShutDown()
+
 	var min = math.MaxInt32
 	var results []string
+
 	go func() {
 		for {
 			v := lbq.Take().(*TestProject.Node).Data.(*BestMatchingData)
+			//log.Printf("distance:%d,words:%v\n",v.distance,v.words)
 			if v.distance < min {
 				min = v.distance
 				results = nil
@@ -246,9 +247,10 @@ func MatchingDataParallel() {
 				}
 			}
 		}
+
 	}()
 	endTime := time.Now().UnixNano()
-	time.Sleep(1 * time.Minute)
+	time.Sleep(2 * time.Second)
 	fmt.Printf("Word: %s\n", word)
 	fmt.Printf("Minimun distance: %d\n", min)
 	fmt.Printf("List of best matching words: %d\n", len(results))
