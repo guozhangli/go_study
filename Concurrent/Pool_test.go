@@ -3,6 +3,8 @@ package Concurrent
 import (
 	"fmt"
 	"log"
+	"math/rand"
+	"strconv"
 	"testing"
 	"time"
 )
@@ -84,4 +86,33 @@ func TestChan(t *testing.T) {
 	}*/
 
 	time.Sleep(5 * time.Second)
+}
+
+type taskPoolFuture struct {
+}
+
+func (task *taskPoolFuture) Call() interface{} {
+	//time.Sleep(2*time.Second)
+	rand.Seed(time.Now().UnixNano())
+	r := rand.Intn(1000)
+	return "hello world " + strconv.Itoa(r)
+}
+
+func TestPool_Submit(t *testing.T) {
+	rejected := NewRejectedHandler(func() {
+		log.Println("rejected execute goroutine")
+	})
+	pool := NewPoolRejectedHandler(10, rejected)
+	var fts []*FutureTask
+	for i := 0; i < 100; i++ {
+		future := NewFutureService()
+		taskPool := new(taskPoolFuture)
+		ft := pool.Submit(taskPool, future)
+		fts = append(fts, ft)
+	}
+	for _, v := range fts {
+		fmt.Printf("%s\n", v.get())
+	}
+	pool.ShutDown()
+	//time.Sleep(20 * time.Second)
 }

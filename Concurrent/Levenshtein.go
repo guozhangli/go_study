@@ -259,3 +259,69 @@ func MatchingDataParallel() {
 	}
 	fmt.Printf("Execution Time: %dms\n", (endTime-startTime)/1000000)
 }
+
+func (t *taskDistance) Call() interface{} {
+	//log.Printf("startIndex:%d,endIndex:%d", t.startIndex, t.endIndex)
+	bestMatchingData := getBestMatchingWordsParallel(t.word, t.dictionary, t.startIndex, t.endIndex)
+	return bestMatchingData
+}
+
+func MatchingDataParallelFuture() {
+	startTime := time.Now().UnixNano()
+	word := "stitter"
+	dictionary := load("data/UK Advanced Cryptics Dictionary.txt")
+	fmt.Println("Dictionary Size: ", len(dictionary))
+	rejected := NewRejectedHandler(func() {
+		log.Fatal("pool closed,rejected task")
+	})
+	var poolNum = 100
+	pool := NewPoolRejectedHandler(int32(10), rejected)
+	step := len(dictionary) / poolNum
+	startIndex := 0
+	endIndex := step
+	var result []*FutureTask
+	for i := 0; i < poolNum; i++ {
+		task := &taskDistance{
+			startIndex: startIndex,
+			endIndex:   endIndex,
+			word:       word,
+			dictionary: dictionary,
+		}
+		ft := pool.Submit(task, NewFutureService())
+		result = append(result, ft)
+		startIndex = endIndex
+		if i < poolNum-2 {
+			endIndex = endIndex + step
+		} else {
+			endIndex = len(dictionary)
+		}
+	}
+	log.Printf("worker num:%d\n", pool.WorkerSize())
+
+	var min = math.MaxInt32
+	var results []string
+	for _, ft := range result {
+		//log.Printf("distance:%d,words:%v\n",v.distance,v.words)
+		v := ft.get().(*BestMatchingData)
+		if v.distance < min {
+			min = v.distance
+			results = nil
+			for _, w := range v.words {
+				results = append(results, w)
+			}
+		} else if v.distance == min {
+			for _, w := range v.words {
+				results = append(results, w)
+			}
+		}
+	}
+	endTime := time.Now().UnixNano()
+	fmt.Printf("Word: %s\n", word)
+	fmt.Printf("Minimun distance: %d\n", min)
+	fmt.Printf("List of best matching words: %d\n", len(results))
+	for _, r := range results {
+		fmt.Println(r)
+	}
+	fmt.Printf("Execution Time: %dms\n", (endTime-startTime)/1000000)
+	pool.ShutDown()
+}

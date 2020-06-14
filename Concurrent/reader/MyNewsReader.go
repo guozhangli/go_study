@@ -1,9 +1,9 @@
 package reader
 
 import (
-	"Concurrent"
 	"bufio"
 	"fmt"
+	"go_study/Concurrent"
 	"io"
 	"io/ioutil"
 	"log"

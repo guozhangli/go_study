@@ -2,10 +2,10 @@ package reader
 
 import (
 	"crypto/md5"
-	TestProject "datastructure"
 	"errors"
 	"fmt"
 	"github.com/mmcdole/gofeed"
+	TestProject "go_study/datastructure"
 	"log"
 	"time"
 )

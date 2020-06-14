@@ -1,11 +1,24 @@
 package reader
 
 import (
-	"Concurrent"
 	"fmt"
+	"go_study/Concurrent"
 	"testing"
 	"time"
 )
+
+type taskScheduled struct {
+}
+
+func (task *taskScheduled) Run() error {
+	ticker := time.NewTicker(time.Second * 5)
+	go func() {
+		for _ = range ticker.C {
+			println("test")
+		}
+	}()
+	return nil
+}
 
 //周期性执行任务
 func TestScheduled(t *testing.T) {
@@ -14,15 +27,7 @@ func TestScheduled(t *testing.T) {
 	})
 	pool := Concurrent.NewPoolRejectedHandler(2, rejected)
 	for i := 0; i < 10; i++ {
-		pool.Execute(func() error {
-			ticker := time.NewTicker(time.Second * 5)
-			go func() {
-				for _ = range ticker.C {
-					println("test")
-				}
-			}()
-			return nil
-		})
+		pool.Execute(new(taskScheduled))
 	}
 	fmt.Println(pool.WorkerSize())
 	time.Sleep(time.Minute)

@@ -23,3 +23,7 @@ func TestMatchingData(t *testing.T) {
 func TestMatchingDataParallel(t *testing.T) {
 	MatchingDataParallel()
 }
+
+func TestMatchingDataParallelFuture(t *testing.T) {
+	MatchingDataParallelFuture()
+}

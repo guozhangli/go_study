@@ -86,6 +86,29 @@ func (p *Pool) Execute(r Runnable) {
 	p.jobChan <- task
 }
 
+func (p *Pool) Submit(f Future, future *FutureService) *FutureTask {
+	if p.closed {
+		if p.rejected != nil {
+			p.rejected.reject()
+		}
+		return nil
+	}
+	task := &task{
+		f: func() error {
+			go func(ft *FutureTask) {
+				result := f.Call()
+				ft.finish(result)
+			}(future.futureTask)
+			return nil
+		},
+	}
+	wg.Add(1)
+	go func() {
+		p.jobChan <- task
+	}()
+	return future.futureTask
+}
+
 func (p *Pool) ShutDown() {
 	muStop.Lock()
 	p.closed = true  //设置关闭标志位
@@ -132,5 +155,4 @@ func (w *worker) run(p *Pool) {
 		w.f() //执行任务
 		wg.Done()
 	}
-
 }
