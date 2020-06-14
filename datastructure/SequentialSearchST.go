@@ -40,26 +40,33 @@ func (s *SequentialSearchST) Get(key string) (interface{}, error) {
 }
 
 //{"First":{"Key":"N","Value":"nnnnn","Next":{"Key":"M","Value":"mmmmm","Next":{"Key":"V","Value":"vvvvv","Next":{"Key":"T","Value":"ttttt","Next":{"Key":"S","Value":"sssss","Next":null}}}}}}
-func (s *SequentialSearchST) Put(key string, value interface{}) {
+func (s *SequentialSearchST) Put(key string, value interface{}) bool {
 	//查找给的键，找到则更新，否则新建节点插入到头
 	for node := s.First; node != nil; node = node.Next {
 		if node.Key == key {
 			node.Value = value
+			return false
 		}
 	}
 	s.First = NewNodeST(key, value, s.First)
+	return true
 }
 
-func (s *SequentialSearchST) Delete(key string) {
+func (s *SequentialSearchST) Delete(key string) bool {
 	var pre *NodeST
 	for node := s.First; node != nil; node = node.Next {
 		if node.Key == key {
-			pre.Next = node.Next
+			if pre != nil {
+				pre.Next = node.Next
+			} else {
+				s.First = node.Next
+			}
 			node = nil
-			break
+			return true
 		}
 		pre = node
 	}
+	return false
 }
 
 func (s *SequentialSearchST) Size() int {
