@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-//基于线性探测的符号表
+//基于线性探测的符号表(开地址哈希表)
 type LinearProbingHashST struct {
 	N      int //符号表中键值对的总数
 	M      int //线性探测表的大小
