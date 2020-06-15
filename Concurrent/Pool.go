@@ -86,7 +86,7 @@ func (p *Pool) Execute(r Runnable) {
 	p.jobChan <- task
 }
 
-func (p *Pool) Submit(f Future, future *FutureService) *FutureTask {
+func (p *Pool) Submit(f Callable, future *FutureService) *FutureTask {
 	if p.closed {
 		if p.rejected != nil {
 			p.rejected.reject()

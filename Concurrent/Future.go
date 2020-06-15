@@ -42,11 +42,11 @@ func NewFutureService() *FutureService {
 	return fs
 }
 
-type Future interface {
+type Callable interface {
 	Call() interface{}
 }
 
-func (future *FutureService) submit(f Future) *FutureTask {
+func (future *FutureService) submit(f Callable) *FutureTask {
 	go func(ft *FutureTask) {
 		result := f.Call()
 		ft.finish(result)
