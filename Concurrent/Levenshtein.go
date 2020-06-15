@@ -194,6 +194,8 @@ func (t *taskDistance) Run() error {
 	return nil
 }
 
+var interrupt = false
+
 //最佳匹配算法的并行版本
 func MatchingDataParallel() {
 	startTime := time.Now().UnixNano()
@@ -232,7 +234,8 @@ func MatchingDataParallel() {
 	var results []string
 
 	go func() {
-		for {
+		for !interrupt {
+			//如何中断阻塞？
 			v := lbq.Take().(*TestProject.Node).Data.(*BestMatchingData)
 			//log.Printf("distance:%d,words:%v\n",v.distance,v.words)
 			if v.distance < min {
@@ -246,9 +249,13 @@ func MatchingDataParallel() {
 					results = append(results, w)
 				}
 			}
+			if interrupt {
+				break
+			}
 		}
 	}()
 	pool.WaitTermination()
+	interrupt = true
 	endTime := time.Now().UnixNano()
 	fmt.Printf("Word: %s\n", word)
 	fmt.Printf("Minimun distance: %d\n", min)
