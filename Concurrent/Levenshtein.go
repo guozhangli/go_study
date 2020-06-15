@@ -247,10 +247,9 @@ func MatchingDataParallel() {
 				}
 			}
 		}
-
 	}()
+	pool.WaitTermination()
 	endTime := time.Now().UnixNano()
-	time.Sleep(2 * time.Second)
 	fmt.Printf("Word: %s\n", word)
 	fmt.Printf("Minimun distance: %d\n", min)
 	fmt.Printf("List of best matching words: %d\n", len(results))
@@ -297,7 +296,7 @@ func MatchingDataParallelFuture() {
 		}
 	}
 	log.Printf("worker num:%d\n", pool.WorkerSize())
-
+	pool.ShutDown()
 	var min = math.MaxInt32
 	var results []string
 	for _, ft := range result {
@@ -323,5 +322,5 @@ func MatchingDataParallelFuture() {
 		fmt.Println(r)
 	}
 	fmt.Printf("Execution Time: %dms\n", (endTime-startTime)/1000000)
-	pool.ShutDown()
+	//pool.WaitTermination()
 }

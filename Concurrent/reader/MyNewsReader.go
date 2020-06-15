@@ -75,6 +75,7 @@ func (reader *MyNewsReader) NewsReader() {
 	log.Println("Shutting down the executor.")
 	reader.stoped = true
 	pool.ShutDown()
+	pool.WaitTermination()
 	log.Println("The system has finished.")
 }
 

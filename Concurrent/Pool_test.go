@@ -32,7 +32,7 @@ func TestNewRejectedHandlerPool(t *testing.T) {
 	}
 	pool.ShutDown()
 	pool.Execute(task)
-	time.Sleep(20 * time.Second)
+	pool.WaitTermination()
 }
 
 func TestNewPool(t *testing.T) {
@@ -114,5 +114,6 @@ func TestPool_Submit(t *testing.T) {
 		fmt.Printf("%s\n", v.get())
 	}
 	pool.ShutDown()
+	pool.WaitTermination()
 	//time.Sleep(20 * time.Second)
 }

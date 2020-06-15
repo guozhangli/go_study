@@ -86,6 +86,7 @@ func ServerPool() {
 	}
 	if stoped {
 		pool.ShutDown() //goroutine pool close
+		pool.WaitTermination()
 	}
 	log.Println("pool worker size：", pool.WorkerSize(), "cache size:", cache.getItemCount())
 }

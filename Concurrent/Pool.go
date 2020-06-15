@@ -109,18 +109,21 @@ func (p *Pool) Submit(f Future, future *FutureService) *FutureTask {
 	return future.futureTask
 }
 
+//关闭协程池后，再发送新的任务将会被拒绝。拒绝策略可以自定义
 func (p *Pool) ShutDown() {
+	defer muStop.Unlock()
 	muStop.Lock()
 	p.closed = true  //设置关闭标志位
 	close(p.jobChan) //关闭工作任务队列
-	muStop.Unlock()
-	func() {
-		wg.Wait() //等待所有的协程执行完毕
-		log.Println("all goroutine execute finish")
-		p.workers.Clear() //清空工作集合
-		log.Printf("worker num:%d\n", p.WorkerSize())
-		p.workers = nil
-	}()
+}
+
+//等待所有任务都执行完毕
+func (p *Pool) WaitTermination() {
+	wg.Wait() //等待所有的协程执行完毕
+	log.Println("all goroutine execute finish")
+	p.workers.Clear() //清空工作集合
+	log.Printf("worker num:%d\n", p.WorkerSize())
+	p.workers = nil
 }
 
 func (p *Pool) WorkerSize() int {
