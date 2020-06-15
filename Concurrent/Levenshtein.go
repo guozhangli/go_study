@@ -203,6 +203,33 @@ func MatchingDataParallel() {
 	lbq := TestProject.NewLinkedBlockingQueue(math.MaxInt32)
 	dictionary := load("data/UK Advanced Cryptics Dictionary.txt")
 	fmt.Println("Dictionary Size: ", len(dictionary))
+
+	var min = math.MaxInt32
+	var results []string //切片线程不安全，并发更新时加锁保证线程安全
+	for i := 0; i < 1; i++ {
+		go func() {
+			for !interrupt {
+				//如何中断阻塞？
+				v := lbq.Take().(*TestProject.Node).Data.(*BestMatchingData)
+				//log.Printf("distance:%d,words:%v\n",v.distance,v.words)
+				if v.distance < min {
+					min = v.distance
+					results = nil
+					for _, w := range v.words {
+						results = append(results, w)
+					}
+				} else if v.distance == min {
+					for _, w := range v.words {
+						results = append(results, w)
+					}
+				}
+				if interrupt {
+					break
+				}
+			}
+		}()
+	}
+
 	rejected := NewRejectedHandler(func() {
 		log.Fatal("pool closed,rejected task")
 	})
@@ -229,31 +256,6 @@ func MatchingDataParallel() {
 	}
 	//log.Printf("worker num:%d\n",pool.WorkerSize())
 	pool.ShutDown()
-
-	var min = math.MaxInt32
-	var results []string
-
-	go func() {
-		for !interrupt {
-			//如何中断阻塞？
-			v := lbq.Take().(*TestProject.Node).Data.(*BestMatchingData)
-			//log.Printf("distance:%d,words:%v\n",v.distance,v.words)
-			if v.distance < min {
-				min = v.distance
-				results = nil
-				for _, w := range v.words {
-					results = append(results, w)
-				}
-			} else if v.distance == min {
-				for _, w := range v.words {
-					results = append(results, w)
-				}
-			}
-			if interrupt {
-				break
-			}
-		}
-	}()
 	pool.WaitTermination()
 	interrupt = true
 	endTime := time.Now().UnixNano()
