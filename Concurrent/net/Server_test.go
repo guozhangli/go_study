@@ -25,6 +25,24 @@ func BenchmarkServer3(b *testing.B) {
 	ServerPool()
 }
 
+type taskServerTest struct {
+	conn net.Conn
+}
+
+func (t *taskServerTest) Run() error {
+	defer t.conn.Close()
+	for {
+		read := bufio.NewReader(t.conn)
+		line, _, err := read.ReadLine()
+		if err != nil {
+			break
+		}
+		log.Println(string(line))
+		io.WriteString(t.conn, "send to client\n")
+	}
+	return nil
+}
+
 func TestServer(t *testing.T) {
 	listen, err := net.Listen("tcp", "localhost:8888")
 	if err != nil {
@@ -37,21 +55,8 @@ func TestServer(t *testing.T) {
 			log.Fatal("connect is error")
 			continue
 		}
-		pool.Execute(func() error {
-			func(conn net.Conn) {
-				defer conn.Close()
-				for {
-					read := bufio.NewReader(conn)
-					line, _, err := read.ReadLine()
-					if err != nil {
-						break
-					}
-					log.Println(string(line))
-					io.WriteString(conn, "send to client\n")
-				}
-			}(c)
-			return nil
-		})
+		task := &taskServerTest{conn: c}
+		pool.Execute(task)
 		fmt.Println(pool.WorkerSize())
 	}
 }

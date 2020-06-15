@@ -55,6 +55,14 @@ func ServerParallel() {
 	}
 }
 
+type taskSever struct {
+	conn net.Conn
+}
+
+func (t *taskSever) Run() error {
+	handleConn(t.conn)
+	return nil
+}
 func ServerPool() {
 	_ = GetDAO()
 	cache = NewParallelCache()
@@ -73,10 +81,8 @@ func ServerPool() {
 			log.Println(err)
 			continue
 		}
-		pool.Execute(func() error {
-			handleConn(conn)
-			return nil
-		})
+		task := &taskSever{conn: conn}
+		pool.Execute(task)
 	}
 	if stoped {
 		pool.ShutDown() //goroutine pool close
