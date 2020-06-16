@@ -181,7 +181,6 @@ func TextIndexingGroup() {
 			for _, v := range doc {
 				updateInvertedIndexParallel(v.wc, m, v.fileName)
 			}
-
 		}
 	}(invertedIndex)
 	pool := NewPoolRejectedHandler(int32(100), rejected)
