@@ -3,13 +3,16 @@ package Concurrent
 import (
 	"bufio"
 	"fmt"
+	TestProject "go_study/datastructure"
 	"io"
 	"io/ioutil"
 	"log"
+	"math"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -46,9 +49,9 @@ func parse(filePath string) map[string]int {
 	}
 	reader := bufio.NewReader(file)
 	for {
-		line, is_prefix, err := reader.ReadLine()
+		line, _, err := reader.ReadLine()
 		if err != nil {
-			if err == io.EOF && !is_prefix {
+			if err == io.EOF {
 				break
 			}
 		}
@@ -82,4 +85,127 @@ func updateInvertedIndex(wc map[string]int, ss map[string]string, fileName strin
 			}
 		}
 	}
+}
+
+func updateInvertedIndexParallel(wc map[string]int, ss sync.Map, fileName string) {
+	for k, _ := range wc {
+		if len(k) > 3 {
+			if v, ok := ss.Load(k); ok {
+				ss.Store(k, fmt.Sprintf("%s%s%s", v, fileName, ";"))
+			} else {
+				ss.Store(k, fmt.Sprintf("%s%s", fileName, ";"))
+			}
+		}
+	}
+}
+
+type taskTaxtIndexing struct {
+	fileName string
+	lbq      *TestProject.LinkedBlockingQueue
+}
+
+func (task *taskTaxtIndexing) Run() error {
+	wc := parse(filepath.Join(PATH, task.fileName))
+	doc := &Document{
+		fileName: task.fileName,
+		wc:       wc,
+	}
+	task.lbq.Put(doc)
+	return nil
+}
+
+func TextIndexingParallel() {
+	files, err := ioutil.ReadDir(PATH)
+	if err != nil {
+		log.Fatal("open dir error,", err)
+	}
+	start := time.Now().UnixNano()
+	var invertedIndex sync.Map
+	rejected := NewRejectedHandler(func() {
+		log.Fatal("pool closed,rejected task")
+	})
+	lbq := TestProject.NewLinkedBlockingQueue(math.MaxInt32)
+	go func(m sync.Map) {
+		for {
+			doc := lbq.Take().(*Document)
+			updateInvertedIndexParallel(doc.wc, m, doc.fileName)
+		}
+	}(invertedIndex)
+	pool := NewPoolRejectedHandler(int32(100), rejected)
+	for _, f := range files {
+		if strings.HasSuffix(f.Name(), ".txt") {
+			task := &taskTaxtIndexing{fileName: f.Name(), lbq: lbq}
+			pool.Execute(task)
+		}
+	}
+	pool.ShutDown()
+	pool.WaitTermination()
+	end := time.Now().UnixNano()
+	fmt.Printf("Execution Time: %d\n", (end-start)/1000000)
+	fmt.Printf("invertedIndex: %v\n", invertedIndex)
+}
+
+type taskIndexingGroup struct {
+	fileNames []string
+	lbq       *TestProject.LinkedBlockingQueue
+}
+
+func (task *taskIndexingGroup) Run() error {
+	var docs []*Document
+	for _, v := range task.fileNames {
+		wc := parse(filepath.Join(PATH, v))
+		doc := &Document{
+			fileName: v,
+			wc:       wc,
+		}
+		docs = append(docs, doc)
+	}
+	task.lbq.Put(docs)
+	return nil
+}
+
+func TextIndexingGroup() {
+	files, err := ioutil.ReadDir(PATH)
+	if err != nil {
+		log.Fatal("open dir error,", err)
+	}
+	start := time.Now().UnixNano()
+	var invertedIndex sync.Map
+	rejected := NewRejectedHandler(func() {
+		log.Fatal("pool closed,rejected task")
+	})
+	lbq := TestProject.NewLinkedBlockingQueue(math.MaxInt32)
+	go func(m sync.Map) {
+		for {
+			doc := lbq.Take().([]*Document)
+			for _, v := range doc {
+				updateInvertedIndexParallel(v.wc, m, v.fileName)
+			}
+
+		}
+	}(invertedIndex)
+	pool := NewPoolRejectedHandler(int32(100), rejected)
+	var fileNames []string
+	for i, f := range files {
+		if strings.HasSuffix(f.Name(), ".txt") {
+			if (i+1)%100 != 0 {
+				fileNames = append(fileNames, f.Name())
+			} else {
+				task := &taskIndexingGroup{fileNames: fileNames, lbq: lbq}
+				pool.Execute(task)
+				fileNames = nil
+			}
+
+		}
+	}
+	if len(fileNames) > 0 {
+		task := &taskIndexingGroup{fileNames: fileNames, lbq: lbq}
+		pool.Execute(task)
+		fileNames = nil
+	}
+	pool.ShutDown()
+	pool.WaitTermination()
+	end := time.Now().UnixNano()
+	fmt.Printf("Execution Time: %d\n", (end-start)/1000000)
+	fmt.Printf("invertedIndex: %v\n", invertedIndex)
 }
