@@ -6,7 +6,6 @@ import (
 )
 
 var (
-	count    int32
 	takeLock = new(sync.Mutex)
 	putLock  = new(sync.Mutex)
 	notEmpty = sync.NewCond(takeLock)
@@ -17,6 +16,7 @@ type LinkedBlockingQueue struct {
 	Head     *Node
 	Last     *Node
 	Capatity int32
+	Count    int32
 }
 
 func NewLinkedBlockingQueue(capacity int32) *LinkedBlockingQueue {
@@ -24,11 +24,12 @@ func NewLinkedBlockingQueue(capacity int32) *LinkedBlockingQueue {
 		Head:     nil,
 		Last:     nil,
 		Capatity: capacity,
+		Count:    0,
 	}
 }
 
 //从对头删除一个元素
-func (lbq *LinkedBlockingQueue) dequeue() interface{} {
+func (lbq *LinkedBlockingQueue) dequeue() *Node {
 	if lbq.Head == nil {
 		return nil
 	}
@@ -51,34 +52,34 @@ func (lbq *LinkedBlockingQueue) enqueue(data interface{}) {
 
 //从队列中取出元素，如果队列为空，则阻塞当前线程，直到其中有元素为止
 func (lbq *LinkedBlockingQueue) Take() interface{} {
+	defer takeLock.Unlock()
 	takeLock.Lock()
-	for atomic.LoadInt32(&count) == 0 {
+	for atomic.LoadInt32(&lbq.Count) == 0 {
 		notEmpty.Wait()
 	}
 	item := lbq.dequeue()
-	c := atomic.AddInt32(&count, -1)
+	c := atomic.AddInt32(&lbq.Count, -1)
 	if c > 1 {
 		notEmpty.Signal()
 	}
-	takeLock.Unlock()
 	if c < lbq.Capatity {
 		notFull.Signal()
 	}
-	return item
+	return item.Data
 }
 
 //向队列中插入元素，如果队列已满，则阻塞线程，直到出现空间为止
 func (lbq *LinkedBlockingQueue) Put(value interface{}) {
+	defer putLock.Unlock()
 	putLock.Lock()
-	for atomic.LoadInt32(&count) == lbq.Capatity {
+	for atomic.LoadInt32(&lbq.Count) == lbq.Capatity {
 		notFull.Wait()
 	}
 	lbq.enqueue(value)
-	c := atomic.AddInt32(&count, 1)
+	c := atomic.AddInt32(&lbq.Count, 1)
 	if c < lbq.Capatity {
 		notFull.Signal()
 	}
-	putLock.Unlock()
 	if c > 0 {
 		notEmpty.Signal()
 	}
@@ -86,16 +87,16 @@ func (lbq *LinkedBlockingQueue) Put(value interface{}) {
 
 //向队列中插入元素，如果队列已满，则返回false，否则返回true（非阻塞）
 func (lbq *LinkedBlockingQueue) Offer(value interface{}) bool {
+	defer putLock.Unlock()
 	putLock.Lock()
-	if atomic.LoadInt32(&count) == lbq.Capatity {
+	if atomic.LoadInt32(&lbq.Count) == lbq.Capatity {
 		return false
 	}
 	lbq.enqueue(value)
-	c := atomic.AddInt32(&count, 1)
+	c := atomic.AddInt32(&lbq.Count, 1)
 	if c < lbq.Capatity {
 		notFull.Signal()
 	}
-	putLock.Unlock()
 	if c > 0 {
 		notEmpty.Signal()
 	}
@@ -104,20 +105,20 @@ func (lbq *LinkedBlockingQueue) Offer(value interface{}) bool {
 
 //从队列中取出元素，如果队列为空，则返回null(非阻塞）
 func (lbq *LinkedBlockingQueue) Poll() interface{} {
+	defer takeLock.Unlock()
 	takeLock.Lock()
-	if atomic.LoadInt32(&count) == 0 {
+	if atomic.LoadInt32(&lbq.Count) == 0 {
 		return nil
 	}
 	item := lbq.dequeue()
-	c := atomic.AddInt32(&count, -1)
+	c := atomic.AddInt32(&lbq.Count, -1)
 	if c > 1 {
 		notEmpty.Signal()
 	}
-	takeLock.Unlock()
 	if c < lbq.Capatity {
 		notFull.Signal()
 	}
-	return item
+	return item.Data
 }
 
 //从队列中返回元素，但不删除元素，如果队列为空，则返回null
@@ -126,7 +127,7 @@ func (lbq *LinkedBlockingQueue) peek() interface{} {
 }
 
 func (lbq *LinkedBlockingQueue) size() int32 {
-	return count
+	return lbq.Count
 }
 
 //清空队列元素
@@ -137,7 +138,7 @@ func (lbq *LinkedBlockingQueue) clear() {
 		node.Data = nil
 	}
 	lbq.Head = lbq.Last
-	if atomic.LoadInt32(&count) == lbq.Capatity {
+	if atomic.LoadInt32(&lbq.Count) == lbq.Capatity {
 		notFull.Signal()
 	}
 	takeLock.Unlock()

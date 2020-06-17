@@ -210,7 +210,7 @@ func MatchingDataParallel() {
 		go func() {
 			for !interrupt {
 				//如何中断阻塞？
-				v := lbq.Take().(*TestProject.Node).Data.(*BestMatchingData)
+				v := lbq.Take().(*BestMatchingData)
 				//log.Printf("distance:%d,words:%v\n",v.distance,v.words)
 				if v.distance < min {
 					min = v.distance
