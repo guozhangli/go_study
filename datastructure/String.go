@@ -1,6 +1,30 @@
 package TestProject
 
+import (
+	"bytes"
+	"sync"
+)
+
 type MyString string
+
+type Buffer struct {
+	b  bytes.Buffer
+	rw sync.RWMutex
+}
+
+func (buff *Buffer) Read() string {
+	defer buff.rw.RUnlock()
+	buff.rw.RLock()
+	return buff.b.String()
+}
+
+func (buff *Buffer) Write(s ...string) {
+	defer buff.rw.Unlock()
+	buff.rw.Lock()
+	for _, v := range s {
+		buff.b.WriteString(v)
+	}
+}
 
 func BruteForceStringMatch(s MyString, t MyString) int {
 	s_len := len(s)

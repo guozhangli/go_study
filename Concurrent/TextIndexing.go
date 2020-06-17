@@ -71,9 +71,13 @@ func updateInvertedIndex(wc map[string]int, ss map[string]string, fileName strin
 	for k, _ := range wc {
 		if len(k) > 3 {
 			if _, ok := ss[k]; ok {
-				ss[k] += fileName + ";"
+				buf := new(TestProject.Buffer)
+				buf.Write(fileName, ";")
+				ss[k] += buf.Read()
 			} else {
-				ss[k] = fileName + ";"
+				buf := new(TestProject.Buffer)
+				buf.Write(fileName, ";")
+				ss[k] = buf.Read()
 			}
 		}
 	}
@@ -83,9 +87,13 @@ func updateInvertedIndexParallel(wc map[string]int, ss *sync.Map, fileName strin
 	for k, _ := range wc {
 		if len(k) > 3 {
 			if v, ok := ss.Load(k); ok {
-				ss.Store(k, v.(string)+fileName+";")
+				buf := new(TestProject.Buffer)
+				buf.Write(v.(string), fileName, ";")
+				ss.Store(k, buf.Read())
 			} else {
-				ss.Store(k, fileName+";")
+				buf := new(TestProject.Buffer)
+				buf.Write(fileName, ";")
+				ss.Store(k, buf.Read())
 			}
 		}
 	}

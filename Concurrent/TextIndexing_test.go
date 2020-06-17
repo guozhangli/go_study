@@ -3,10 +3,13 @@ package Concurrent
 import "testing"
 
 /**
-=== RUN   TestTextIndexing
-Execution Time: 966414
-invertedIndex: 647673
---- PASS: TestTextIndexing (966.51s)
+Execution Time: 425436
+invertedIndex: 647669
+goos: windows
+goarch: amd64
+pkg: go_study/Concurrent
+BenchmarkTextIndexing-8   	       1	425535000000 ns/op
+PASS
 */
 func BenchmarkTextIndexing(b *testing.B) {
 	TextIndexingSerial()
