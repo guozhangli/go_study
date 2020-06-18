@@ -69,6 +69,7 @@ func parse(filePath string) (map[string]int, error) {
 	return wc, nil
 }
 
+//map 接收结果（并发不安全的容器）
 func updateInvertedIndex(wc map[string]int, ss map[string]string, fileName string) {
 	for k, _ := range wc {
 		if len(k) >= 3 {
@@ -85,6 +86,7 @@ func updateInvertedIndex(wc map[string]int, ss map[string]string, fileName strin
 	}
 }
 
+//sync.Map 接收结果（并发安全的容器）
 func updateInvertedIndexParallel(wc map[string]int, ss *sync.Map, fileName string) {
 	for k, _ := range wc {
 		if len(k) >= 3 {
@@ -99,6 +101,11 @@ func updateInvertedIndexParallel(wc map[string]int, ss *sync.Map, fileName strin
 			}
 		}
 	}
+}
+
+type Data struct {
+	key   string
+	value string
 }
 
 type taskTaxtIndexing struct {
