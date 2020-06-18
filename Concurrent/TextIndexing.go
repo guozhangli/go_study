@@ -31,7 +31,7 @@ func TextIndexingSerial() {
 		log.Fatal("open dir error,", err)
 	}
 	start := time.Now().UnixNano()
-	invertedIndex := make(map[string]string, 600000)
+	invertedIndex := make(map[string]string)
 	for _, f := range files {
 		if strings.HasSuffix(f.Name(), ".txt") {
 			wc, err := parse(filepath.Join(PATH, f.Name()))
@@ -49,14 +49,16 @@ func TextIndexingSerial() {
 var reg = regexp.MustCompile("\\P{L}+")
 
 func parse(filePath string) (map[string]int, error) {
-	var wc = make(map[string]int, 1000)
+	var wc = make(map[string]int)
 	datas, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		log.Println("read file error,", err)
 		return nil, errors.New("read file error")
 	}
-	for _, s := range reg.Split(string(datas), -1) {
+	data := reg.Split(string(datas), -1)
+	for _, s := range data {
 		if s != "" {
+			s = strings.ToLower(s)
 			if _, ok := wc[s]; !ok {
 				wc[s] = 1
 			} else {
@@ -69,7 +71,7 @@ func parse(filePath string) (map[string]int, error) {
 
 func updateInvertedIndex(wc map[string]int, ss map[string]string, fileName string) {
 	for k, _ := range wc {
-		if len(k) > 3 {
+		if len(k) >= 3 {
 			if _, ok := ss[k]; ok {
 				buf := new(TestProject.Buffer)
 				buf.Write(fileName, ";")
@@ -85,7 +87,7 @@ func updateInvertedIndex(wc map[string]int, ss map[string]string, fileName strin
 
 func updateInvertedIndexParallel(wc map[string]int, ss *sync.Map, fileName string) {
 	for k, _ := range wc {
-		if len(k) > 3 {
+		if len(k) >= 3 {
 			if v, ok := ss.Load(k); ok {
 				buf := new(TestProject.Buffer)
 				buf.Write(v.(string), fileName, ";")

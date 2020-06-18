@@ -4,7 +4,7 @@ import "testing"
 
 /**
 Execution Time: 425436
-invertedIndex: 647669
+invertedIndex: 589624
 goos: windows
 goarch: amd64
 pkg: go_study/Concurrent
