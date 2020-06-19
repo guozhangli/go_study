@@ -5,6 +5,9 @@ import (
 	"time"
 )
 
+/**
+矩阵乘法
+*/
 func generate(row, col int) [][]int {
 	matrix := make([][]int, row)
 	for i := 0; i < row; i++ {

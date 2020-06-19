@@ -2,6 +2,7 @@ package TestProject
 
 import (
 	json2 "encoding/json"
+	"fmt"
 	"testing"
 	"time"
 )
@@ -49,4 +50,32 @@ func TestLinkedBlockingQueue_put(t *testing.T) {
 	}
 	printLBQ(lbq, t)
 	time.Sleep(time.Minute)
+}
+
+func TestParallelPutAndTake(t *testing.T) {
+	lbq := NewLinkedBlockingQueue(1000)
+	go func(l *LinkedBlockingQueue) {
+		for {
+			d := l.Take()
+			fmt.Println(d.(int))
+		}
+
+	}(lbq)
+	go func(l *LinkedBlockingQueue) {
+		for {
+			d := l.Take()
+			fmt.Println(d.(int))
+		}
+
+	}(lbq)
+	for i := 0; i < 10; i++ {
+		go func(l *LinkedBlockingQueue) {
+			for i := 0; i < 100; i++ {
+				time.Sleep(50 * time.Millisecond)
+				l.Put(i)
+			}
+		}(lbq)
+	}
+
+	time.Sleep(10 * time.Second)
 }

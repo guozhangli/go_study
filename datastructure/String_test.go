@@ -110,3 +110,25 @@ ok      go_study/datastructure  1.776s
 //这个比较理想，可以当成可变字符使用，对内存的增长也有优化，如果能预估字符串的长度，还可以用 buffer.Grow() 接口来设置 capacity
 
 //>go test -run=none -bench=BenchmarkAddStringWith*
+
+func BenchmarkAddStringWithSelfDefine(b *testing.B) {
+	hello := "hello"
+	world := "world"
+	for i := 0; i < 1000000; i++ {
+		buffer := new(Buffer)
+		buffer.Write(hello, ",", world)
+		_ = buffer.Read()
+	}
+}
+
+/**
+goos: windows
+goarch: amd64
+pkg: go_study/datastructure
+BenchmarkAddStringWithOperator-8        1000000000               0.0350 ns/op
+BenchmarkAddStringWithSprintf-8         1000000000               0.155 ns/op
+BenchmarkAddStringWithJoin-8            1000000000               0.0390 ns/op
+BenchmarkAddStringWithBuffer-8          1000000000               0.0600 ns/op
+BenchmarkAddStringWithSelfDefine-8      1000000000               0.241 ns/op
+
+*/
