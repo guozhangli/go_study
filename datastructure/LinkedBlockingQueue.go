@@ -22,20 +22,21 @@ type LinkedBlockingQueue struct {
 func NewLinkedBlockingQueue(capacity int32) *LinkedBlockingQueue {
 	node := NewNode(nil, nil)
 	lbq := &LinkedBlockingQueue{
-		Head:     node,
-		Last:     node,
 		Capatity: capacity,
 		Count:    0,
 	}
+	lbq.Head = node
 	lbq.Last = lbq.Head
 	return lbq
 }
 
 //从对头删除一个元素
 func (lbq *LinkedBlockingQueue) dequeue() interface{} {
-	var top = lbq.Head
+	var h = lbq.Head
+	var top = h.Next
+	h.Next = h //help GC
+	lbq.Head = top
 	var item = top.Data
-	lbq.Head = lbq.Head.Next
 	top.Data = nil
 	return item
 }
@@ -56,11 +57,11 @@ func (lbq *LinkedBlockingQueue) Put(value interface{}) {
 	}
 	lbq.enqueue(value)
 	c = atomic.AddInt32(&lbq.Count, 1)
-	if c+1 < lbq.Capatity {
+	if c < lbq.Capatity {
 		notFull.Signal()
 	}
 	putLock.Unlock()
-	if c == 0 {
+	if c == 1 {
 		signalNotEmpty()
 	}
 }
@@ -75,15 +76,15 @@ func (lbq *LinkedBlockingQueue) Offer(value interface{}) bool {
 	if atomic.LoadInt32(&lbq.Count) < lbq.Capatity {
 		lbq.enqueue(value)
 		c = atomic.AddInt32(&lbq.Count, 1)
-		if c+1 < lbq.Capatity {
+		if c < lbq.Capatity {
 			notFull.Signal()
 		}
 	}
 	putLock.Unlock()
-	if c == 0 {
+	if c == 1 {
 		signalNotEmpty()
 	}
-	return c >= 0
+	return c >= 1
 }
 
 func signalNotEmpty() {
@@ -101,11 +102,11 @@ func (lbq *LinkedBlockingQueue) Take() interface{} {
 	}
 	item := lbq.dequeue()
 	c = atomic.AddInt32(&lbq.Count, -1)
-	if c > 1 {
+	if c > 0 {
 		notEmpty.Signal()
 	}
 	takeLock.Unlock()
-	if c == lbq.Capatity {
+	if c == lbq.Capatity-1 {
 		signalNotFull()
 	}
 	return item
@@ -122,12 +123,12 @@ func (lbq *LinkedBlockingQueue) Poll() interface{} {
 	if atomic.LoadInt32(&lbq.Count) > 0 {
 		item = lbq.dequeue()
 		c = atomic.AddInt32(&lbq.Count, -1)
-		if c > 1 {
+		if c > 0 {
 			notEmpty.Signal()
 		}
 	}
 	takeLock.Unlock()
-	if c == lbq.Capatity {
+	if c == lbq.Capatity-1 {
 		signalNotFull()
 	}
 	return item
@@ -145,7 +146,7 @@ func (lbq *LinkedBlockingQueue) peek() interface{} {
 }
 
 func (lbq *LinkedBlockingQueue) size() int32 {
-	return lbq.Count
+	return atomic.LoadInt32(&lbq.Count)
 }
 
 //清空队列元素

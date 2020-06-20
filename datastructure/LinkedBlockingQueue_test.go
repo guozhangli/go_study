@@ -68,10 +68,10 @@ func TestParallelPutAndTake(t *testing.T) {
 		}
 
 	}(lbq)
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 100; i++ {
 		go func(l *LinkedBlockingQueue) {
 			for i := 0; i < 100; i++ {
-				time.Sleep(50 * time.Millisecond)
+				//time.Sleep(50 * time.Millisecond)
 				l.Put(i)
 			}
 		}(lbq)
