@@ -142,6 +142,17 @@ func signalNotFull() {
 
 //从队列中返回元素，但不删除元素，如果队列为空，则返回null
 func (lbq *LinkedBlockingQueue) peek() interface{} {
+	if atomic.LoadInt32(&lbq.Count) == 0 {
+		return nil
+	}
+	defer takeLock.Unlock()
+	takeLock.Lock()
+	top := lbq.Head.Next
+	if top == nil {
+		return nil
+	} else {
+		return top.Data
+	}
 	return nil
 }
 
