@@ -55,7 +55,7 @@ func (w wordList) Len() int {
 	return len(w)
 }
 func (w wordList) Less(i, j int) bool {
-	return w[i].tfIdf < w[j].tfIdf
+	return w[i].tfIdf > w[j].tfIdf
 }
 
 func (w wordList) Swap(i, j int) {
@@ -74,7 +74,7 @@ func (kl keywordList) Len() int {
 }
 
 func (kl keywordList) Less(i, j int) bool {
-	return kl[i].df < kl[j].df
+	return kl[i].df > kl[j].df
 }
 
 func (kl keywordList) Swap(i, j int) {
@@ -113,61 +113,15 @@ func KeywordSerial() {
 	var globalVoc = make(map[string]*word)
 	var globalKeywords = make(map[string]int)
 	var numDocuments int
+	var orderedGlobalKeywords []*keyword
 	start := time.Now().UnixNano()
 	// Phase 1: Parse all the documents
-	for _, f := range files {
-		if strings.HasSuffix(f.Name(), ".txt") {
-			document, err := parse(&f)
-			if err != nil {
-				continue
-			}
-			for _, v := range document.voc {
-				if _, ok := globalVoc[v.word]; !ok {
-					globalVoc[v.word] = v
-				} else {
-					globalVoc[v.word].marge(v)
-				}
-			}
-			numDocuments++
-		}
-	}
+	phase1(&files, &globalVoc, &numDocuments)
 	// Phase 2: Update the df of the voc of the Documents
-	for _, f := range files {
-		if strings.HasSuffix(f.Name(), ".txt") {
-			document, err := parse(&f)
-			if err != nil {
-				continue
-			}
-			var keywords []*word
-			for _, v := range document.voc {
-				w := globalVoc[v.word]
-				w.setTfIdf(numDocuments)
-				keywords = append(keywords, w)
-			}
-			sort.Sort(wordList(keywords))
-			if len(keywords) > 10 {
-				keywords = keywords[:10]
-			}
-			for _, v := range keywords {
-				if _, ok := globalKeywords[v.word]; !ok {
-					globalKeywords[v.word] = 1
-				} else {
-					globalKeywords[v.word] += globalKeywords[v.word]
-				}
-			}
-		}
-	}
+	phase2(&files, &globalVoc, &globalKeywords, &numDocuments)
 	// Phase 3: Get a list of a better keywords
-	var orderedGlobalKeywords []*keyword
-	for k, v := range globalKeywords {
-		kw := NewKeyword(k, v)
-		orderedGlobalKeywords = append(orderedGlobalKeywords, kw)
-	}
-	sort.Sort(keywordList(orderedGlobalKeywords))
-	orderedGlobalKeywords = orderedGlobalKeywords[0:100]
-	for _, v := range orderedGlobalKeywords {
-		fmt.Printf("%s:%d\n", v.word, v.df)
-	}
+	phase3(&orderedGlobalKeywords, &globalKeywords)
+
 	end := time.Now().UnixNano()
 	fmt.Printf("Execution Time: %d\n", (end-start)/1000000)
 	fmt.Printf("Vocabulary Size: %d\n", len(globalVoc))
@@ -199,5 +153,63 @@ func parseLine(line string, doc *document) {
 		if l != "" {
 			doc.addWord(l)
 		}
+	}
+}
+
+func phase1(files *[]os.FileInfo, globalVoc *map[string]*word, numDocuments *int) {
+	for _, f := range *files {
+		if strings.HasSuffix(f.Name(), ".txt") {
+			document, err := parse(&f)
+			if err != nil {
+				continue
+			}
+			for _, v := range document.voc {
+				if _, ok := (*globalVoc)[v.word]; !ok {
+					(*globalVoc)[v.word] = v
+				} else {
+					(*globalVoc)[v.word].marge(v)
+				}
+			}
+			*numDocuments++
+		}
+	}
+}
+
+func phase2(files *[]os.FileInfo, globalVoc *map[string]*word, globalKeywords *map[string]int, numDocuments *int) {
+	for _, f := range *files {
+		if strings.HasSuffix(f.Name(), ".txt") {
+			document, err := parse(&f)
+			if err != nil {
+				continue
+			}
+			var keywords []*word
+			for _, v := range document.voc {
+				w := (*globalVoc)[v.word]
+				w.setTfIdf(*numDocuments)
+				keywords = append(keywords, w)
+			}
+			sort.Sort(wordList(keywords))
+			if len(keywords) > 10 {
+				keywords = keywords[:10]
+			}
+			for _, v := range keywords {
+				if _, ok := (*globalKeywords)[v.word]; !ok {
+					(*globalKeywords)[v.word] = 1
+				} else {
+					(*globalKeywords)[v.word] += (*globalKeywords)[v.word]
+				}
+			}
+		}
+	}
+}
+func phase3(orderedGlobalKeywords *[]*keyword, globalKeywords *map[string]int) {
+	for k, v := range *globalKeywords {
+		kw := NewKeyword(k, v)
+		*orderedGlobalKeywords = append(*orderedGlobalKeywords, kw)
+	}
+	sort.Sort(keywordList(*orderedGlobalKeywords))
+	*orderedGlobalKeywords = (*orderedGlobalKeywords)[0:100]
+	for _, v := range *orderedGlobalKeywords {
+		fmt.Printf("%s:%d\n", v.word, v.df)
 	}
 }
