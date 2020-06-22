@@ -1,4 +1,4 @@
-package Concurrent
+package textindexing
 
 import "testing"
 

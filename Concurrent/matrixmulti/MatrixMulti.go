@@ -1,4 +1,4 @@
-package Concurrent
+package matrixmulti
 
 import (
 	"math/rand"

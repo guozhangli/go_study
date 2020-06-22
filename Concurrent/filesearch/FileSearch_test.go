@@ -1,4 +1,4 @@
-package Concurrent
+package filesearch
 
 import (
 	"encoding/json"

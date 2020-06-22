@@ -18,5 +18,5 @@ func TestFutureService(t *testing.T) {
 	future := NewFutureService()
 	task := new(taskFuture)
 	ft := future.submit(task)
-	fmt.Printf("%s", ft.get())
+	fmt.Printf("%s", ft.Get())
 }

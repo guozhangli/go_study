@@ -6,7 +6,7 @@ type FutureTask struct {
 	ch     chan interface{}
 }
 
-func (task *FutureTask) get() interface{} {
+func (task *FutureTask) Get() interface{} {
 	if !task.isDone {
 		var r interface{}
 		for r == nil {

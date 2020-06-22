@@ -1,4 +1,4 @@
-package Concurrent
+package levenshtein
 
 import (
 	"fmt"

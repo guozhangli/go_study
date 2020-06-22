@@ -1,8 +1,9 @@
-package Concurrent
+package levenshtein
 
 import (
 	"bufio"
 	"fmt"
+	"go_study/Concurrent"
 	TestProject "go_study/datastructure"
 	"io"
 	"log"
@@ -16,6 +17,7 @@ Levenshtein Distance 算法，又叫 Edit Distance 算法，是指两个字符�
 许可的编辑操作包括将一个字符替换成另一个字符，插入一个字符，删除一个字符。一般来说，编辑距离越小，两个串的相似度越大。
 计算相似度
 */
+
 func Levenshtein(str1, str2 string) float64 {
 	by1 := []byte(str1)
 	by2 := []byte(str2)
@@ -145,9 +147,11 @@ func getBestMatchingWords(word string, dictionary []string) *BestMatchingData {
 	return bestMatchingData
 }
 
+const PATH = "../data/UK Advanced Cryptics Dictionary.txt"
+
 //最佳匹配算法的串行版本
 func MatchingData() {
-	dictionary := load("data/UK Advanced Cryptics Dictionary.txt")
+	dictionary := load(PATH)
 	fmt.Println("Dictionary Size: ", len(dictionary))
 	startTime := time.Now().UnixNano()
 	word := "stitter"
@@ -201,7 +205,7 @@ func MatchingDataParallel() {
 	startTime := time.Now().UnixNano()
 	word := "stitter"
 	lbq := TestProject.NewLinkedBlockingQueue(math.MaxInt32)
-	dictionary := load("data/UK Advanced Cryptics Dictionary.txt")
+	dictionary := load(PATH)
 	fmt.Println("Dictionary Size: ", len(dictionary))
 
 	var min = math.MaxInt32
@@ -230,11 +234,11 @@ func MatchingDataParallel() {
 		}()
 	}
 
-	rejected := NewRejectedHandler(func() {
+	rejected := Concurrent.NewRejectedHandler(func() {
 		log.Fatal("pool closed,rejected task")
 	})
 	var poolNum = 100
-	pool := NewPoolRejectedHandler(int32(50), rejected)
+	pool := Concurrent.NewPoolRejectedHandler(int32(50), rejected)
 	step := len(dictionary) / poolNum
 	startIndex := 0
 	endIndex := step
@@ -277,17 +281,17 @@ func (t *taskDistance) Call() interface{} {
 func MatchingDataParallelFuture() {
 	startTime := time.Now().UnixNano()
 	word := "stitter"
-	dictionary := load("data/UK Advanced Cryptics Dictionary.txt")
+	dictionary := load(PATH)
 	fmt.Println("Dictionary Size: ", len(dictionary))
-	rejected := NewRejectedHandler(func() {
+	rejected := Concurrent.NewRejectedHandler(func() {
 		log.Fatal("pool closed,rejected task")
 	})
 	var poolNum = 100
-	pool := NewPoolRejectedHandler(int32(10), rejected)
+	pool := Concurrent.NewPoolRejectedHandler(int32(10), rejected)
 	step := len(dictionary) / poolNum
 	startIndex := 0
 	endIndex := step
-	var result []*FutureTask
+	var result []*Concurrent.FutureTask
 	for i := 0; i < poolNum; i++ {
 		task := &taskDistance{
 			startIndex: startIndex,
@@ -295,7 +299,7 @@ func MatchingDataParallelFuture() {
 			word:       word,
 			dictionary: dictionary,
 		}
-		ft := pool.Submit(task, NewFutureService())
+		ft := pool.Submit(task, Concurrent.NewFutureService())
 		result = append(result, ft)
 		startIndex = endIndex
 		if i < poolNum-2 {
@@ -310,7 +314,7 @@ func MatchingDataParallelFuture() {
 	var results []string
 	for _, ft := range result {
 		//log.Printf("distance:%d,words:%v\n",v.distance,v.words)
-		v := ft.get().(*BestMatchingData)
+		v := ft.Get().(*BestMatchingData)
 		if v.distance < min {
 			min = v.distance
 			results = nil

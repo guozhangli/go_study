@@ -1,4 +1,4 @@
-package Concurrent
+package knn
 
 import (
 	"errors"
@@ -289,8 +289,10 @@ k-最邻近算法的流程
 kNN 的基本要素
 	由上述的流程可知，对于一个确定的训练集，只要确定了距离度量、k值和分类决策规则，就能对任何一个新的实例，确定它的分类。
 */
+const PATH = "../data/bank.data"
+
 func KnnSerial() {
-	train, _ := Load("data/bank.data")
+	train, _ := Load(PATH)
 	fmt.Printf("Train: %d\n", len(train))
 	test, _ := Load("data/bank.test")
 	fmt.Printf("Test: %d\n", len(test))
@@ -350,7 +352,7 @@ func KnnClassifier(dataset []*BankMarketing, bankMarketing *BankMarketing, k int
 
 //k-邻近算法并行版本（细粒度的并行）
 func KnnParallelIndividual() {
-	train, _ := Load("data/bank.data")
+	train, _ := Load(PATH)
 	fmt.Printf("Train: %d\n", len(train))
 	test, _ := Load("data/bank.test")
 	fmt.Printf("Test: %d\n", len(test))
@@ -417,7 +419,7 @@ func KnnClassifierParallel(dataset []*BankMarketing, bankMarketing *BankMarketin
 
 //k-邻近算法并行版本（粗粒度的并行）
 func KnnParallelGroup() {
-	train, _ := Load("data/bank.data")
+	train, _ := Load(PATH)
 	fmt.Printf("Train: %d\n", len(train))
 	test, _ := Load("data/bank.test")
 	fmt.Printf("Test: %d\n", len(test))

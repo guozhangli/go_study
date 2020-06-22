@@ -1,8 +1,9 @@
-package Concurrent
+package textindexing
 
 import (
 	"errors"
 	"fmt"
+	"go_study/Concurrent"
 	TestProject "go_study/datastructure"
 	"io/ioutil"
 	"log"
@@ -23,16 +24,13 @@ type Document struct {
 	wc       map[string]int
 }
 
-const PATH = "data/text"
+const PATH = "../data/text"
 
 var stop = false
 var mu sync.Mutex
 
 func TextIndexingSerial() {
-	files, err := ioutil.ReadDir(PATH)
-	if err != nil {
-		log.Fatal("open dir error,", err)
-	}
+	files := ReadDir()
 	start := time.Now().UnixNano()
 	invertedIndex := make(map[string]string)
 	for _, f := range files {
@@ -131,7 +129,7 @@ func (task *taskTaxtIndexing) Run() error {
 }
 func TextIndexingParallel() {
 	start := time.Now().UnixNano()
-	files := readDir()
+	files := ReadDir()
 	invertedIndex := new(sync.Map)
 	lbq := TestProject.NewLinkedBlockingQueue(math.MaxInt32)
 	var wgTextIndexing sync.WaitGroup
@@ -139,7 +137,7 @@ func TextIndexingParallel() {
 		wgTextIndexing.Add(1)
 		go execParse(invertedIndex, lbq, &wgTextIndexing)
 	}
-	pool := NewPoolRejectedHandler(int32(100), NewRejectedHandler(func() {
+	pool := Concurrent.NewPoolRejectedHandler(int32(100), Concurrent.NewRejectedHandler(func() {
 		log.Fatal("pool closed,rejected task")
 	}))
 	execTask(pool, files, lbq)
@@ -179,14 +177,14 @@ func (task *taskIndexingGroup) Run() error {
 
 func TextIndexingGroup() {
 	start := time.Now().UnixNano()
-	files := readDir()
+	files := ReadDir()
 	invertedIndex := new(sync.Map)
 	lbq := TestProject.NewLinkedBlockingQueue(math.MaxInt32)
 	var wgTextIndexing sync.WaitGroup
 
 	go execParseGroup(invertedIndex, lbq, &wgTextIndexing)
 	go execParseGroup(invertedIndex, lbq, &wgTextIndexing)
-	pool := NewPoolRejectedHandler(int32(100), NewRejectedHandler(func() {
+	pool := Concurrent.NewPoolRejectedHandler(int32(100), Concurrent.NewRejectedHandler(func() {
 		log.Fatal("pool closed,rejected task")
 	}))
 	execTaskGroup(pool, files, lbq)
@@ -200,7 +198,7 @@ func TextIndexingGroup() {
 	fmt.Printf("invertedIndex: %d\n", len(s))
 }
 
-func readDir() []os.FileInfo {
+func ReadDir() []os.FileInfo {
 	files, err := ioutil.ReadDir(PATH)
 	if err != nil {
 		log.Fatal("open dir error,", err)
@@ -253,7 +251,7 @@ func execParseGroup(m *sync.Map, lbq *TestProject.LinkedBlockingQueue, wgTextInd
 	}
 }
 
-func execTask(pool *Pool, files []os.FileInfo, lbq *TestProject.LinkedBlockingQueue) {
+func execTask(pool *Concurrent.Pool, files []os.FileInfo, lbq *TestProject.LinkedBlockingQueue) {
 	for _, f := range files {
 		if strings.HasSuffix(f.Name(), ".txt") {
 			task := &taskTaxtIndexing{fileName: f.Name(), lbq: lbq}
@@ -263,7 +261,7 @@ func execTask(pool *Pool, files []os.FileInfo, lbq *TestProject.LinkedBlockingQu
 	fmt.Printf("send task finish:%d\n", len(files))
 }
 
-func execTaskGroup(pool *Pool, files []os.FileInfo, lbq *TestProject.LinkedBlockingQueue) {
+func execTaskGroup(pool *Concurrent.Pool, files []os.FileInfo, lbq *TestProject.LinkedBlockingQueue) {
 	var fileNames []string
 	for _, f := range files {
 		if strings.HasSuffix(f.Name(), ".txt") {
