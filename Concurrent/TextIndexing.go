@@ -49,7 +49,7 @@ func TextIndexingSerial() {
 	fmt.Printf("invertedIndex: %d\n", len(invertedIndex))
 }
 
-var reg = regexp.MustCompile("\\P{Arabic}+")
+var reg = regexp.MustCompile("\\P{L}+")
 
 func parse(filePath string) (map[string]int, error) {
 	var wc = make(map[string]int)
@@ -134,9 +134,11 @@ func TextIndexingParallel() {
 	files := readDir()
 	invertedIndex := new(sync.Map)
 	lbq := TestProject.NewLinkedBlockingQueue(math.MaxInt32)
-	var wgTextIndexing = new(sync.WaitGroup)
-	go execParse(invertedIndex, lbq, wgTextIndexing)
-	go execParse(invertedIndex, lbq, wgTextIndexing)
+	var wgTextIndexing sync.WaitGroup
+	for i := 0; i < 2; i++ {
+		wgTextIndexing.Add(1)
+		go execParse(invertedIndex, lbq, &wgTextIndexing)
+	}
 	pool := NewPoolRejectedHandler(int32(100), NewRejectedHandler(func() {
 		log.Fatal("pool closed,rejected task")
 	}))
@@ -146,6 +148,7 @@ func TextIndexingParallel() {
 	pool.WaitTermination() //等待所有的任务完成，清理协程池
 	setStop()
 	wgTextIndexing.Wait()
+
 	end := time.Now().UnixNano()
 	fmt.Printf("Execution Time: %d\n", (end-start)/1000000)
 	s := saveSlice(invertedIndex)
@@ -179,9 +182,10 @@ func TextIndexingGroup() {
 	files := readDir()
 	invertedIndex := new(sync.Map)
 	lbq := TestProject.NewLinkedBlockingQueue(math.MaxInt32)
-	var wgTextIndexing = new(sync.WaitGroup)
-	go execParseGroup(invertedIndex, lbq, wgTextIndexing)
-	go execParseGroup(invertedIndex, lbq, wgTextIndexing)
+	var wgTextIndexing sync.WaitGroup
+
+	go execParseGroup(invertedIndex, lbq, &wgTextIndexing)
+	go execParseGroup(invertedIndex, lbq, &wgTextIndexing)
 	pool := NewPoolRejectedHandler(int32(100), NewRejectedHandler(func() {
 		log.Fatal("pool closed,rejected task")
 	}))
@@ -204,7 +208,7 @@ func readDir() []os.FileInfo {
 	return files
 }
 func execParse(m *sync.Map, lbq *TestProject.LinkedBlockingQueue, wgTextIndexing *sync.WaitGroup) {
-	wgTextIndexing.Add(1)
+	defer wgTextIndexing.Done()
 	for !stop {
 		d := lbq.Take()
 		if d == nil {
@@ -213,7 +217,6 @@ func execParse(m *sync.Map, lbq *TestProject.LinkedBlockingQueue, wgTextIndexing
 		doc := d.(*Document)
 		updateInvertedIndexParallel(&doc.wc, m, doc.fileName)
 	}
-	fmt.Printf("docment in queue count :%d\n", lbq.Count)
 	for {
 		d := lbq.Poll()
 		if d == nil {
@@ -222,10 +225,11 @@ func execParse(m *sync.Map, lbq *TestProject.LinkedBlockingQueue, wgTextIndexing
 		doc := d.(*Document)
 		updateInvertedIndexParallel(&doc.wc, m, doc.fileName)
 	}
-	wgTextIndexing.Done()
+
 }
 
 func execParseGroup(m *sync.Map, lbq *TestProject.LinkedBlockingQueue, wgTextIndexing *sync.WaitGroup) {
+	defer wgTextIndexing.Done()
 	wgTextIndexing.Add(1)
 	for !stop {
 		d := lbq.Take()
@@ -247,7 +251,6 @@ func execParseGroup(m *sync.Map, lbq *TestProject.LinkedBlockingQueue, wgTextInd
 			updateInvertedIndexParallel(&v.wc, m, v.fileName)
 		}
 	}
-	wgTextIndexing.Done()
 }
 
 func execTask(pool *Pool, files []os.FileInfo, lbq *TestProject.LinkedBlockingQueue) {

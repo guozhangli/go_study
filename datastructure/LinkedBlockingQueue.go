@@ -156,7 +156,7 @@ func (lbq *LinkedBlockingQueue) peek() interface{} {
 	return nil
 }
 
-func (lbq *LinkedBlockingQueue) size() int32 {
+func (lbq *LinkedBlockingQueue) Size() int32 {
 	return atomic.LoadInt32(&lbq.Count)
 }
 
