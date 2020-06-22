@@ -196,7 +196,7 @@ func phase2(files *[]os.FileInfo, globalVoc *map[string]*word, globalKeywords *m
 				if _, ok := (*globalKeywords)[v.word]; !ok {
 					(*globalKeywords)[v.word] = 1
 				} else {
-					(*globalKeywords)[v.word] += (*globalKeywords)[v.word]
+					(*globalKeywords)[v.word] += 1
 				}
 			}
 		}
