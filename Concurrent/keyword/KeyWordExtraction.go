@@ -173,6 +173,7 @@ func phase1(files *[]os.FileInfo, globalVoc *map[string]*word, numDocuments *int
 			*numDocuments++
 		}
 	}
+	fmt.Printf("%d\n", len(*globalVoc))
 }
 
 func phase2(files *[]os.FileInfo, globalVoc *map[string]*word, globalKeywords *map[string]int, numDocuments *int) {
