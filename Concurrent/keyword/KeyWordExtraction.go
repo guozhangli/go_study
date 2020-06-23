@@ -33,8 +33,8 @@ func NewWord(w string) *word {
 	}
 }
 
-func (w *word) setTfIdf(dNum int) {
-	w.tfIdf = float64(w.tf) * math.Log(float64(dNum/w.df))
+func (w *word) setTfIdf(dNum, df int) {
+	w.tfIdf = float64(w.tf) * math.Log(float64(dNum/df))
 }
 
 func (w *word) addTf() *word {
@@ -186,8 +186,8 @@ func phase2(files *[]os.FileInfo, globalVoc *map[string]*word, globalKeywords *m
 			var keywords []*word
 			for _, v := range document.voc {
 				w := (*globalVoc)[v.word]
-				w.setTfIdf(*numDocuments)
-				keywords = append(keywords, w)
+				v.setTfIdf(*numDocuments, w.df)
+				keywords = append(keywords, v)
 			}
 			sort.Sort(wordList(keywords))
 			if len(keywords) > 10 {

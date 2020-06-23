@@ -35,11 +35,13 @@ func TextIndexingSerial() {
 	invertedIndex := make(map[string]string)
 	for _, f := range files {
 		if strings.HasSuffix(f.Name(), ".txt") {
-			wc, err := parse(filepath.Join(PATH, f.Name()))
+			path := filepath.Join(PATH, f.Name())
+			wc, err := parse(&path)
 			if err != nil {
 				continue
 			}
-			updateInvertedIndex(&wc, &invertedIndex, f.Name())
+			fName := f.Name()
+			updateInvertedIndex(&wc, &invertedIndex, &fName)
 		}
 	}
 	end := time.Now().UnixNano()
@@ -49,9 +51,9 @@ func TextIndexingSerial() {
 
 var reg = regexp.MustCompile("\\P{L}+")
 
-func parse(filePath string) (map[string]int, error) {
+func parse(filePath *string) (map[string]int, error) {
 	var wc = make(map[string]int)
-	datas, err := ioutil.ReadFile(filePath)
+	datas, err := ioutil.ReadFile(*filePath)
 	if err != nil {
 		log.Println("read file error,", err)
 		return nil, errors.New("read file error")
@@ -71,7 +73,7 @@ func parse(filePath string) (map[string]int, error) {
 }
 
 //map 接收结果（并发不安全的容器）
-func updateInvertedIndex(wc *map[string]int, ss *map[string]string, fileName string) {
+func updateInvertedIndex(wc *map[string]int, ss *map[string]string, fileName *string) {
 	for k, _ := range *wc {
 		if len(k) >= 3 {
 			if _, ok := (*ss)[k]; ok {
@@ -79,12 +81,12 @@ func updateInvertedIndex(wc *map[string]int, ss *map[string]string, fileName str
 				/*	buf := new(TestProject.Buffer)
 					buf.Write((*ss)[k],fileName, ";")
 					(*ss)[k] = buf.Read()*/
-				(*ss)[k] = (*ss)[k] + fileName + ";"
+				(*ss)[k] = (*ss)[k] + *fileName + ";"
 			} else {
 				/*	buf := new(TestProject.Buffer)
 					buf.Write(fileName, ";")
 					(*ss)[k] = buf.Read()*/
-				(*ss)[k] = fileName + ";"
+				(*ss)[k] = *fileName + ";"
 			}
 		}
 	}
@@ -116,7 +118,8 @@ type taskTaxtIndexing struct {
 }
 
 func (task *taskTaxtIndexing) Run() error {
-	wc, err := parse(filepath.Join(PATH, task.fileName))
+	path := filepath.Join(PATH, task.fileName)
+	wc, err := parse(&path)
 	if err != nil {
 		return errors.New("error")
 	}
@@ -161,7 +164,8 @@ type taskIndexingGroup struct {
 func (task *taskIndexingGroup) Run() error {
 	var docs []*Document
 	for _, v := range task.fileNames {
-		wc, err := parse(filepath.Join(PATH, v))
+		path := filepath.Join(PATH, v)
+		wc, err := parse(&path)
 		if err != nil {
 			return errors.New("error")
 		}
