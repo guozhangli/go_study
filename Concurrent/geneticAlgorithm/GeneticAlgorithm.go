@@ -24,7 +24,7 @@ import (
 满足结束标准前，可以重复以上操作。
 */
 
-var PATH = [...]string{"../data/kn57_dist.txt", "../data/lau15_dist.txt"}
+var PATH = [...]string{"../data/lau15_dist.txt", "../data/kn57_dist.txt"}
 
 const (
 	generations = 10000
@@ -64,6 +64,16 @@ func NewIndividual(size int) *Individual {
 	}
 }
 
+func NewIndividual2(other *Individual) *Individual {
+	var ch []int
+	for _, v := range other.chromosomes {
+		ch = append(ch, v)
+	}
+	return &Individual{
+		chromosomes: ch,
+	}
+}
+
 type IndividualList []*Individual
 
 func (il IndividualList) Len() int {
@@ -92,14 +102,13 @@ func (il *IndividualList) initIndividual(size int) {
 
 func (il *IndividualList) evaluate(datas [][]int, size int) {
 	for _, v := range *il {
-		evaluate(v, datas)
+		evaluate(v, datas, size)
 	}
 	sort.Sort(il)
 }
 
-func evaluate(individual *Individual, datas [][]int) {
+func evaluate(individual *Individual, datas [][]int, size int) {
 	chromosomes := individual.chromosomes
-	size := len(chromosomes)
 	var total int
 	for i := 0; i < size-1; i++ {
 		start := chromosomes[i]
@@ -116,18 +125,18 @@ func (il *IndividualList) selection() *IndividualList {
 	var selection = new(IndividualList)
 	len := len(*il) / 2
 	for i := 0; i < len; i++ {
-		*selection = append(*selection, (*il)[i])
+		*selection = append(*selection, NewIndividual2((*il)[i]))
 	}
 	return selection
 }
 
-func (il *IndividualList) crossover(selected *IndividualList, size int) []*Individual {
-	var population = make([]*Individual, individuals)
+func (il *IndividualList) crossover(selected *IndividualList, size int) *IndividualList {
+	var population = new(IndividualList)
 	rand.Seed(time.Now().UnixNano())
 	len := len(*selected)
 	for i := 0; i < individuals/2; i++ {
-		population[2*i] = NewIndividual(size)
-		population[2*i+1] = NewIndividual(size)
+		*population = append(*population, NewIndividual(size))
+		*population = append(*population, NewIndividual(size))
 		index1 := rand.Intn(len)
 		index2 := rand.Intn(len)
 		for index1 == index2 {
@@ -135,7 +144,7 @@ func (il *IndividualList) crossover(selected *IndividualList, size int) []*Indiv
 		}
 		individual := (*selected)[index1]
 		individua2 := (*selected)[index2]
-		crossover(individual, individua2, population[2*i], population[2*i+1], size)
+		crossover(individual, individua2, (*population)[2*i], (*population)[2*i+1], size)
 	}
 	return population
 }
@@ -149,14 +158,19 @@ func crossover(parent1, parent2, p1, p2 *Individual, size int) {
 	}
 	start := Min(number1, number2)
 	end := Max(number1, number2)
-	ch1 := parent1.chromosomes[start:end]
-	ch2 := parent2.chromosomes[start:end]
+	var ch1, ch2 []int
+	for _, v := range parent1.chromosomes[start:end] {
+		ch1 = append(ch1, v)
+	}
+	for _, v := range parent2.chromosomes[start:end] {
+		ch2 = append(ch2, v)
+	}
 	for i := 0; i < size; i++ {
 		v := (end + i) % size
 		v1 := parent1.chromosomes[v]
 		v2 := parent2.chromosomes[v]
-		addValue(ch1, v2)
-		addValue(ch2, v1)
+		ch1 = addValue(ch1, v2)
+		ch2 = addValue(ch2, v1)
 	}
 	ch1 = Rotate(ch1, start)
 	ch2 = Rotate(ch2, start)
@@ -176,7 +190,7 @@ func Max(a, b int) int {
 	}
 	return b
 }
-func addValue(ch []int, v int) {
+func addValue(ch []int, v int) []int {
 	var flag = true
 	for _, c := range ch {
 		if c == v {
@@ -186,6 +200,7 @@ func addValue(ch []int, v int) {
 	if flag {
 		ch = append(ch, v)
 	}
+	return ch
 }
 
 func calculate(datas [][]int) *Individual {
@@ -196,7 +211,7 @@ func calculate(datas [][]int) *Individual {
 	best := (*population)[0]
 	for i := 0; i < generations; i++ {
 		sl := population.selection()
-		*population = population.crossover(sl, size)
+		population = population.crossover(sl, size)
 		population.evaluate(datas, size)
 		if (*population)[0].value < best.value {
 			best = (*population)[0]
@@ -216,7 +231,7 @@ func SerialGeneticAlgorithm() {
 		fmt.Printf("Generations: %d\n", generations)
 		fmt.Printf("Population:  %d\n", individuals)
 		fmt.Printf("Execution Time:  %d\n", (end-start)/1000000)
-		fmt.Printf("Best Individual: %v\n", result)
+		fmt.Printf("Best Individual: %+v\n", result)
 		fmt.Printf("Total Distance: %d\n", result.value)
 		fmt.Println("=======================================")
 	}
