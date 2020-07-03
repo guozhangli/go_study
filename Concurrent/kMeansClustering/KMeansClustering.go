@@ -1,5 +1,13 @@
 package kMeansClustering
 
+import (
+	"fmt"
+	"io/ioutil"
+	"log"
+	"strconv"
+	"strings"
+)
+
 /**
 k-means 聚类算法
 k-means 聚类算法将预先未分类的项集分组到预定的K个簇。它在数据挖掘和机器学习领域非常流行，并且在这些领域中用于
@@ -14,3 +22,109 @@ k-means 聚类算法将预先未分类的项集分组到预定的K个簇。它�
 3、更新 一旦对所有项进行分类之后，必须重新计算定义每个簇的向量。如前所述，通常要计算划分到该簇所有项的向量的平均值。
 4、结束 最后，检查是否有些项改变了为其指派的簇。如果存在变化，需要再次转入指派步骤。否则算法结束，所有项都已分类完毕。
 */
+
+const (
+	PATH1 = "../data/movies.words"
+	PATH2 = "../data/movies.data"
+)
+
+type Word struct {
+	index int
+	tfidf float64
+}
+
+var K, seed int
+
+type wordList []*Word
+
+func (w wordList) Len() int {
+	return len(w)
+}
+func (w wordList) Less(i, j int) bool {
+	return w[i].index < w[j].index
+}
+
+func (w wordList) Swap(i, j int) {
+	w[i], w[j] = w[j], w[i]
+}
+
+type Document struct {
+	name  string
+	words []*Word
+}
+
+type DocumentCluster struct {
+	centroid  []float64
+	documents []*Document
+}
+
+func loadfile2Map() map[string]int {
+	bytes, err := ioutil.ReadFile(PATH1)
+	if err != nil {
+		log.Fatal("read file error")
+	}
+	m := make(map[string]int)
+	var index int
+	lines := strings.Split(string(bytes), "\n")
+	for _, line := range lines {
+		if line != "" {
+			m[line] = index
+			index++
+		}
+	}
+	return m
+}
+
+func loadfile2Slice(vocIndex map[string]int) []*Document {
+	bytes, err := ioutil.ReadFile(PATH2)
+	if err != nil {
+		log.Fatal("read file error")
+	}
+	var docs []*Document
+	lines := strings.Split(string(bytes), "\n")
+	for _, line := range lines {
+		if line != "" {
+			doc := processItem(line, vocIndex)
+			docs = append(docs, doc)
+		}
+	}
+	return docs
+}
+
+func processItem(line string, vocIndex map[string]int) *Document {
+	tokens := strings.Split(line, ",")
+	doc := &Document{
+		name:  tokens[0],
+		words: make([]*Word, len(tokens)-1),
+	}
+	for i, token := range tokens {
+		if i > 0 {
+			wordInfo := strings.Split(token, ":")
+			tfidf, _ := strconv.ParseFloat(wordInfo[1], 64)
+			word := &Word{
+				index: vocIndex[wordInfo[0]],
+				tfidf: tfidf,
+			}
+			doc.words[i-1] = word
+		}
+	}
+	return doc
+}
+
+func calculate() []*DocumentCluster {
+
+	return nil
+}
+func SerialKMeansClustering(ki, seedi int) {
+	if ki == 0 || seedi == 0 {
+		log.Fatal("please specify K and seed")
+	} else {
+		K = ki
+		seed = seedi
+	}
+	vocIndex := loadfile2Map()
+	fmt.Printf("voc size:%d\n", len(vocIndex))
+	documents := loadfile2Slice(vocIndex)
+	fmt.Printf("document size:%d\n", len(documents))
+
+}
