@@ -1,7 +1,7 @@
 package main
 
 import (
-	"datastructure"
+	TestProject "go_study/datastructure"
 )
 // 定义任务类型
 type Task struct {

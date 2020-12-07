@@ -55,3 +55,7 @@ BenchmarkFileSearchParallel-8           1000000000               0.0970 ns/op
     FileSearch_test.go:26: {"Path":"C:\\Windows\\System32\\drivers\\etc\\hosts","Found":true}
 
 */
+
+func TestCopyFile(t *testing.T) {
+	CopyFileMain("C:\\Users\\dell\\Desktop\\17")
+}
