@@ -4,8 +4,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math"
+	"math/rand"
+	"sort"
 	"strconv"
 	"strings"
+	"time"
 )
 
 /**
@@ -29,8 +33,8 @@ const (
 )
 
 type Word struct {
-	index int
-	tfidf float64
+	index int     //该单词的索引
+	tfidf float64 //其在文档中的tf-idf值
 }
 
 var K, seed int
@@ -49,13 +53,73 @@ func (w wordList) Swap(i, j int) {
 }
 
 type Document struct {
-	name  string
-	words []*Word
+	name    string
+	words   wordList
+	cluster *DocumentCluster
+}
+
+func (d *Document) setCluster(cluster *DocumentCluster) bool {
+	if d.cluster == cluster {
+		return false
+	} else {
+		d.cluster = cluster
+		return true
+	}
 }
 
 type DocumentCluster struct {
 	centroid  []float64
 	documents []*Document
+}
+
+func NewDocumentCluster(size int, documents []*Document) *DocumentCluster {
+	return &DocumentCluster{
+		centroid:  make([]float64, size),
+		documents: documents,
+	}
+}
+
+func (dc *DocumentCluster) addCluster(doc *Document) {
+	dc.documents = append(dc.documents, doc)
+}
+
+func (dc *DocumentCluster) clearCluster() {
+	dc.documents = nil
+}
+
+func (dc *DocumentCluster) calculateCentroid() {
+	for _, v := range dc.documents {
+		for _, w := range v.words {
+			dc.centroid[w.index] += w.tfidf
+		}
+	}
+	for i := 0; i < len(dc.centroid); i++ {
+		dc.centroid[i] /= float64(len(dc.documents))
+	}
+}
+
+func (dc *DocumentCluster) initialize(r *rand.Rand) {
+	for i := 0; i < len(dc.centroid); i++ {
+		dc.centroid[i] = r.Float64()
+	}
+}
+
+type DocumentClusterList []*DocumentCluster
+
+func (d DocumentClusterList) Len() int {
+	return len(d)
+}
+
+func (d DocumentClusterList) Less(i, j int) bool {
+	return d[i].getDocumentCount() > d[j].getDocumentCount()
+}
+
+func (d DocumentClusterList) Swap(i, j int) {
+	d[i], d[j] = d[j], d[i]
+}
+
+func (dc *DocumentCluster) getDocumentCount() int {
+	return len(dc.documents)
 }
 
 func loadfile2Map() map[string]int {
@@ -95,7 +159,7 @@ func processItem(line string, vocIndex map[string]int) *Document {
 	tokens := strings.Split(line, ",")
 	doc := &Document{
 		name:  tokens[0],
-		words: make([]*Word, len(tokens)-1),
+		words: make(wordList, len(tokens)-1),
 	}
 	for i, token := range tokens {
 		if i > 0 {
@@ -108,23 +172,98 @@ func processItem(line string, vocIndex map[string]int) *Document {
 			doc.words[i-1] = word
 		}
 	}
+	sort.Sort(doc.words)
 	return doc
 }
 
-func calculate() []*DocumentCluster {
-
-	return nil
+func enclideanDistance(words wordList, centroid []float64) float64 {
+	var distance float64
+	var wordIndex int
+	for i, c := range centroid {
+		if wordIndex < len(words) && words[wordIndex].index == i {
+			distance += math.Pow(words[wordIndex].tfidf-c, 2)
+			wordIndex++
+		} else {
+			distance += c * c
+		}
+	}
+	return math.Sqrt(distance)
 }
+
+func calculate(docments []*Document, clusterCount int, vocSize int, seed int64) []*DocumentCluster {
+	clusters := make([]*DocumentCluster, clusterCount)
+	src := rand.NewSource(seed)
+	r := rand.New(src)
+	for i := 0; i < clusterCount; i++ {
+		var doc []*Document
+		clusters[i] = NewDocumentCluster(vocSize, doc)
+		clusters[i].initialize(r)
+	}
+	change := true
+	var step int
+	for change {
+		change = assignment(clusters, docments)
+		update(clusters)
+		step++
+	}
+	fmt.Printf("Number of steps:%d\n", step)
+	return clusters
+}
+
+func assignment(clusters []*DocumentCluster, docments []*Document) bool {
+	for _, c := range clusters {
+		c.clearCluster()
+	}
+	var numChanges int
+	for _, doc := range docments {
+		distance := math.MaxFloat64
+		var selectCluster *DocumentCluster
+		for _, c := range clusters {
+			curDistance := enclideanDistance(doc.words, c.centroid)
+			if distance > curDistance {
+				distance = curDistance
+				selectCluster = c
+			}
+		}
+		if selectCluster != nil {
+			selectCluster.addCluster(doc)
+			change := doc.setCluster(selectCluster)
+			if change {
+				numChanges++
+			}
+		}
+	}
+	fmt.Printf("Number of change:%d\n", numChanges)
+	return numChanges > 0
+}
+
+func update(clusters []*DocumentCluster) {
+	for _, c := range clusters {
+		c.calculateCentroid()
+	}
+}
+
 func SerialKMeansClustering(ki, seedi int) {
+	var K, SEED int
 	if ki == 0 || seedi == 0 {
 		log.Fatal("please specify K and seed")
 	} else {
 		K = ki
-		seed = seedi
+		SEED = seedi
 	}
 	vocIndex := loadfile2Map()
 	fmt.Printf("voc size:%d\n", len(vocIndex))
 	documents := loadfile2Slice(vocIndex)
 	fmt.Printf("document size:%d\n", len(documents))
-
+	start := time.Now().UnixNano()
+	clusters := calculate(documents, K, len(vocIndex), int64(SEED))
+	end := time.Now().UnixNano()
+	fmt.Printf("K:%d,SEED:%d\n", K, SEED)
+	fmt.Printf("Execution Time:%d\n", (end-start)/1000000)
+	sort.Sort(DocumentClusterList(clusters))
+	var msg string
+	for _, v := range clusters {
+		msg += "Cluster sizes:" + fmt.Sprintf("%d", v.getDocumentCount()) + ","
+	}
+	fmt.Println(msg)
 }
