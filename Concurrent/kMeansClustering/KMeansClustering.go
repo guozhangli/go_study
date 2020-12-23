@@ -68,8 +68,8 @@ func (d *Document) setCluster(cluster *DocumentCluster) bool {
 }
 
 type DocumentCluster struct {
-	centroid  []float64
-	documents []*Document
+	centroid  []float64   //质心集合
+	documents []*Document //文档集合
 }
 
 func NewDocumentCluster(size int, documents []*Document) *DocumentCluster {
