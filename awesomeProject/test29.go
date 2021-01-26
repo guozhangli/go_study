@@ -68,16 +68,4 @@ func main() {
 	var e interface{} = 1
 	var f interface{} = "hi"
 	fmt.Println(e == f)
-
-	ch := make(chan int, 5)
-	func() {
-		for i := 0; i <= 5; i++ { //超过缓存大小会报dealline问题
-			ch <- i
-		}
-	}()
-	go func() {
-		for i := 0; i <= 5; i++ {
-			fmt.Println(<-ch)
-		}
-	}()
 }
