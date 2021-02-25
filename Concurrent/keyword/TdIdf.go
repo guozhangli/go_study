@@ -38,6 +38,7 @@ func idf(collections [][]string, word string) float64 {
 	return math.Log(float64(len(collections)) / float64(df(collections, word)+1))
 }
 
+//权重
 func tdidf(list []string, collections [][]string, word string) float64 {
 	return td(list, word) * idf(collections, word)
 }
