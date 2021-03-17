@@ -117,3 +117,20 @@ func TestIsEqual(t *testing.T) {
 func TestConveringExample(t *testing.T) {
 	ConveringExample()
 }
+
+//容斥原理
+func TestInclusion_exclusion(t *testing.T) {
+	set1 := initSet()
+	set2 := initSet2()
+	set3 := NewSet(func(o, n interface{}) bool {
+		return o == n
+	})
+	Union(set1, set2, set3)
+	set4 := NewSet(func(o, n interface{}) bool {
+		return o == n
+	})
+	Intersection(set1, set2, set4)
+	size := set1.Size() + set2.Size() - set4.Size()
+	flag := set3.Size() == size
+	t.Log(flag)
+}
