@@ -1,18 +1,18 @@
 package cls2
 
 import (
-	"awesomeProject/src/clsfactory/base"
 	"fmt"
+	"go_study/awesomeProject/src/clsfactory/base"
 )
 
 type Class2 struct {
-
 }
-func (c *Class2) Do(){
+
+func (c *Class2) Do() {
 	fmt.Println("Class2")
 }
 
-func init(){
+func init() {
 	base.Register("Class2", func() base.Class {
 		return new(Class2)
 	})

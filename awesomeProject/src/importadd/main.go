@@ -2,9 +2,9 @@ package main
 
 import "fmt"
 
-import renameLib "awesomeProject/src/importadd/mylib"
+import renameLib "go_study/awesomeProject/src/importadd/mylib"
 
 func main() {
-	fmt.Println(renameLib.Add(1,2))
+	fmt.Println(renameLib.Add(1, 2))
 
 }

@@ -7,19 +7,19 @@ import (
 	"strings"
 )
 
-func handleSession(conn net.Conn,exitChan chan int){
+func handleSession(conn net.Conn, exitChan chan int) {
 	fmt.Println("Session started:")
-	reader:=bufio.NewReader(conn)
-	for true {
-		str,err:=reader.ReadString('\n')
-		if err==nil{
-			str=strings.TrimSpace(str)
-			if !processTelnetCommand(str,exitChan){
+	reader := bufio.NewReader(conn)
+	for {
+		str, err := reader.ReadString('\n')
+		if err == nil {
+			str = strings.TrimSpace(str)
+			if !processTelnetCommand(str, exitChan) {
 				conn.Close()
 				break
 			}
-			conn.Write([]byte(str+"\r\n"))
-		}else{
+			conn.Write([]byte(str + "\r\n"))
+		} else {
 			fmt.Println("Session closed")
 			conn.Close()
 			break

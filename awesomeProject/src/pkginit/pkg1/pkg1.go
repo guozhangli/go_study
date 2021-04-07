@@ -1,8 +1,8 @@
 package pkg1
 
 import (
-	"awesomeProject/src/pkginit/pkg2"
 	"fmt"
+	"go_study/awesomeProject/src/pkginit/pkg2"
 )
 
 func ExecPkg1() {
